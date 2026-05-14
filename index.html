@@ -9,13 +9,31 @@
 <meta name="apple-mobile-web-app-title" content="GlucoControl">
 <meta name="description" content="Control de diabetes - glucemia, medicamentos, citas y más">
 <link rel="manifest" id="manifest-link">
-<title>GlucoControl v3</title>
+<title>GlucoControl v5</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#eef2f5;color:#2c3e50;min-height:100vh}
+:root{
+  --c-primary:#0f4a61;--c-accent:#1a6e8e;--c-teal:#2eb89a;
+  --c-bg:#eef2f5;--c-card:#fff;--c-border:#dde4ec;--c-text:#2c3e50;--c-muted:#6c7a89;
+}
+body{font-family:Arial,sans-serif;background:var(--c-bg);color:var(--c-text);min-height:100vh}
+/* TEMA SELECTOR */
+#theme-bar{position:fixed;bottom:70px;right:12px;z-index:400;display:flex;flex-direction:column;gap:6px}
+.theme-dot{width:28px;height:28px;border-radius:50%;border:3px solid rgba(255,255,255,0.7);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.2);transition:transform 0.15s}
+.theme-dot:hover,.theme-dot.on{transform:scale(1.2);border-color:#fff}
+/* PATRÓN POR HORA */
+.hora-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:6px}
+.hora-cell{border-radius:6px;padding:6px 3px;text-align:center;border:1px solid var(--c-border)}
+.hora-cell .hc-h{font-size:0.6rem;color:var(--c-muted);font-weight:700}
+.hora-cell .hc-v{font-size:0.82rem;font-weight:700;margin-top:2px}
+.hora-cell .hc-n{font-size:0.58rem;color:var(--c-muted)}
+/* CHART MEJORADO */
+.chart-legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;font-size:0.72rem}
+.chart-legend span{display:flex;align-items:center;gap:4px}
+.chart-legend i{display:inline-block;width:10px;height:10px;border-radius:50%}
 button{cursor:pointer;font-family:Arial,sans-serif}
 #wrap{display:flex;min-height:100vh}
-#side{width:230px;background:#0f4a61;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100}
+#side{width:230px;background:var(--c-primary);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100}
 #side .logo{padding:16px 16px 12px;border-bottom:1px solid rgba(255,255,255,0.15)}
 #side .logo h1{color:#fff;font-size:1.05rem;font-weight:700}
 #side .logo p{color:rgba(255,255,255,0.5);font-size:0.68rem;margin-top:2px}
@@ -40,8 +58,8 @@ button{cursor:pointer;font-family:Arial,sans-serif}
 #bar .blast span.nd{background:#f0f4f7;color:#999}
 #content{padding:18px 22px}
 .sec{display:none}.sec.on{display:block}
-.card{background:#fff;border-radius:10px;border:1px solid #dde4ec;padding:16px 18px;margin-bottom:16px}
-.card h2{font-size:0.92rem;font-weight:700;color:#0f4a61;margin-bottom:12px}
+.card{background:var(--c-card);border-radius:10px;border:1px solid var(--c-border);padding:16px 18px;margin-bottom:16px}
+.card h2{font-size:0.92rem;font-weight:700;color:var(--c-primary);margin-bottom:12px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
@@ -194,7 +212,7 @@ tr:hover td{background:#f8fafb}
     <button id="n-nutricion"      onclick="ir('nutricion')">🥗 Nutrición</button>
   </nav>
   <div class="sfooter">
-    <p>GlucoControl v4.0</p>
+    <p>GlucoControl v5.0</p>
     <button onclick="doImprimir()">🖨️ Imprimir</button>
     <button class="pdf" onclick="doExportPDF()">📄 Exportar PDF</button>
     <button class="xls" onclick="doExportExcel()">📊 Exportar Excel</button>
@@ -267,6 +285,11 @@ tr:hover td{background:#f8fafb}
       <div class="card">
         <h2>📅 Promedio por momento del día</h2>
         <div id="momento-stats"></div>
+      </div>
+      <div class="card">
+        <h2>🕐 Patrón de glucemia por hora</h2>
+        <p style="font-size:0.75rem;color:#999;margin-bottom:8px">Promedio de todas tus mediciones agrupadas por hora del día</p>
+        <div id="hora-pattern"></div>
       </div>
       <div class="card">
         <h2>📈 Tendencia últimas 4 semanas</h2>
@@ -614,6 +637,15 @@ tr:hover td{background:#f8fafb}
 </div>
 <div id="mas-overlay" onclick="cerrarMas()" style="display:none;position:fixed;inset:0;bottom:60px;z-index:198;background:rgba(0,0,0,0.3)"></div>
 
+<!-- SELECTOR DE TEMA -->
+<div id="theme-bar">
+  <div class="theme-dot on" style="background:#0f4a61" onclick="aplicarTema('azul')" title="Azul (predeterminado)"></div>
+  <div class="theme-dot" style="background:#7b3b9b" onclick="aplicarTema('purpura')" title="Púrpura"></div>
+  <div class="theme-dot" style="background:#1a6e3e" onclick="aplicarTema('verde')" title="Verde"></div>
+  <div class="theme-dot" style="background:#8b2500" onclick="aplicarTema('rojo')" title="Rojo oscuro"></div>
+  <div class="theme-dot" style="background:#555" onclick="aplicarTema('gris')" title="Gris"></div>
+</div>
+
 <script>
 var MLAB={ayunas:'Ayunas',antes_desayuno:'Antes desayuno',despues_desayuno:'Despues desayuno',antes_comida:'Antes comida',despues_comida:'Despues comida',antes_cena:'Antes cena',despues_cena:'Despues cena',antes_dormir:'Antes dormir'};
 var MICO={ayunas:'🌅',antes_desayuno:'☕',despues_desayuno:'🥐',antes_comida:'🍽️',despues_comida:'🥘',antes_cena:'🌆',despues_cena:'🌙',antes_dormir:'🛌'};
@@ -813,6 +845,7 @@ function pintaEstadisticas(){
     semLabels[3]='Esta';
     svgLineChart(tc,semanas,semLabels,70,180,'#7b3b9b');
   }
+  pintaPatronHora();
 }
 
 function barRowVal(lb,val,unit,col,sub){return '<div class="bar-row" style="margin-bottom:8px"><div style="flex:1"><div style="font-size:0.8rem;font-weight:700">'+lb+'</div><div style="font-size:0.7rem;color:#999">'+sub+'</div></div><div style="text-align:right"><div style="font-size:1rem;font-weight:700;color:'+col+'">'+val+'</div><div style="font-size:0.7rem;color:#999">'+unit+'</div></div></div>';}
@@ -1019,6 +1052,98 @@ function doExportPDF(){
   var link=g('manifest-link');if(link)link.href=url;
 })();
 
+// ── TEMAS DE COLOR ───────────────────────────────────────────
+var TEMAS={
+  azul:   {primary:'#0f4a61',accent:'#1a6e8e',teal:'#2eb89a',bg:'#eef2f5'},
+  purpura:{primary:'#4a1a6e',accent:'#6b3b9b',teal:'#9b59b6',bg:'#f0eef5'},
+  verde:  {primary:'#1a4a2e',accent:'#1a6e3e',teal:'#2eb87a',bg:'#eef5f0'},
+  rojo:   {primary:'#6e1a1a',accent:'#8b2500',teal:'#c0392b',bg:'#f5eeee'},
+  gris:   {primary:'#333',accent:'#555',teal:'#777',bg:'#f0f0f0'},
+};
+function aplicarTema(nombre){
+  var t=TEMAS[nombre];if(!t)return;
+  var r=document.documentElement.style;
+  r.setProperty('--c-primary',t.primary);
+  r.setProperty('--c-accent',t.accent);
+  r.setProperty('--c-teal',t.teal);
+  r.setProperty('--c-bg',t.bg);
+  document.querySelectorAll('.theme-dot').forEach(function(d){d.classList.remove('on');});
+  var idx={azul:0,purpura:1,verde:2,rojo:3,gris:4}[nombre];
+  var dots=document.querySelectorAll('.theme-dot');
+  if(dots[idx])dots[idx].classList.add('on');
+  // update meta theme-color
+  var meta=document.querySelector('meta[name="theme-color"]');
+  if(meta)meta.setAttribute('content',t.primary);
+  svv('tema',nombre);
+  // re-render current section
+  if(typeof secActual!=='undefined')ir(secActual);
+}
+function cargarTema(){var t=ldv('tema','azul');aplicarTema(t);}
+
+// ── GRÁFICA SVG MEJORADA ─────────────────────────────────────
+function svgLineChart(el,data,labels,ref1,ref2,color){
+  if(!data.some(function(v){return v!==null;})){el.innerHTML='<div style="text-align:center;color:#999;font-size:0.78rem;padding:16px 0">Sin datos suficientes</div>';return;}
+  var W=480,H=160,PL=36,PR=10,PT=14,PB=28,cW=W-PL-PR,cH=H-PT-PB;
+  var vals=data.filter(function(v){return v!==null;});
+  var minV=Math.min.apply(null,vals.concat([ref1]))-20,maxV=Math.max.apply(null,vals.concat([ref2]))+20;
+  function fy(v){return PT+cH-((v-minV)/(maxV-minV))*cH;}
+  function fx(i){return PL+(data.length>1?i*(cW/(data.length-1)):cW/2);}
+  // zona objetivo sombreada
+  var y1=fy(ref2),y2=fy(ref1);
+  var zona='<rect x="'+PL+'" y="'+y1+'" width="'+cW+'" height="'+(y2-y1)+'" fill="#27ae60" opacity="0.07" rx="2"/>';
+  // líneas de referencia
+  var refs='';[[ref1,'#f39c12'],[ref2,'#27ae60']].forEach(function(r){if(r[0]>=minV&&r[0]<=maxV){var y=fy(r[0]);refs+='<line x1="'+PL+'" y1="'+y+'" x2="'+(W-PR)+'" y2="'+y+'" stroke="'+r[1]+'" stroke-width="1.2" stroke-dasharray="5,3" opacity="0.6"/><text x="'+(PL-3)+'" y="'+(y+4)+'" text-anchor="end" font-size="8" fill="'+r[1]+'" font-weight="bold">'+r[0]+'</text>';}});
+  // puntos y curva
+  var pts=data.map(function(v,i){return v!==null?[fx(i),fy(v)]:null;});
+  var path='',first=true;
+  pts.forEach(function(p,i){if(p){if(first){path+='M '+p[0]+','+p[1];first=false;}else{var prev=null;for(var j=i-1;j>=0;j--){if(pts[j]){prev=pts[j];break;}}if(prev){var cx1=prev[0]+(p[0]-prev[0])*0.45,cx2=p[0]-(p[0]-prev[0])*0.45;path+=' C '+cx1+','+prev[1]+' '+cx2+','+p[1]+' '+p[0]+','+p[1];}}}else{first=true;}});
+  // área gradiente bajo la curva
+  var lastPt=null;for(var ii=pts.length-1;ii>=0;ii--){if(pts[ii]){lastPt=pts[ii];break;}}
+  var firstPt=null;for(var jj=0;jj<pts.length;jj++){if(pts[jj]){firstPt=pts[jj];break;}}
+  var area='';if(path&&firstPt&&lastPt)area='<path d="'+path+' L '+lastPt[0]+','+(H-PB)+' L '+firstPt[0]+','+(H-PB)+' Z" fill="url(#ga'+color.replace(/[^a-z0-9]/gi,'')+')"/>';
+  // puntos con color según estado
+  var dots='';pts.forEach(function(p,i){if(!p)return;var v=data[i],col=v<ref1?'#f39c12':v<=ref2?'#27ae60':'#e74c3c';dots+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="5" fill="'+col+'" stroke="#fff" stroke-width="2"/>';if(data.length<=10)dots+='<text x="'+p[0]+'" y="'+(p[1]-9)+'" text-anchor="middle" font-size="9" fill="'+col+'" font-weight="bold">'+v+'</text>';});
+  // etiquetas eje X
+  var step=data.length>8?Math.ceil(data.length/6):1;
+  var xl=labels.map(function(l,i){if(i%step!==0&&i!==labels.length-1)return '';return '<text x="'+fx(i)+'" y="'+(H-5)+'" text-anchor="middle" font-size="8.5" fill="#999">'+l+'</text>';}).join('');
+  var gid='ga'+color.replace(/[^a-z0-9]/gi,'');
+  el.innerHTML='<svg width="100%" viewBox="0 0 '+W+' '+H+'" style="overflow:visible"><defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+color+'" stop-opacity="0.18"/><stop offset="100%" stop-color="'+color+'" stop-opacity="0.01"/></linearGradient></defs>'+zona+refs+area+'<path d="'+path+'" fill="none" stroke="'+color+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>'+dots+xl+'</svg><div class="chart-legend"><span><i style="background:#27ae60"></i>En rango ('+ref1+'–'+ref2+')</span><span><i style="background:#e74c3c"></i>Alto</span><span><i style="background:#f39c12"></i>Bajo</span></div>';
+}
+
+// ── PATRÓN POR HORA ──────────────────────────────────────────
+function pintaPatronHora(){
+  var el=g('hora-pattern');if(!el)return;
+  if(!GL.length){el.innerHTML='<p style="color:#999;font-size:0.8rem">Sin datos suficientes</p>';return;}
+  // Agrupar mediciones por hora
+  var horas={};
+  GL.forEach(function(gl){
+    var h=parseInt((gl.hora||'00:00').split(':')[0]);
+    var bloque=Math.floor(h/2)*2; // bloques de 2h
+    if(!horas[bloque])horas[bloque]={suma:0,n:0};
+    horas[bloque].suma+=gl.valor;horas[bloque].n++;
+  });
+  // Crear celdas para todas las horas del día (bloques de 2h)
+  var html='<div class="hora-grid">';
+  for(var h=0;h<24;h+=2){
+    var dato=horas[h];
+    if(dato){
+      var avg=Math.round(dato.suma/dato.n);
+      var col=avg<70?'#f39c12':avg<=180?'#27ae60':'#e74c3c';
+      var bg=avg<70?'#fef9ec':avg<=180?'#eafaf1':'#fdf0ef';
+      html+='<div class="hora-cell" style="background:'+bg+';border-color:'+col+'40"><div class="hc-h">'+pad(h)+':00</div><div class="hc-v" style="color:'+col+'">'+avg+'</div><div class="hc-n">'+dato.n+' med.</div></div>';
+    }else{
+      html+='<div class="hora-cell" style="background:#f8fafb"><div class="hc-h">'+pad(h)+':00</div><div class="hc-v" style="color:#ddd">—</div><div class="hc-n" style="color:#ddd">sin datos</div></div>';
+    }
+  }
+  html+='</div>';
+  // Mejor y peor hora
+  var mejorH=null,peorH=null,mejorV=999,peorV=0;
+  Object.keys(horas).forEach(function(h){var a=Math.round(horas[h].suma/horas[h].n);if(Math.abs(a-125)<Math.abs(mejorV-125)){mejorV=a;mejorH=h;}if(a>peorV){peorV=a;peorH=h;}});
+  if(mejorH!==null)html+='<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><div style="flex:1;background:#eafaf1;border-radius:8px;padding:8px 10px;font-size:0.76rem"><div style="color:#27ae60;font-weight:700">✅ Mejor control</div><div style="font-weight:700">'+(mejorH?pad(parseInt(mejorH))+':00–'+pad(parseInt(mejorH)+2)+':00':'—')+'</div><div style="color:#999">Prom. '+mejorV+' mg/dL</div></div><div style="flex:1;background:#fdf0ef;border-radius:8px;padding:8px 10px;font-size:0.76rem"><div style="color:#e74c3c;font-weight:700">⚠️ Mayor glucemia</div><div style="font-weight:700">'+(peorH?pad(parseInt(peorH))+':00–'+pad(parseInt(peorH)+2)+':00':'—')+'</div><div style="color:#999">Prom. '+peorV+' mg/dL</div></div></div>';
+  el.innerHTML=html;
+}
+function pad(n){return n<10?'0'+n:''+n;}
+
 // ── NUTRICIÓN ────────────────────────────────────────────────
 var NUT_DB=[
   // CEREALES Y PAN
@@ -1193,6 +1318,7 @@ function pintaNutricion(){
 }
 
 // fin script nutrición
+cargarTema();
 iniciarRecordatorios();
 ir('dashboard');
 </script>
