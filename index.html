@@ -191,9 +191,10 @@ tr:hover td{background:#f8fafb}
     <button id="n-recordatorios"  onclick="ir('recordatorios')">🔔 Recordatorios</button>
     <button id="n-citas"          onclick="ir('citas')">📅 Citas</button>
     <button id="n-informes"       onclick="ir('informes')">📋 Informes</button>
+    <button id="n-nutricion"      onclick="ir('nutricion')">🥗 Nutrición</button>
   </nav>
   <div class="sfooter">
-    <p>GlucoControl v3.0</p>
+    <p>GlucoControl v4.0</p>
     <button onclick="doImprimir()">🖨️ Imprimir</button>
     <button class="pdf" onclick="doExportPDF()">📄 Exportar PDF</button>
     <button class="xls" onclick="doExportExcel()">📊 Exportar Excel</button>
@@ -402,6 +403,92 @@ tr:hover td{background:#f8fafb}
 </main>
 </div>
 
+<!-- SECCIÓN NUTRICIÓN -->
+<script>
+// Insertar sección nutrición en el DOM
+(function(){
+  var sec = document.createElement('div');
+  sec.className = 'sec';
+  sec.id = 'sec-nutricion';
+  sec.innerHTML = `
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div><h1 style="font-size:1.15rem;color:#0f4a61">🥗 Nutrición</h1><p style="font-size:0.78rem;color:#999">Carbohidratos, IG y ratio insulina</p></div>
+  </div>
+
+  <!-- CALCULADORA CARBOHIDRATOS -->
+  <div class="card" style="margin-bottom:14px">
+    <h2>🍞 Calculadora de Carbohidratos</h2>
+    <p style="font-size:0.78rem;color:#999;margin-bottom:12px">Busca un alimento para ver sus carbohidratos por 100g y calcular tu ración</p>
+    <div class="fr" style="margin-bottom:10px">
+      <div class="fg"><label>Buscar alimento</label><input type="text" id="nut-search" placeholder="Ej: arroz, pan, manzana..." oninput="nutBuscar()"></div>
+    </div>
+    <div id="nut-resultados" style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px"></div>
+    <div id="nut-seleccionado" style="display:none;background:#e8f4f8;border-radius:8px;padding:12px;margin-bottom:12px">
+      <div style="font-weight:700;font-size:0.9rem;color:#0f4a61;margin-bottom:6px" id="nut-sel-nombre">—</div>
+      <div class="g3" style="margin-bottom:10px">
+        <div class="sc"><div class="sl">Carbos/100g</div><div class="sv" id="nut-carbos100">—</div></div>
+        <div class="sc"><div class="sl">IG</div><div class="sv" id="nut-ig-val">—</div></div>
+        <div class="sc"><div class="sl">Kcal/100g</div><div class="sv" id="nut-kcal100">—</div></div>
+      </div>
+      <div class="fr" style="align-items:flex-end">
+        <div class="fg"><label>Cantidad que vas a comer (g)</label><input type="number" id="nut-gramos" min="1" max="2000" placeholder="150" oninput="nutCalcular()"></div>
+        <button class="btn ba" onclick="nutCalcular()">Calcular</button>
+      </div>
+      <div id="nut-resultado-calculo" style="display:none;margin-top:10px;background:#fff;border-radius:8px;padding:10px">
+        <div class="g3">
+          <div class="sc ok"><div class="sl">Carbohidratos</div><div class="sv" id="nut-res-carbos">—</div><div style="font-size:0.65rem;color:#999">gramos</div></div>
+          <div class="sc"><div class="sl">Calorías</div><div class="sv" id="nut-res-kcal">—</div><div style="font-size:0.65rem;color:#999">kcal</div></div>
+          <div class="sc pu"><div class="sl">Raciones HC</div><div class="sv" id="nut-res-raciones">—</div><div style="font-size:0.65rem;color:#999">x10g</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RATIO INSULINA / CARBOHIDRATOS -->
+  <div class="card" style="margin-bottom:14px">
+    <h2>💉 Calculadora de Insulina</h2>
+    <p style="font-size:0.78rem;color:#999;margin-bottom:12px">Calcula las unidades de insulina rápida necesarias según tus carbohidratos y glucemia actual</p>
+    <div class="g2" style="margin-bottom:12px">
+      <div>
+        <div class="fg" style="margin-bottom:9px"><label>Mi ratio I:HC (1u insulina por X gramos de HC)</label><input type="number" id="ins-ratio" min="1" max="50" placeholder="10" value="" oninput="svv('ins_ratio',this.value)"></div>
+        <div class="fg" style="margin-bottom:9px"><label>Mi factor de sensibilidad (1u baja X mg/dL)</label><input type="number" id="ins-fsens" min="1" max="200" placeholder="40" value="" oninput="svv('ins_fsens',this.value)"></div>
+        <div class="fg" style="margin-bottom:9px"><label>Mi objetivo glucémico (mg/dL)</label><input type="number" id="ins-objetivo" min="60" max="200" placeholder="110" value="" oninput="svv('ins_objetivo',this.value)"></div>
+      </div>
+      <div>
+        <div class="fg" style="margin-bottom:9px"><label>Carbohidratos de la comida (g)</label><input type="number" id="ins-carbos" min="0" max="500" placeholder="60"></div>
+        <div class="fg" style="margin-bottom:9px"><label>Glucemia actual (mg/dL)</label><input type="number" id="ins-glucemia" min="40" max="600" placeholder="140"></div>
+        <button class="btn bp" style="width:100%;margin-top:4px" onclick="calcularInsulina()">Calcular insulina</button>
+      </div>
+    </div>
+    <div id="ins-resultado" style="display:none;border-radius:8px;padding:14px;background:#f5f8fb">
+      <div style="font-size:0.78rem;color:#6c7a89;margin-bottom:8px;font-weight:700">RESULTADO</div>
+      <div class="g3">
+        <div class="sc pu"><div class="sl">Insulina HC</div><div class="sv" id="ins-res-hc">—</div><div style="font-size:0.65rem;color:#999">unidades</div></div>
+        <div class="sc hi"><div class="sl">Corrección</div><div class="sv" id="ins-res-corr">—</div><div style="font-size:0.65rem;color:#999">unidades</div></div>
+        <div class="sc ok"><div class="sl">TOTAL</div><div class="sv" id="ins-res-total">—</div><div style="font-size:0.65rem;color:#999">unidades</div></div>
+      </div>
+      <div id="ins-aviso" style="margin-top:10px;font-size:0.75rem;padding:8px 10px;border-radius:6px;background:#fef9ec;color:#b7770d;font-weight:600"></div>
+    </div>
+    <div class="cj w" style="margin-top:10px"><h4>⚠️ Importante</h4><p>Esta calculadora es orientativa. Consulta siempre con tu médico o educador en diabetes antes de modificar dosis de insulina.</p></div>
+  </div>
+
+  <!-- BASE DE DATOS IG -->
+  <div class="card">
+    <h2>📋 Índice Glucémico de Alimentos</h2>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px">
+      <button class="btn bg bs" onclick="filtroIG('todos',this)">Todos</button>
+      <button class="btn bg bs" onclick="filtroIG('bajo',this)">🟢 IG Bajo (&lt;55)</button>
+      <button class="btn bg bs" onclick="filtroIG('medio',this)">🟡 IG Medio (55–70)</button>
+      <button class="btn bg bs" onclick="filtroIG('alto',this)">🔴 IG Alto (&gt;70)</button>
+    </div>
+    <div style="margin-bottom:10px"><input type="text" id="ig-filtro" placeholder="Filtrar alimentos..." oninput="pintaTablaIG()"></div>
+    <div class="tw"><table><thead><tr><th>Alimento</th><th>Categoría</th><th>IG</th><th>Carbos/100g</th><th>Kcal/100g</th></tr></thead><tbody id="ig-tbody"></tbody></table></div>
+  </div>
+  `;
+  document.getElementById('content').appendChild(sec);
+})();
+</script>
+
 <!-- MODALES -->
 <div class="ov" id="mg" onclick="cerrarOv(event,this)"><div class="mo">
   <h2>📊 Nueva Medición</h2>
@@ -532,7 +619,7 @@ var MLAB={ayunas:'Ayunas',antes_desayuno:'Antes desayuno',despues_desayuno:'Desp
 var MICO={ayunas:'🌅',antes_desayuno:'☕',despues_desayuno:'🥐',antes_comida:'🍽️',despues_comida:'🥘',antes_cena:'🌆',despues_cena:'🌙',antes_dormir:'🛌'};
 var MORDEN=['ayunas','antes_desayuno','despues_desayuno','antes_comida','despues_comida','antes_cena','despues_cena','antes_dormir'];
 var MESES=['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
-var TITULOS={dashboard:'Dashboard',glucemia:'Glucemia',estadisticas:'Estadísticas',hba1c:'HbA1c',consejos:'Consejos',alimentacion:'Alimentación',vitales:'Peso y Tensión',medicamentos:'Medicamentos',recordatorios:'Recordatorios',citas:'Citas',informes:'Informes'};
+var TITULOS={dashboard:'Dashboard',glucemia:'Glucemia',estadisticas:'Estadísticas',hba1c:'HbA1c',consejos:'Consejos',alimentacion:'Alimentación',vitales:'Peso y Tensión',medicamentos:'Medicamentos',recordatorios:'Recordatorios',citas:'Citas',informes:'Informes',nutricion:'Nutrición'};
 var DIAS_LABEL=['Do','Lu','Ma','Mi','Ju','Vi','Sa'];
 
 function ld(k){try{var v=localStorage.getItem('gc_'+k);return v?JSON.parse(v):[];}catch(e){return[];}}
@@ -580,6 +667,7 @@ function ir(sec){
   else if(sec==='recordatorios')pintaRecs();
   else if(sec==='citas')pintaCitas();
   else if(sec==='informes')pintaInformes();
+  else if(sec==='nutricion')pintaNutricion();
 }
 
 // ── TOPBAR ───────────────────────────────────────────────────
@@ -931,7 +1019,180 @@ function doExportPDF(){
   var link=g('manifest-link');if(link)link.href=url;
 })();
 
-// ── INICIO ───────────────────────────────────────────────────
+// ── NUTRICIÓN ────────────────────────────────────────────────
+var NUT_DB=[
+  // CEREALES Y PAN
+  {n:'Arroz blanco cocido',cat:'Cereales',ig:72,carbos:28,kcal:130},
+  {n:'Arroz integral cocido',cat:'Cereales',ig:50,carbos:23,kcal:111},
+  {n:'Pan blanco',cat:'Pan',ig:75,carbos:49,kcal:265},
+  {n:'Pan integral',cat:'Pan',ig:51,carbos:41,kcal:247},
+  {n:'Pan de centeno',cat:'Pan',ig:58,carbos:48,kcal:259},
+  {n:'Pasta blanca cocida',cat:'Cereales',ig:49,carbos:25,kcal:131},
+  {n:'Pasta integral cocida',cat:'Cereales',ig:42,carbos:24,kcal:124},
+  {n:'Avena cocida',cat:'Cereales',ig:55,carbos:12,kcal:71},
+  {n:'Corn flakes',cat:'Cereales',ig:81,carbos:84,kcal:357},
+  {n:'Muesli sin azúcar',cat:'Cereales',ig:57,carbos:66,kcal:367},
+  {n:'Quinoa cocida',cat:'Cereales',ig:53,carbos:22,kcal:120},
+  {n:'Cuscús cocido',cat:'Cereales',ig:65,carbos:23,kcal:112},
+  // FRUTAS
+  {n:'Manzana',cat:'Fruta',ig:36,carbos:14,kcal:52},
+  {n:'Pera',cat:'Fruta',ig:38,carbos:15,kcal:57},
+  {n:'Naranja',cat:'Fruta',ig:43,carbos:12,kcal:47},
+  {n:'Plátano maduro',cat:'Fruta',ig:62,carbos:23,kcal:89},
+  {n:'Plátano verde',cat:'Fruta',ig:42,carbos:23,kcal:89},
+  {n:'Uvas',cat:'Fruta',ig:59,carbos:18,kcal:69},
+  {n:'Sandía',cat:'Fruta',ig:72,carbos:8,kcal:30},
+  {n:'Melón',cat:'Fruta',ig:65,carbos:8,kcal:34},
+  {n:'Fresas',cat:'Fruta',ig:40,carbos:8,kcal:32},
+  {n:'Melocotón',cat:'Fruta',ig:42,carbos:10,kcal:39},
+  {n:'Kiwi',cat:'Fruta',ig:53,carbos:15,kcal:61},
+  {n:'Mango',cat:'Fruta',ig:60,carbos:17,kcal:65},
+  {n:'Piña',cat:'Fruta',ig:59,carbos:13,kcal:50},
+  {n:'Cerezas',cat:'Fruta',ig:22,carbos:16,kcal:63},
+  // VERDURAS
+  {n:'Zanahoria cruda',cat:'Verdura',ig:16,carbos:10,kcal:41},
+  {n:'Zanahoria cocida',cat:'Verdura',ig:47,carbos:8,kcal:35},
+  {n:'Patata hervida',cat:'Verdura',ig:78,carbos:17,kcal:77},
+  {n:'Patata al horno',cat:'Verdura',ig:85,carbos:21,kcal:93},
+  {n:'Boniato cocido',cat:'Verdura',ig:63,carbos:20,kcal:86},
+  {n:'Guisantes',cat:'Verdura',ig:51,carbos:14,kcal:81},
+  {n:'Maíz dulce',cat:'Verdura',ig:52,carbos:19,kcal:86},
+  {n:'Calabaza',cat:'Verdura',ig:75,carbos:7,kcal:26},
+  {n:'Brócoli',cat:'Verdura',ig:15,carbos:7,kcal:34},
+  {n:'Tomate',cat:'Verdura',ig:15,carbos:4,kcal:18},
+  {n:'Lechuga',cat:'Verdura',ig:15,carbos:2,kcal:13},
+  // LEGUMBRES
+  {n:'Lentejas cocidas',cat:'Legumbre',ig:32,carbos:20,kcal:116},
+  {n:'Garbanzos cocidos',cat:'Legumbre',ig:28,carbos:27,kcal:164},
+  {n:'Judías blancas cocidas',cat:'Legumbre',ig:31,carbos:21,kcal:127},
+  {n:'Soja cocida',cat:'Legumbre',ig:15,carbos:9,kcal:173},
+  // LÁCTEOS
+  {n:'Leche entera',cat:'Lácteo',ig:27,carbos:5,kcal:61},
+  {n:'Leche desnatada',cat:'Lácteo',ig:32,carbos:5,kcal:34},
+  {n:'Yogur natural',cat:'Lácteo',ig:36,carbos:4,kcal:59},
+  {n:'Yogur azucarado',cat:'Lácteo',ig:52,carbos:17,kcal:90},
+  {n:'Helado de vainilla',cat:'Lácteo',ig:61,carbos:24,kcal:207},
+  // DULCES Y AZÚCARES
+  {n:'Azúcar blanco',cat:'Azúcar',ig:65,carbos:100,kcal:387},
+  {n:'Miel',cat:'Azúcar',ig:61,carbos:82,kcal:304},
+  {n:'Chocolate negro 70%',cat:'Dulce',ig:22,carbos:45,kcal:598},
+  {n:'Chocolate con leche',cat:'Dulce',ig:43,carbos:60,kcal:535},
+  {n:'Galletas María',cat:'Dulce',ig:70,carbos:75,kcal:420},
+  {n:'Zumo de naranja',cat:'Bebida',ig:52,carbos:10,kcal:45},
+  {n:'Refresco cola',cat:'Bebida',ig:63,carbos:11,kcal:42},
+  // PROTEÍNAS (pocos carbos)
+  {n:'Huevo',cat:'Proteína',ig:0,carbos:0,kcal:155},
+  {n:'Pechuga de pollo',cat:'Proteína',ig:0,carbos:0,kcal:165},
+  {n:'Atún en lata',cat:'Proteína',ig:0,carbos:0,kcal:132},
+  {n:'Salmón',cat:'Proteína',ig:0,carbos:0,kcal:208},
+];
+
+var igFiltroActual='todos';
+
+function igClsTag(ig){return ig<55?'🟢':ig<=70?'🟡':'🔴';}
+function igNombre(ig){return ig<55?'Bajo':ig<=70?'Medio':'Alto';}
+function igPill(ig){return ig<55?'pok':ig<=70?'plo':'phi';}
+
+function filtroIG(tipo,btn){
+  igFiltroActual=tipo;
+  document.querySelectorAll('#sec-nutricion .btn.bg.bs').forEach(function(b){b.style.fontWeight='';b.style.borderColor='';});
+  if(btn){btn.style.fontWeight='700';btn.style.borderColor='#1a6e8e';}
+  pintaTablaIG();
+}
+
+function pintaTablaIG(){
+  var busq=(g('ig-filtro')?g('ig-filtro').value.toLowerCase():'');
+  var lista=NUT_DB.filter(function(a){
+    var matchTipo=igFiltroActual==='todos'||(igFiltroActual==='bajo'&&a.ig<55)||(igFiltroActual==='medio'&&a.ig>=55&&a.ig<=70)||(igFiltroActual==='alto'&&a.ig>70);
+    var matchBusq=!busq||a.n.toLowerCase().includes(busq)||a.cat.toLowerCase().includes(busq);
+    return matchTipo&&matchBusq;
+  });
+  var tb=g('ig-tbody');if(!tb)return;
+  if(!lista.length){tb.innerHTML='<tr><td colspan="5" style="text-align:center;color:#999;padding:16px">Sin resultados</td></tr>';return;}
+  tb.innerHTML=lista.map(function(a){
+    return '<tr><td><strong>'+a.n+'</strong></td><td><span style="font-size:0.72rem;color:#6c7a89">'+a.cat+'</span></td><td><span class="pill '+igPill(a.ig)+'">'+igClsTag(a.ig)+' '+a.ig+'</span></td><td>'+a.carbos+'g</td><td>'+a.kcal+'</td></tr>';
+  }).join('');
+}
+
+var nutSeleccionado=null;
+
+function nutBuscar(){
+  var q=(g('nut-search').value||'').toLowerCase().trim();
+  var res=g('nut-resultados');if(!res)return;
+  if(q.length<2){res.innerHTML='';return;}
+  var matches=NUT_DB.filter(function(a){return a.n.toLowerCase().includes(q)||a.cat.toLowerCase().includes(q);}).slice(0,9);
+  if(!matches.length){res.innerHTML='<p style="font-size:0.78rem;color:#999;grid-column:1/-1">Sin resultados para "'+q+'"</p>';return;}
+  res.innerHTML=matches.map(function(a,i){
+    return '<div class="mc" onclick="nutSeleccionar('+i+',\''+q+'\')" style="text-align:left;padding:8px 10px"><div style="font-size:0.75rem;font-weight:700;color:#0f4a61">'+a.n+'</div><div style="font-size:0.68rem;color:#999">'+igClsTag(a.ig)+' IG '+igNombre(a.ig)+'</div></div>';
+  }).join('');
+  window._nutMatches=matches;
+}
+
+function nutSeleccionar(idx,q){
+  var matches=window._nutMatches;if(!matches)return;
+  nutSeleccionado=matches[idx];
+  var el=g('nut-seleccionado');if(!el)return;
+  el.style.display='block';
+  g('nut-sel-nombre').textContent=nutSeleccionado.n;
+  g('nut-carbos100').textContent=nutSeleccionado.carbos+'g';
+  g('nut-ig-val').textContent=igClsTag(nutSeleccionado.ig)+' '+nutSeleccionado.ig+' ('+igNombre(nutSeleccionado.ig)+')';
+  g('nut-kcal100').textContent=nutSeleccionado.kcal;
+  g('nut-gramos').value='100';
+  g('nut-resultado-calculo').style.display='none';
+  nutCalcular();
+}
+
+function nutCalcular(){
+  if(!nutSeleccionado)return;
+  var grams=parseFloat(g('nut-gramos').value)||0;
+  if(!grams)return;
+  var carbos=Math.round(nutSeleccionado.carbos*grams/100*10)/10;
+  var kcal=Math.round(nutSeleccionado.kcal*grams/100);
+  var raciones=Math.round(carbos/10*10)/10;
+  g('nut-res-carbos').textContent=carbos+'g';
+  g('nut-res-kcal').textContent=kcal;
+  g('nut-res-raciones').textContent=raciones;
+  g('nut-resultado-calculo').style.display='block';
+}
+
+function calcularInsulina(){
+  var ratio=parseFloat(g('ins-ratio').value)||0;
+  var fsens=parseFloat(g('ins-fsens').value)||0;
+  var objetivo=parseFloat(g('ins-objetivo').value)||110;
+  var carbos=parseFloat(g('ins-carbos').value)||0;
+  var glucemia=parseFloat(g('ins-glucemia').value)||0;
+  var res=g('ins-resultado');
+  if(!ratio||!fsens||!carbos||!glucemia){alert('Rellena todos los campos para calcular.');return;}
+  var insHC=carbos/ratio;
+  var diff=glucemia-objetivo;
+  var insCorr=diff>0?diff/fsens:0;
+  var total=insHC+insCorr;
+  // round to 0.5
+  insHC=Math.round(insHC*2)/2;
+  insCorr=Math.round(insCorr*2)/2;
+  total=Math.round(total*2)/2;
+  g('ins-res-hc').textContent=insHC+'u';
+  g('ins-res-corr').textContent=insCorr>0?'+'+insCorr+'u':'0u';
+  g('ins-res-total').textContent=total+'u';
+  var aviso='';
+  if(glucemia<70)aviso='⚠️ Glucemia baja: no corrijas con insulina, trata primero la hipoglucemia.';
+  else if(total>20)aviso='⚠️ Dosis elevada. Verifica con tu médico antes de administrar.';
+  else aviso='✅ Cálculo orientativo. Confirma con tu médico o educador en diabetes.';
+  g('ins-aviso').textContent=aviso;
+  res.style.display='block';
+}
+
+function pintaNutricion(){
+  // cargar valores guardados de ratio/fsens/objetivo
+  var r=ldv('ins_ratio','');var f=ldv('ins_fsens','');var o=ldv('ins_objetivo','');
+  setTimeout(function(){
+    var ir2=g('ins-ratio'),if2=g('ins-fsens'),io=g('ins-objetivo');
+    if(ir2&&r)ir2.value=r;if(if2&&f)if2.value=f;if(io&&o)io.value=o;
+    pintaTablaIG();
+  },50);
+}
+
+// fin script nutrición
 iniciarRecordatorios();
 ir('dashboard');
 </script>
