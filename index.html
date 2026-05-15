@@ -276,6 +276,7 @@ tr:hover td{background:var(--surface2)}
     <button id="n-recordatorios"  onclick="ir('recordatorios')">🔔 Recordatorios</button>
     <button id="n-citas"          onclick="ir('citas')">📅 Citas</button>
     <button id="n-informes"       onclick="ir('informes')">📋 Informes</button>
+    <button id="n-ajustes" onclick="ir('ajustes')">⚙️ Ajustes</button>
     <button id="n-asistente"      onclick="ir('asistente')" style="border-top:1px solid rgba(255,255,255,0.12);margin-top:6px">🤖 Asistente IA</button>
   </nav>
   <div class="sfooter">
@@ -284,6 +285,10 @@ tr:hover td{background:var(--surface2)}
     <button class="pdf" onclick="doExportPDF()">📄 Exportar PDF</button>
     <button class="xls" onclick="doExportExcel()">📊 Exportar Excel</button>
     <button class="pwa" onclick="instalarPWA()">📱 Instalar app</button>
+    <button style="background:rgba(123,59,155,0.18);border-color:rgba(123,59,155,0.35)" onclick="exportarDatos()">📤 Exportar Backup</button>
+    <button style="background:rgba(15,74,97,0.18);border-color:rgba(15,74,97,0.35)" onclick="g('importFile').click()">📥 Importar Backup</button>
+    <input type="file" id="importFile" style="display:none" accept=".json" onchange="importarDatos(event)">
+
   </div>
 </aside>
 <main id="main">
@@ -297,6 +302,41 @@ tr:hover td{background:var(--surface2)}
   <div id="content">
     <!-- FAB acción rápida -->
     <button id="fab" onclick="abrirModal('mg')" title="Registrar glucemia rápido" aria-label="Nueva medición de glucemia">🩸</button>
+
+    
+    <!-- AJUSTES -->
+
+      <div class="card">
+        <h2>🤖 Configuración Asistente IA</h2>
+        <p style="font-size:0.78rem;color:#999;margin-bottom:12px">Para usar la IA, necesitas una API Key de OpenAI o un Proxy compatible.</p>
+        <div class="fg" style="margin-bottom:9px"><label>API Key (OpenAI compatible)</label><input type="password" id="set-ai-key" placeholder="sk-..."></div>
+        <div class="fg" style="margin-bottom:9px"><label>Proxy URL (opcional)</label><input type="text" id="set-ai-proxy" placeholder="https://api.openai.com/v1/chat/completions"></div>
+        <div class="fg"><label>Modelo</label><input type="text" id="set-ai-model" placeholder="gpt-3.5-turbo"></div>
+        <button class="btn ba" style="margin-top:16px;width:100%" onclick="guardarAjustesIA()">Guardar Configuración IA</button>
+      </div>
+
+    <div class="sec" id="sec-ajustes">
+      <div style="margin-bottom:14px"><h1 style="font-size:1.15rem;color:#0f4a61">Ajustes del Perfil</h1></div>
+      <div class="card">
+        <h2>🎯 Objetivos Personalizados</h2>
+        <p style="font-size:0.78rem;color:#999;margin-bottom:12px">Configura tus rangos según las indicaciones de tu médico.</p>
+        <div class="g3">
+          <div class="fg"><label>Glucosa Mín (mg/dL)</label><input type="number" id="set-gmin" placeholder="70"></div>
+          <div class="fg"><label>Glucosa Máx (mg/dL)</label><input type="number" id="set-gmax" placeholder="180"></div>
+          <div class="fg"><label>Objetivo HbA1c (%)</label><input type="number" id="set-hba1c" step="0.1" placeholder="7.0"></div>
+        </div>
+        <div class="fg" style="margin-top:12px"><label>Altura (cm) — para IMC</label><input type="number" id="set-alt" placeholder="170"></div>
+        <button class="btn bp" style="margin-top:16px;width:100%" onclick="guardarAjustes()">Guardar Ajustes</button>
+      </div>
+      <div class="card">
+        <h2>🗑️ Gestión de Datos</h2>
+        <p style="font-size:0.78rem;color:#999;margin-bottom:12px">Acciones críticas sobre tu información local.</p>
+        <div style="display:flex;gap:10px">
+          <button class="btn bg" style="flex:1" onclick="exportarDatos()">📤 Copia de seguridad</button>
+          <button class="btn bd" style="flex:1" onclick="borrarTodo()">💀 Borrar todo</button>
+        </div>
+      </div>
+    </div>
 
     <!-- DASHBOARD -->
     <div class="sec on" id="sec-dashboard">
@@ -690,6 +730,14 @@ tr:hover td{background:var(--surface2)}
 <div id="mas-overlay" onclick="cerrarMas()" style="display:none;position:fixed;inset:0;bottom:60px;z-index:198;background:rgba(0,0,0,0.3)"></div>
 
 <script>
+// Utilidad para escapar HTML y prevenir XSS
+function eH(str) {
+  if (!str) return '';
+  var div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 var MLAB={ayunas:'Ayunas',antes_desayuno:'Antes desayuno',despues_desayuno:'Despues desayuno',antes_comida:'Antes comida',despues_comida:'Despues comida',antes_cena:'Antes cena',despues_cena:'Despues cena',antes_dormir:'Antes dormir'};
 var MICO={ayunas:'🌅',antes_desayuno:'☕',despues_desayuno:'🥐',antes_comida:'🍽️',despues_comida:'🥘',antes_cena:'🌆',despues_cena:'🌙',antes_dormir:'🛌'};
 var MORDEN=['ayunas','antes_desayuno','despues_desayuno','antes_comida','despues_comida','antes_cena','despues_cena','antes_dormir'];
@@ -811,9 +859,9 @@ function svgLineChart(el,data,labels,ref1,ref2,color){
   el.innerHTML='<svg width="100%" viewBox="0 0 '+W+' '+H+'" style="overflow:visible"><defs><linearGradient id="ga'+color.replace('#','')+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+color+'" stop-opacity="0.12"/><stop offset="100%" stop-color="'+color+'" stop-opacity="0.01"/></linearGradient></defs>'+refs+'<path d="'+area+'" fill="url(#ga'+color.replace('#','')+')"/><path d="'+path+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'+dots+xl+'</svg>';
 }
 
-function pintaDMeds(){var el=g('d-meds');if(!el)return;if(!ME.length){el.innerHTML='<p style="color:#999;font-size:0.8rem">Sin medicamentos.</p>';return;}el.innerHTML=ME.slice(0,3).map(function(m){var cls=m.stock===0?'no':m.stock<=m.alerta?'lo':'ok';return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0f4f7;font-size:0.8rem"><span>💊 '+m.nombre+'</span><span class="mstock '+cls+'">'+m.stock+'</span></div>';}).join('');}
+function pintaDMeds(){var el=g('d-meds');if(!el)return;if(!ME.length){el.innerHTML='<p style="color:#999;font-size:0.8rem">Sin medicamentos.</p>';return;}el.innerHTML=ME.slice(0,3).map(function(m){var cls=m.stock===0?'no':m.stock<=m.alerta?'lo':'ok';return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0f4f7;font-size:0.8rem"><span>💊 '+eH(m.nombre)+'</span><span class="mstock '+cls+'">'+m.stock+'</span></div>';}).join('');}
 function pintaDCitas(){var today=hoy(),prox=CI.filter(function(c){return c.fecha>=today;}).slice(0,3);var el=g('d-citas');if(!el)return;if(!prox.length){el.innerHTML='<p style="color:#999;font-size:0.8rem">Sin citas proximas.</p>';return;}el.innerHTML=prox.map(function(c){return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0f4f7;font-size:0.8rem"><span>📅 '+fmtF(c.fecha)+' '+c.hora+'</span><span style="color:#999">'+(c.especialista||'').slice(0,20)+'</span></div>';}).join('');}
-function pintaAlertas(){var el=g('alert-box');if(!el)return;var html='',last=GL[0];if(last){var e=est(last.valor);if(e==='hi'&&last.valor>250)html+='<div class="ab hi">🔴 Glucosa muy alta: '+last.valor+' mg/dL</div>';else if(e==='lo')html+='<div class="ab lo">⚠️ Glucosa baja: '+last.valor+' mg/dL</div>';}var agot=ME.filter(function(m){return m.stock===0;}),bajo=ME.filter(function(m){return m.stock>0&&m.stock<=m.alerta;});if(agot.length)html+='<div class="ab hi">❌ Agotado: '+agot.map(function(m){return m.nombre;}).join(', ')+'</div>';else if(bajo.length)html+='<div class="ab lo">⚠️ Stock bajo: '+bajo.map(function(m){return m.nombre;}).join(', ')+'</div>';el.innerHTML=html;}
+function pintaAlertas(){var el=g('alert-box');if(!el)return;var html='',last=GL[0];if(last){var e=est(last.valor);if(e==='hi'&&last.valor>250)html+='<div class="ab hi">🔴 Glucosa muy alta: '+last.valor+' mg/dL</div>';else if(e==='lo')html+='<div class="ab lo">⚠️ Glucosa baja: '+last.valor+' mg/dL</div>';}var agot=ME.filter(function(m){return m.stock===0;}),bajo=ME.filter(function(m){return m.stock>0&&m.stock<=m.alerta;});if(agot.length)html+='<div class="ab hi">❌ Agotado: '+agot.map(function(m){return eH(m.nombre);}).join(', ')+'</div>';else if(bajo.length)html+='<div class="ab lo">⚠️ Stock bajo: '+bajo.map(function(m){return eH(m.nombre);}).join(', ')+'</div>';el.innerHTML=html;}
 
 // ── GLUCEMIA ─────────────────────────────────────────────────
 function filtroMomento(m,el2){filtroG=m;document.querySelectorAll('.mc').forEach(function(c){c.classList.remove('on');});if(el2)el2.classList.add('on');pintaGTable();}
@@ -980,14 +1028,14 @@ function pintaAlimentacion(){
   var tipoIco={desayuno:'🌅',almuerzo:'🥜',comida:'🍽️',merienda:'🍎',cena:'🌙',otro:'🍴'};
   var igCls={bajo:'pok',medio:'plo',alto:'phi'};
   var ahe=g('alim-hoy');
-  if(ahe){ahe.innerHTML=ah.length?ah.map(function(a){return '<div class="alim-row"><span style="font-size:1rem">'+(tipoIco[a.tipo]||'🍴')+'</span><div style="flex:1"><div style="font-size:0.82rem;font-weight:700">'+a.alimentos.slice(0,40)+'</div><div style="font-size:0.7rem;color:#999">'+a.hora+' · <span class="pill '+igCls[a.ig]+'">IG '+a.ig+'</span></div></div><div class="alim-kcal">'+a.kcal+' kcal</div><button class="btn bd bs" onclick="borrarAlim('+a.id+')">🗑️</button></div>';}).join(''):'<p style="color:#999;font-size:0.8rem">Sin registros hoy</p>';}
+  if(ahe){ahe.innerHTML=ah.length?ah.map(function(a){return '<div class="alim-row"><span style="font-size:1rem">'+(tipoIco[a.tipo]||'🍴')+'</span><div style="flex:1"><div style="font-size:0.82rem;font-weight:700">'+eH(a.alimentos).slice(0,40)+'</div><div style="font-size:0.7rem;color:#999">'+a.hora+' · <span class="pill '+igCls[a.ig]+'">IG '+a.ig+'</span></div></div><div class="alim-kcal">'+a.kcal+' kcal</div><button class="btn bd bs" onclick="borrarAlim('+a.id+')">🗑️</button></div>';}).join(''):'<p style="color:#999;font-size:0.8rem">Sin registros hoy</p>';}
   var kce=g('alim-kcal-hoy');if(kce)kce.textContent=totalKcal?'Total hoy: '+totalKcal+' kcal':'';
   // Semana
   var days=[];for(var i=6;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);days.push(d.toISOString().slice(0,10));}
   var ase=g('alim-semana');
   if(ase){var html='';days.forEach(function(d){var da=AL.filter(function(a){return a.fecha===d;});var kc=da.reduce(function(s,a){return s+a.kcal;},0);var p=d.split('-');html+='<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0f4f7;font-size:0.8rem"><span>'+p[2]+'/'+p[1]+'</span><span style="color:#999">'+da.length+' comidas</span><span style="font-weight:700;color:#1a6e8e">'+(kc||'—')+' kcal</span></div>';});ase.innerHTML=html;}
   var tb=g('alim-tbody');
-  if(tb){if(!AL.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:#999;padding:16px">Sin registros</td></tr>';return;}tb.innerHTML=AL.slice(0,40).map(function(a){return '<tr><td>'+fmtF(a.fecha)+'</td><td>'+a.hora+'</td><td>'+(tipoIco[a.tipo]||'')+'</td><td style="font-size:0.76rem">'+a.alimentos.slice(0,40)+'</td><td>'+a.kcal+'</td><td><span class="pill '+igCls[a.ig]+'">'+a.ig+'</span></td><td><button class="btn bd bs" onclick="borrarAlim('+a.id+')">🗑️</button></td></tr>';}).join('');}
+  if(tb){if(!AL.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:#999;padding:16px">Sin registros</td></tr>';return;}tb.innerHTML=AL.slice(0,40).map(function(a){return '<tr><td>'+fmtF(a.fecha)+'</td><td>'+a.hora+'</td><td>'+(tipoIco[a.tipo]||'')+'</td><td style="font-size:0.76rem">'+eH(a.alimentos).slice(0,40)+'</td><td>'+a.kcal+'</td><td><span class="pill '+igCls[a.ig]+'">'+a.ig+'</span></td><td><button class="btn bd bs" onclick="borrarAlim('+a.id+')">🗑️</button></td></tr>';}).join('');}
 }
 
 // ── VITALES ──────────────────────────────────────────────────
@@ -1033,13 +1081,13 @@ function guardarM(){
   sv('me',ME);cerrar('mm');pintaMeds();
 }
 function tomarMed(id){var med=ME.find(function(m){return m.id===id;});if(!med)return;TM.unshift({id:Date.now(),medId:id,nombre:med.nombre,dosis:med.dosis,fecha:hoy(),hora:ahora()});if(med.stock>0){med.stock--;sv('me',ME);}sv('tm',TM);pintaMeds();toast('💊 Toma registrada','ok');}
-function editarMed(id){var m=ME.find(function(x){return x.id===id;});if(!m)return;editMedId=id;g('mn').value=m.nombre;g('md').value=m.dosis;g('mtp').value=m.tipo;g('mh').value=m.horarios.join(', ');g('ms').value=m.stock;g('ma').value=m.alerta;g('minstr').value=m.notas||'';abrirModal('mm');}
-function borrarMed(id){var m=ME.find(function(x){return x.id===id;});confirmar('¿Eliminar medicamento?',(m?m.nombre:'Este medicamento')+' se eliminará permanentemente.',function(){ME=ME.filter(function(x){return x.id!==id;});sv('me',ME);pintaMeds();toast('🗑️ Medicamento eliminado','warn');});}
+function editarMed(id){var m=ME.find(function(x){return x.id===id;});if(!m)return;editMedId=id;g('mn').value=eH(m.nombre);g('md').value=eH(m.dosis);g('mtp').value=m.tipo;g('mh').value=m.horarios.join(', ');g('ms').value=m.stock;g('ma').value=m.alerta;g('minstr').value=eH(m.notas||'');abrirModal('mm');}
+function borrarMed(id){var m=ME.find(function(x){return x.id===id;});confirmar('¿Eliminar medicamento?',(m?eH(m.nombre):'Este medicamento')+' se eliminará permanentemente.',function(){ME=ME.filter(function(x){return x.id!==id;});sv('me',ME);pintaMeds();toast('🗑️ Medicamento eliminado','warn');});}
 function pintaMeds(){
   var today=hoy(),th=TM.filter(function(t){return t.fecha===today;});
-  var le=g('listamed');if(le){if(!ME.length)le.innerHTML='<p style="color:#999;font-size:0.8rem">Sin medicamentos.</p>';else le.innerHTML=ME.map(function(m){var sc=m.stock===0?'no':m.stock<=m.alerta?'lo':'ok';var sl=m.stock===0?'❌ Agotado':m.stock<=m.alerta?'⚠️ Quedan '+m.stock:'✅ Stock: '+m.stock;return '<div class="mcard"><div class="minfo"><div class="mico">💊</div><div><div class="mname">'+m.nombre+'</div><div class="mdose">'+m.dosis+' · '+(m.horarios.join(', ')||'—')+'</div><div class="mstock '+sc+'">'+sl+'</div></div></div><div class="mact"><button class="btn ba bs" onclick="tomarMed('+m.id+')">✅</button><button class="btn bg bs" onclick="editarMed('+m.id+')">✏️</button><button class="btn bd bs" onclick="borrarMed('+m.id+')">🗑️</button></div></div>';}).join('');}
+  var le=g('listamed');if(le){if(!ME.length)le.innerHTML='<p style="color:#999;font-size:0.8rem">Sin medicamentos.</p>';else le.innerHTML=ME.map(function(m){var sc=m.stock===0?'no':m.stock<=m.alerta?'lo':'ok';var sl=m.stock===0?'❌ Agotado':m.stock<=m.alerta?'⚠️ Quedan '+m.stock:'✅ Stock: '+m.stock;return '<div class="mcard"><div class="minfo"><div class="mico">💊</div><div><div class="mname">'+eH(m.nombre)+'</div><div class="mdose">'+eH(m.dosis)+' · '+(m.horarios.join(', ')||'—')+'</div><div class="mstock '+sc+'">'+sl+'</div></div></div><div class="mact"><button class="btn ba bs" onclick="tomarMed('+m.id+')">✅</button><button class="btn bg bs" onclick="editarMed('+m.id+')">✏️</button><button class="btn bd bs" onclick="borrarMed('+m.id+')">🗑️</button></div></div>';}).join('');}
   var te=g('tomashot');if(te){if(!th.length)te.innerHTML='<p style="color:#999;font-size:0.8rem">Sin tomas hoy.</p>';else te.innerHTML=th.slice(0,6).map(function(t){return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0f4f7;font-size:0.8rem"><span>💊 '+t.nombre+'</span><span style="color:#999">'+t.hora+'</span></div>';}).join('');}
-  var be=g('stockbajo');if(be){var bajo=ME.filter(function(m){return m.stock<=m.alerta;});if(!bajo.length)be.innerHTML='<p style="color:#27ae60;font-size:0.8rem">✅ Todo correcto.</p>';else be.innerHTML=bajo.map(function(m){return '<div class="cj w" style="margin-bottom:6px"><h4>⚠️ '+m.nombre+'</h4><p>Quedan '+m.stock+' uds.</p></div>';}).join('');}
+  var be=g('stockbajo');if(be){var bajo=ME.filter(function(m){return m.stock<=m.alerta;});if(!bajo.length)be.innerHTML='<p style="color:#27ae60;font-size:0.8rem">✅ Todo correcto.</p>';else be.innerHTML=bajo.map(function(m){return '<div class="cj w" style="margin-bottom:6px"><h4>⚠️ '+eH(m.nombre)+'</h4><p>Quedan '+m.stock+' uds.</p></div>';}).join('');}
   var tb=g('tombody');if(tb){if(!TM.length)tb.innerHTML='<tr><td colspan="5" style="text-align:center;color:#999;padding:16px">Sin registros</td></tr>';else tb.innerHTML=TM.slice(0,30).map(function(t){return '<tr><td>'+fmtF(t.fecha)+'</td><td>'+t.hora+'</td><td>'+t.nombre+'</td><td>'+t.dosis+'</td><td><span class="pill pok">✅</span></td></tr>';}).join('');}
 }
 
@@ -1112,7 +1160,7 @@ function guardarC(){
 function borrarCita(id){confirmar('¿Eliminar cita?','Esta acción no se puede deshacer.',function(){CI=CI.filter(function(c){return c.id!==id;});sv('ci',CI);pintaCitas();toast('🗑️ Cita eliminada','warn');});}
 function pintaCitas(){
   var today=hoy(),prox=CI.filter(function(c){return c.fecha>=today;}),hist=CI.filter(function(c){return c.fecha<today;}).reverse();
-  function cH(c){var p=c.fecha.split('-'),tl={med:'Medico',enf:'Enfermeria',ana:'Analisis'};return '<div class="citarow"><div class="cfecha"><div class="cd">'+p[2]+'</div><div class="cm">'+MESES[parseInt(p[1])-1]+'</div></div><div class="cinfo"><span class="ctbadge '+(c.tipo||'med')+'">'+(tl[c.tipo]||c.tipo)+'</span><h4>'+(c.especialista||'—')+'</h4><p>'+(c.notas||'')+'</p></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px"><span style="font-weight:700;color:#1a6e8e;font-size:0.83rem">'+c.hora+'</span><button class="btn bd bs" onclick="borrarCita('+c.id+')">🗑️</button></div></div>';}
+  function cH(c){var p=c.fecha.split('-'),tl={med:'Medico',enf:'Enfermeria',ana:'Analisis'};return '<div class="citarow"><div class="cfecha"><div class="cd">'+p[2]+'</div><div class="cm">'+MESES[parseInt(p[1])-1]+'</div></div><div class="cinfo"><span class="ctbadge '+(c.tipo||'med')+'">'+(tl[c.tipo]||c.tipo)+'</span><h4>'+eH(c.especialista||'—')+'</h4><p>'+eH(c.notas||'')+'</p></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px"><span style="font-weight:700;color:#1a6e8e;font-size:0.83rem">'+c.hora+'</span><button class="btn bd bs" onclick="borrarCita('+c.id+')">🗑️</button></div></div>';}
   var pe=g('proxcitas');if(pe)pe.innerHTML=prox.length?prox.map(cH).join(''):'<p style="color:#999;font-size:0.8rem">Sin citas proximas.</p>';
   var he=g('histcitas');if(he)he.innerHTML=hist.length?hist.map(cH).join(''):'<p style="color:#999;font-size:0.8rem">Sin historial.</p>';
 }
@@ -1138,7 +1186,7 @@ function pintaInformes(){
   var im={analisis:'🧪',prueba:'🔬',cita:'📋'},il={analisis:'Analisis',prueba:'Prueba',cita:'Resumen'};
   var el=g('listainf');if(!el)return;
   if(!lista.length){el.innerHTML='<p style="color:#999;font-size:0.8rem;text-align:center;padding:16px">Sin informes.</p>';return;}
-  el.innerHTML=lista.map(function(i){var fh=i.foto?'<img src="'+i.foto+'" class="iimg" onclick="abrirImgViewer(\''+i.foto+'\')" alt="foto">':'';return '<div class="irow"><div class="iico">'+(im[i.tipo]||'📋')+'</div><div class="iinfo"><h4>'+i.titulo+'</h4><p>'+(i.medico||'')+' '+(il[i.tipo]||i.tipo)+'</p>'+(i.contenido?'<p style="margin-top:2px;font-size:0.72rem;color:#aaa;white-space:pre-line">'+i.contenido.slice(0,120)+(i.contenido.length>120?'…':'')+'</p>':'')+'</div>'+fh+'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0"><span style="font-size:0.76rem;color:#999">'+fmtF(i.fecha)+'</span><button class="btn bd bs" onclick="borrarInforme('+i.id+')">🗑️</button></div></div>';}).join('');
+  el.innerHTML=lista.map(function(i){var fh=i.foto?'<img src="'+i.foto+'" class="iimg" onclick="abrirImgViewer(\''+i.foto+'\')" alt="foto">':'';return '<div class="irow"><div class="iico">'+(im[i.tipo]||'📋')+'</div><div class="iinfo"><h4>'+eH(i.titulo)+'</h4><p>'+eH(i.medico||'')+' '+(il[i.tipo]||i.tipo)+'</p>'+(i.contenido?'<p style="margin-top:2px;font-size:0.72rem;color:#aaa;white-space:pre-line">'+eH(i.contenido).slice(0,120)+(i.contenido.length>120?'…':'')+'</p>':'')+'</div>'+fh+'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0"><span style="font-size:0.76rem;color:#999">'+fmtF(i.fecha)+'</span><button class="btn bd bs" onclick="borrarInforme('+i.id+')">🗑️</button></div></div>';}).join('');
 }
 
 // ── MODALES ──────────────────────────────────────────────────
@@ -1172,12 +1220,12 @@ function doExportExcel(){
     var XLSX=window.XLSX,wb=XLSX.utils.book_new();
     var gd=[['Fecha','Hora','Momento','Glucosa mg/dL','Estado','Notas']];GL.forEach(function(g2){gd.push([fmtF(g2.fecha),g2.hora,MLAB[g2.momento]||g2.momento,g2.valor,g2.valor<70?'Baja':g2.valor<=180?'Normal':'Alta',g2.notas||'']);});XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(gd),'Glucemia');
     var hd=[['Fecha','HbA1c%','Estado','Centro','Notas']];HB.forEach(function(h){hd.push([fmtF(h.fecha),h.valor,h.valor<5.7?'Normal':h.valor<6.5?'Prediabetes':'Diabetes',h.centro||'',h.notas||'']);});XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(hd),'HbA1c');
-    var ad=[['Fecha','Hora','Tipo','Alimentos','Kcal','IG','Notas']];AL.forEach(function(a){ad.push([fmtF(a.fecha),a.hora,a.tipo,a.alimentos,a.kcal,a.ig,a.notas||'']);});XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(ad),'Alimentacion');
+    var ad=[['Fecha','Hora','Tipo','Alimentos','Kcal','IG','Notas']];AL.forEach(function(a){ad.push([fmtF(a.fecha),a.hora,a.tipo,eH(a.alimentos),a.kcal,a.ig,a.notas||'']);});XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(ad),'Alimentacion');
     var vd=[['Fecha','Hora','Peso kg','Tension','Pulso','IMC']];VT.forEach(function(v){vd.push([fmtF(v.fecha),v.hora,v.peso||'',v.ts&&v.td?v.ts+'/'+v.td:'',v.pulso||'',v.imc||'']);});XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(vd),'Peso_Tension');
-    var md=[['Nombre','Dosis','Tipo','Horarios','Stock','Alerta']];ME.forEach(function(m){md.push([m.nombre,m.dosis,m.tipo,m.horarios.join(', '),m.stock,m.alerta]);});XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(md),'Medicamentos');
+    var md=[['Nombre','Dosis','Tipo','Horarios','Stock','Alerta']];ME.forEach(function(m){md.push([eH(m.nombre),eH(m.dosis),m.tipo,m.horarios.join(', '),m.stock,m.alerta]);});XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(md),'Medicamentos');
     var td=[['Fecha','Hora','Medicamento','Dosis']];TM.forEach(function(t){td.push([fmtF(t.fecha),t.hora,t.nombre,t.dosis]);});XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(td),'Tomas');
     var cd=[['Fecha','Hora','Tipo','Especialista','Motivo']];CI.forEach(function(c){cd.push([fmtF(c.fecha),c.hora,c.tipo,c.especialista||'',c.notas||'']);});XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(cd),'Citas');
-    var ind=[['Fecha','Titulo','Tipo','Medico','Contenido']];IN.forEach(function(i){ind.push([fmtF(i.fecha),i.titulo,i.tipo,i.medico||'',i.contenido||'']);});XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(ind),'Informes');
+    var ind=[['Fecha','Titulo','Tipo','Medico','Contenido']];IN.forEach(function(i){ind.push([fmtF(i.fecha),eH(i.titulo),i.tipo,i.medico||'',i.contenido||'']);});XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(ind),'Informes');
     XLSX.writeFile(wb,'GlucoControl_'+hoy()+'.xlsx');ov.classList.remove('on');
   });
 }
@@ -1231,11 +1279,11 @@ function construirContexto() {
     return v.fecha + ': peso=' + (v.peso||'-') + 'kg, tensión=' + (v.ts&&v.td?v.ts+'/'+v.td:'-') + ', pulso=' + (v.pulso||'-') + ', IMC=' + (v.imc||'-');
   });
   var hbaUlt = HB.slice(0, 5).map(function(h){return h.fecha + ': ' + h.valor + '% (' + lblHba(h.valor) + ')';});
-  var alimUlt = AL.slice(0, 10).map(function(a){return a.fecha + ' ' + a.hora + ' [' + a.tipo + ']: ' + a.alimentos + (a.kcal?' ('+a.kcal+' kcal, IG '+a.ig+')':'');});
-  var medsResumen = ME.map(function(m){return m.nombre + ' ' + m.dosis + ', horarios: ' + m.horarios.join(',') + ', stock: ' + m.stock + (m.stock<=m.alerta?' ⚠️ BAJO':'');});
+  var alimUlt = AL.slice(0, 10).map(function(a){return a.fecha + ' ' + a.hora + ' [' + a.tipo + ']: ' + eH(a.alimentos) + (a.kcal?' ('+a.kcal+' kcal, IG '+a.ig+')':'');});
+  var medsResumen = ME.map(function(m){return eH(m.nombre) + ' ' + eH(m.dosis) + ', horarios: ' + m.horarios.join(',') + ', stock: ' + m.stock + (m.stock<=m.alerta?' ⚠️ BAJO':'');});
   var tomasHoy = TM.filter(function(t){return t.fecha===hoy();}).map(function(t){return t.nombre + ' a las ' + t.hora;});
-  var citasProx = CI.filter(function(c){return c.fecha>=hoy();}).slice(0,5).map(function(c){return c.fecha + ' ' + c.hora + ' con ' + (c.especialista||'—') + ' (' + c.tipo + ')';});
-  var informesUlt = IN.slice(0,5).map(function(i){return i.fecha + ': [' + i.tipo + '] ' + i.titulo + (i.contenido?' — '+i.contenido.slice(0,100):'');});
+  var citasProx = CI.filter(function(c){return c.fecha>=hoy();}).slice(0,5).map(function(c){return c.fecha + ' ' + c.hora + ' con ' + eH(c.especialista||'—') + ' (' + c.tipo + ')';});
+  var informesUlt = IN.slice(0,5).map(function(i){return i.fecha + ': [' + i.tipo + '] ' + eH(i.titulo) + (i.contenido?' — '+eH(i.contenido).slice(0,100):'');});
 
   return [
     '=== DATOS REALES DEL PACIENTE EN GLUCOCONTROL ===',
@@ -1247,7 +1295,7 @@ function construirContexto() {
     '- Últimos 28 días: promedio ' + (glStats.prom28||'-') + ' mg/dL, en rango ' + (glStats.enRango||0) + '%, altas: ' + (glStats.altas||0) + ', bajas: ' + (glStats.bajas||0),
     '- Máximo histórico: ' + (glStats.max||'-') + ' mg/dL, Mínimo: ' + (glStats.min||'-') + ' mg/dL',
     '- Últimas 30 mediciones:',
-    glUlt.map(function(g2){return '  · ' + g2.fecha + ' ' + g2.hora + ' [' + (MLAB[g2.momento]||g2.momento) + ']: ' + g2.valor + ' mg/dL (' + lbl(g2.valor) + ')' + (g2.notas?' — '+g2.notas:'');}).join('\n') || '  Sin registros',
+    glUlt.map(function(g2){return '  · ' + g2.fecha + ' ' + g2.hora + ' [' + (MLAB[g2.momento]||g2.momento) + ']: ' + g2.valor + ' mg/dL (' + lbl(g2.valor) + ')' + (g2.notas?' — '+eH(g2.notas):'');}).join('\n') || '  Sin registros',
     '',
     '## HbA1c',
     hbaUlt.length ? hbaUlt.map(function(h){return '  · ' + h;}).join('\n') : '  Sin datos',
@@ -1292,12 +1340,56 @@ var TITULOS_RAPIDOS = {
   riesgos: '⚠️ Alertas y Riesgos'
 };
 
+
 async function llamarIA(mensajes) {
   var contexto = construirContexto();
-  var msgsConContexto = [{
-    role: 'user',
-    content: 'CONTEXTO — datos del paciente:\n' + contexto + '\n\nMi pregunta: ' + mensajes[0].content
-  }].concat(mensajes.slice(1));
+  
+  // NOTA: Para que la IA funcione en un archivo HTML local, necesitas un servidor intermedio (Proxy) 
+  // o usar una API que permita CORS (poco común por seguridad).
+  // Si tienes una API Key de OpenAI o Anthropic, lo ideal es usar un pequeño servidor local.
+  
+  // Intentaremos usar un endpoint genérico o avisar si no hay configuración.
+  var proxyUrl = localStorage.getItem('gc_ai_proxy') || '';
+  var apiKey = localStorage.getItem('gc_ai_key') || '';
+
+  if (!proxyUrl && !apiKey) {
+    throw new Error('Configuración de IA faltante. Ve a Ajustes para configurar tu API Key o Proxy.');
+  }
+
+  // Ejemplo usando OpenAI compatible (más común para proxies)
+  var url = proxyUrl || 'https://api.openai.com/v1/chat/completions';
+  var model = localStorage.getItem('gc_ai_model') || 'gpt-3.5-turbo';
+
+  var body = {
+    model: model,
+    messages: [
+      { role: 'system', content: PROMPT_SISTEMA },
+      { role: 'user', content: 'CONTEXTO:
+' + contexto + '
+
+Consulta: ' + mensajes[mensajes.length-1].content }
+    ],
+    temperature: 0.7
+  };
+
+  var resp = await fetch(url, {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + apiKey
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!resp.ok) {
+    var errData = await resp.json().catch(() => ({}));
+    throw new Error(errData.error?.message || 'Error ' + resp.status);
+  }
+  
+  var data = await resp.json();
+  return data.choices[0].message.content;
+}
+].concat(mensajes.slice(1));
 
   var resp = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -1417,6 +1509,106 @@ function actualizarFab(sec){
 initDark();
 iniciarRecordatorios();
 ir('dashboard');
+
+// --- SISTEMA DE BACKUP ---
+function exportarDatos() {
+  var data = {
+    gl: GL, hb: HB, al: AL, vt: VT, me: ME, tm: TM, ci: CI, in: IN,
+    ajustes: { altura: alturaGuardada, v: '3.1' }
+  };
+  var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'GlucoControl_Backup_' + hoy() + '.json';
+  a.click();
+  toast('📤 Copia de seguridad descargada', 'ok');
+}
+
+function importarDatos(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      if (!data.gl || !data.me) throw new Error('Formato no válido');
+      confirmar('¿Importar datos?', 'Esto reemplazará todos tus datos actuales por los de la copia.', function() {
+        GL = data.gl || []; HB = data.hb || []; AL = data.al || []; VT = data.vt || [];
+        ME = data.me || []; TM = data.tm || []; CI = data.ci || []; IN = data.in || [];
+        if (data.ajustes) {
+          if (data.ajustes.altura) { alturaGuardada = data.ajustes.altura; sv('altura', alturaGuardada); }
+        }
+        sv('gl', GL); sv('hb', HB); sv('al', AL); sv('vt', VT);
+        sv('me', ME); sv('tm', TM); sv('ci', CI); sv('in', IN);
+        location.reload();
+      }, '📥');
+    } catch(err) {
+      alert('Error al importar: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+// --- SISTEMA DE AJUSTES ---
+var CONFIG = JSON.parse(localStorage.getItem('gc_config') || '{"gMin":70,"gMax":180,"hba1c":7.0}');
+
+function guardarAjustes() {
+  var min = parseInt(g('set-gmin').value) || 70;
+  var max = parseInt(g('set-gmax').value) || 180;
+  var hba = parseFloat(g('set-hba1c').value) || 7.0;
+  var alt = parseInt(g('set-alt').value);
+  
+  CONFIG = { gMin: min, gMax: max, hba1c: hba };
+  localStorage.setItem('gc_config', JSON.stringify(CONFIG));
+  if (alt) { alturaGuardada = alt; sv('altura', alt); }
+  
+  toast('✅ Ajustes guardados', 'ok');
+  setTimeout(function(){ location.reload(); }, 1000);
+}
+
+function cargarAjustesUI() {
+  if (g('set-gmin')) {
+    g('set-gmin').value = CONFIG.gMin;
+    g('set-gmax').value = CONFIG.gMax;
+    g('set-hba1c').value = CONFIG.hba1c;
+    g('set-alt').value = alturaGuardada || '';
+  }
+}
+
+function borrarTodo() {
+  confirmar('¿BORRAR TODO?', 'Esta acción eliminará permanentemente todos tus registros de este navegador.', function() {
+    localStorage.clear();
+    location.reload();
+  }, '⚠️');
+}
+
+// Modificar las funciones que usan rangos para usar CONFIG
+// (Esto requiere cambios en lbl() y similares, lo haremos inyectando lógica dinámica)
+
+function guardarAjustesIA() {
+  var key = g('set-ai-key').value.trim();
+  var proxy = g('set-ai-proxy').value.trim();
+  var model = g('set-ai-model').value.trim() || 'gpt-3.5-turbo';
+  
+  localStorage.setItem('gc_ai_key', key);
+  localStorage.setItem('gc_ai_proxy', proxy);
+  localStorage.setItem('gc_ai_model', model);
+  
+  toast('🤖 Configuración de IA guardada', 'ok');
+}
+
+// Actualizar cargarAjustesUI para incluir los campos de IA
+var oldCargarAjustesUI = cargarAjustesUI;
+cargarAjustesUI = function() {
+  oldCargarAjustesUI();
+  if (g('set-ai-key')) {
+    g('set-ai-key').value = localStorage.getItem('gc_ai_key') || '';
+    g('set-ai-proxy').value = localStorage.getItem('gc_ai_proxy') || '';
+    g('set-ai-model').value = localStorage.getItem('gc_ai_model') || 'gpt-3.5-turbo';
+  }
+};
 </script>
 </body>
 </html>
