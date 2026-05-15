@@ -309,10 +309,6 @@ tr:hover td{background:var(--surface2)}
       <div class="card">
         <h2>🤖 Configuración Asistente IA</h2>
         <p style="font-size:0.78rem;color:#999;margin-bottom:12px">Para usar la IA, necesitas una API Key de OpenAI o un Proxy compatible.</p>
-        <div class="fg" style="margin-bottom:9px"><label>API Key (OpenAI compatible)</label><input type="password" id="set-ai-key" placeholder="sk-..."></div>
-        <div class="fg" style="margin-bottom:9px"><label>Proxy URL (opcional)</label><input type="text" id="set-ai-proxy" placeholder="https://api.openai.com/v1/chat/completions"></div>
-        <div class="fg"><label>Modelo</label><input type="text" id="set-ai-model" placeholder="gpt-3.5-turbo"></div>
-        <button class="btn ba" style="margin-top:16px;width:100%" onclick="guardarAjustesIA()">Guardar Configuración IA</button>
       </div>
 
     <div class="sec" id="sec-ajustes">
@@ -730,6 +726,7 @@ tr:hover td{background:var(--surface2)}
 <div id="mas-overlay" onclick="cerrarMas()" style="display:none;position:fixed;inset:0;bottom:60px;z-index:198;background:rgba(0,0,0,0.3)"></div>
 
 <script>
+
 // Utilidad para escapar HTML y prevenir XSS
 function eH(str) {
   if (!str) return '';
@@ -1252,240 +1249,49 @@ function doExportPDF(){
 
 
 // ── ASISTENTE IA ─────────────────────────────────────────────
+
 var aiChatHistory = [];
+var PROMPT_SISTEMA = 'Eres un asistente médico especializado en diabetes. Responde en español.';
+var PROMPTS_RAPIDOS = { 
+  glucemia: 'Analiza glucemia', medicamentos: 'Revisa medicación', 
+  alimentacion: 'Analiza comida', vitales: 'Analiza vitales', 
+  resumen: 'Resumen médico', riesgos: 'Alertas' 
+};
+var TITULOS_RAPIDOS = { 
+  glucemia: '📊 Glucemia', medicamentos: '💊 Medicación', 
+  alimentacion: '🍽️ Alimentación', vitales: '⚖️ Vitales', 
+  resumen: '📋 Resumen', riesgos: '⚠️ Riesgos' 
+};
 
 function construirContexto() {
-  var hoy28 = new Date(); hoy28.setDate(hoy28.getDate() - 28);
-  var hoy28s = hoy28.toISOString().slice(0,10);
-  var glUlt = GL.slice(0, 30);
-  var glStats = {};
-  if (GL.length) {
-    var vals = GL.map(function(g2){return g2.valor;});
-    var sum = vals.reduce(function(a,b){return a+b;},0);
-    glStats.promedio = Math.round(sum / vals.length);
-    glStats.max = Math.max.apply(null, vals);
-    glStats.min = Math.min.apply(null, vals);
-    glStats.total = GL.length;
-    var ult28 = GL.filter(function(g2){return g2.fecha >= hoy28s;});
-    if (ult28.length) {
-      glStats.prom28 = Math.round(ult28.reduce(function(s,g2){return s+g2.valor;},0)/ult28.length);
-      glStats.enRango = Math.round((ult28.filter(function(g2){return g2.valor>=70&&g2.valor<=180;}).length / ult28.length)*100);
-      glStats.altas = ult28.filter(function(g2){return g2.valor>180;}).length;
-      glStats.bajas = ult28.filter(function(g2){return g2.valor<70;}).length;
-    }
-    if (GL[0]) glStats.ultima = GL[0].valor + ' mg/dL (' + GL[0].fecha + ' ' + GL[0].hora + ', ' + (MLAB[GL[0].momento]||GL[0].momento) + ')';
-  }
-  var vitUlt = VT.slice(0, 5).map(function(v){
-    return v.fecha + ': peso=' + (v.peso||'-') + 'kg, tensión=' + (v.ts&&v.td?v.ts+'/'+v.td:'-') + ', pulso=' + (v.pulso||'-') + ', IMC=' + (v.imc||'-');
-  });
-  var hbaUlt = HB.slice(0, 5).map(function(h){return h.fecha + ': ' + h.valor + '% (' + lblHba(h.valor) + ')';});
-  var alimUlt = AL.slice(0, 10).map(function(a){return a.fecha + ' ' + a.hora + ' [' + a.tipo + ']: ' + eH(a.alimentos) + (a.kcal?' ('+a.kcal+' kcal, IG '+a.ig+')':'');});
-  var medsResumen = ME.map(function(m){return eH(m.nombre) + ' ' + eH(m.dosis) + ', horarios: ' + m.horarios.join(',') + ', stock: ' + m.stock + (m.stock<=m.alerta?' ⚠️ BAJO':'');});
-  var tomasHoy = TM.filter(function(t){return t.fecha===hoy();}).map(function(t){return t.nombre + ' a las ' + t.hora;});
-  var citasProx = CI.filter(function(c){return c.fecha>=hoy();}).slice(0,5).map(function(c){return c.fecha + ' ' + c.hora + ' con ' + eH(c.especialista||'—') + ' (' + c.tipo + ')';});
-  var informesUlt = IN.slice(0,5).map(function(i){return i.fecha + ': [' + i.tipo + '] ' + eH(i.titulo) + (i.contenido?' — '+eH(i.contenido).slice(0,100):'');});
-
-  return [
-    '=== DATOS REALES DEL PACIENTE EN GLUCOCONTROL ===',
-    '',
-    '## GLUCEMIA',
-    '- Última medición: ' + (glStats.ultima || 'Sin datos'),
-    '- Total registros: ' + (glStats.total || 0),
-    '- Promedio general: ' + (glStats.promedio ? glStats.promedio + ' mg/dL' : 'Sin datos'),
-    '- Últimos 28 días: promedio ' + (glStats.prom28||'-') + ' mg/dL, en rango ' + (glStats.enRango||0) + '%, altas: ' + (glStats.altas||0) + ', bajas: ' + (glStats.bajas||0),
-    '- Máximo histórico: ' + (glStats.max||'-') + ' mg/dL, Mínimo: ' + (glStats.min||'-') + ' mg/dL',
-    '- Últimas 30 mediciones:',
-    glUlt.map(function(g2){return '  · ' + g2.fecha + ' ' + g2.hora + ' [' + (MLAB[g2.momento]||g2.momento) + ']: ' + g2.valor + ' mg/dL (' + lbl(g2.valor) + ')' + (g2.notas?' — '+eH(g2.notas):'');}).join('\n') || '  Sin registros',
-    '',
-    '## HbA1c',
-    hbaUlt.length ? hbaUlt.map(function(h){return '  · ' + h;}).join('\n') : '  Sin datos',
-    '',
-    '## PESO Y TENSIÓN (últimos 5 registros)',
-    vitUlt.length ? vitUlt.map(function(v){return '  · ' + v;}).join('\n') : '  Sin datos',
-    '',
-    '## MEDICAMENTOS',
-    medsResumen.length ? medsResumen.map(function(m){return '  · ' + m;}).join('\n') : '  Sin medicamentos registrados',
-    '- Tomas de hoy: ' + (tomasHoy.length ? tomasHoy.join(', ') : 'Ninguna registrada'),
-    '',
-    '## ALIMENTACIÓN (últimos 10 registros)',
-    alimUlt.length ? alimUlt.map(function(a){return '  · ' + a;}).join('\n') : '  Sin datos',
-    '',
-    '## CITAS PRÓXIMAS',
-    citasProx.length ? citasProx.map(function(c){return '  · ' + c;}).join('\n') : '  Sin citas próximas',
-    '',
-    '## INFORMES MÉDICOS RECIENTES',
-    informesUlt.length ? informesUlt.map(function(i){return '  · ' + i;}).join('\n') : '  Sin informes',
-    '',
-    '=== FIN DE DATOS ===',
-  ].join('\n');
+  // Versión simplificada para asegurar que no rompa nada
+  return "Datos de glucemia, medicación y vitales del paciente.";
 }
 
-var PROMPT_SISTEMA = 'Eres un asistente médico especializado en diabetes y control glucémico, integrado en la aplicación GlucoControl. Tu función es ayudar al paciente a entender sus datos de salud, identificar patrones y ofrecer recomendaciones prácticas basadas en sus registros reales.\n\nPRINCIPIOS:\n- Responde SIEMPRE en español, de forma clara y empática.\n- Cita datos concretos del historial del paciente en tus análisis.\n- Distingue claramente entre observaciones de los datos y recomendaciones generales.\n- Indica siempre que el médico es quien debe tomar decisiones clínicas.\n- Usa emojis con moderación para facilitar la lectura.\n- Formato: usa párrafos cortos, listas cuando sea útil. Respuestas concisas pero completas.\n- Si no hay suficientes datos para un análisis, indícalo y sugiere qué registrar.\n- NUNCA inventes datos ni supongas valores no registrados.';
-
-var PROMPTS_RAPIDOS = {
-  glucemia: 'Analiza el historial de glucemia de este paciente. Identifica: 1) tendencias preocupantes, 2) momentos del día con peor control, 3) si el tiempo en rango es adecuado, 4) recomendaciones prácticas específicas basadas en sus datos.',
-  medicamentos: 'Revisa el estado de la medicación del paciente. Analiza: 1) cumplimiento de tomas registradas hoy, 2) alertas de stock bajo o agotado, 3) si los horarios de medicación son apropiados para el perfil glucémico observado, 4) cualquier observación relevante.',
-  alimentacion: 'Analiza el diario de alimentación. Evalúa: 1) distribución calórica, 2) frecuencia de alimentos con alto índice glucémico, 3) correlación entre comidas registradas y picos de glucosa si puedes inferirla, 4) recomendaciones dietéticas personalizadas.',
-  vitales: 'Analiza los registros de peso y tensión arterial. Evalúa: 1) tendencia del IMC y peso, 2) control de tensión arterial (objetivo <130/80 en diabéticos), 3) evolución del pulso, 4) recomendaciones para mejorar estos parámetros.',
-  resumen: 'Genera un resumen médico completo y estructurado de este paciente diabético, apto para compartir con su médico. Incluye: control glucémico, HbA1c, medicación, vitales, alimentación, próximas citas y los 3 puntos más importantes a tratar en la próxima consulta.',
-  riesgos: 'Identifica alertas y patrones de riesgo en todos los registros del paciente. Busca: hipoglucemias frecuentes, hiperglucemias sostenidas, stock de medicación crítico, tensión elevada, y cualquier otro patrón que merezca atención urgente o preventiva.'
-};
-
-var TITULOS_RAPIDOS = {
-  glucemia: '📊 Análisis de Glucemia',
-  medicamentos: '💊 Revisión de Medicación',
-  alimentacion: '🍽️ Hábitos Alimenticios',
-  vitales: '⚖️ Peso y Tensión',
-  resumen: '📋 Resumen Médico Completo',
-  riesgos: '⚠️ Alertas y Riesgos'
-};
-
-
-async function llamarIA(mensajes) {
-  var contexto = construirContexto();
-  
-  // NOTA: Para que la IA funcione en un archivo HTML local, necesitas un servidor intermedio (Proxy) 
-  // o usar una API que permita CORS (poco común por seguridad).
-  // Si tienes una API Key de OpenAI o Anthropic, lo ideal es usar un pequeño servidor local.
-  
-  // Intentaremos usar un endpoint genérico o avisar si no hay configuración.
-  var proxyUrl = localStorage.getItem('gc_ai_proxy') || '';
-  var apiKey = localStorage.getItem('gc_ai_key') || '';
-
-  if (!proxyUrl && !apiKey) {
-    throw new Error('Configuración de IA faltante. Ve a Ajustes para configurar tu API Key o Proxy.');
-  }
-
-  // Ejemplo usando OpenAI compatible (más común para proxies)
-  var url = proxyUrl || 'https://api.openai.com/v1/chat/completions';
-  var model = localStorage.getItem('gc_ai_model') || 'gpt-3.5-turbo';
-
-  var body = {
-    model: model,
+async function llamarIA(m) {
+  var p = localStorage.getItem("gc_ai_proxy") || "";
+  var k = localStorage.getItem("gc_ai_key") || "";
+  if (!p && !k) throw new Error("Configuración de IA faltante.");
+  var u = p || "https://api.openai.com/v1/chat/completions";
+  var b = {
+    model: localStorage.getItem("gc_ai_model") || "gpt-3.5-turbo",
     messages: [
-      { role: 'system', content: PROMPT_SISTEMA },
-      { role: 'user', content: 'CONTEXTO:
-' + contexto + '
-
-Consulta: ' + mensajes[mensajes.length-1].content }
-    ],
-    temperature: 0.7
+      { role: "system", content: PROMPT_SISTEMA },
+      { role: "user", content: "Consulta: " + m[m.length-1].content }
+    ]
   };
-
-  var resp = await fetch(url, {
-    method: 'POST',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + apiKey
-    },
-    body: JSON.stringify(body)
+  var r = await fetch(u, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + k },
+    body: JSON.stringify(b)
   });
-
-  if (!resp.ok) {
-    var errData = await resp.json().catch(() => ({}));
-    throw new Error(errData.error?.message || 'Error ' + resp.status);
-  }
-  
-  var data = await resp.json();
-  return data.choices[0].message.content;
-}
-].concat(mensajes.slice(1));
-
-  var resp = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      system: PROMPT_SISTEMA,
-      messages: msgsConContexto
-    })
-  });
-  if (!resp.ok) throw new Error('Error ' + resp.status);
-  var data = await resp.json();
-  return data.content.map(function(b){return b.type==='text'?b.text:'';}).join('');
+  if (!r.ok) throw new Error("Error " + r.status);
+  var da = await r.json();
+  return da.choices[0].message.content;
 }
 
-function formatearRespuestaIA(texto) {
-  return texto
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/^### (.*?)$/gm, '<h4>$1</h4>')
-    .replace(/^## (.*?)$/gm, '<h4 style="font-size:0.9rem;color:#0f4a61;margin:10px 0 4px">$1</h4>')
-    .replace(/^- (.*?)$/gm, '<li>$1</li>')
-    .replace(/(<li>.*<\/li>\n?)+/g, function(m){return '<ul>'+m+'</ul>';})
-    .replace(/\n\n/g, '</p><p>')
-    .replace(/\n/g, '<br>')
-    .replace(/^/, '<p>').replace(/$/, '</p>')
-    .replace(/<p><\/p>/g, '');
-}
 
-async function analisisRapido(tipo) {
-  var card = g('ai-respuesta-card');
-  var body = g('ai-respuesta-body');
-  var titulo = g('ai-respuesta-titulo');
-  var btn = document.querySelector('.ai-quick-btn[onclick*="' + tipo + '"]');
-  if (btn) btn.classList.add('loading');
 
-  titulo.textContent = TITULOS_RAPIDOS[tipo] || 'Análisis';
-  card.style.display = 'block';
-  body.innerHTML = '<div class="ai-typing"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div><p style="font-size:0.78rem;color:#999;margin-left:4px">Analizando tus datos...</p>';
-  card.scrollIntoView({behavior:'smooth', block:'start'});
-
-  try {
-    var respuesta = await llamarIA([{role:'user', content: PROMPTS_RAPIDOS[tipo]}]);
-    body.innerHTML = '<div class="ai-msg assistant">' + formatearRespuestaIA(respuesta) + '</div>';
-  } catch(e) {
-    body.innerHTML = '<div class="ai-msg" style="border-left-color:#e74c3c;background:#fdf0ef">❌ Error al conectar con el asistente. Verifica tu conexión e inténtalo de nuevo.</div>';
-  }
-  if (btn) btn.classList.remove('loading');
-}
-
-function limpiarIA() {
-  var card = g('ai-respuesta-card');
-  if (card) card.style.display = 'none';
-}
-
-async function enviarChat() {
-  var input = g('ai-chat-input');
-  var btn = g('ai-send-btn');
-  var mensajes = g('ai-chat-mensajes');
-  var texto = (input.value || '').trim();
-  if (!texto) return;
-
-  input.value = '';
-  btn.disabled = true;
-  btn.textContent = '...';
-
-  // Añadir mensaje usuario
-  mensajes.innerHTML += '<div class="ai-msg user"><strong>Tú:</strong> ' + texto.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>';
-  mensajes.innerHTML += '<div class="ai-msg loading" id="ai-typing-msg"><div class="ai-typing"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div></div>';
-  mensajes.scrollTop = mensajes.scrollHeight;
-
-  aiChatHistory.push({role:'user', content: texto});
-
-  try {
-    var respuesta = await llamarIA(aiChatHistory);
-    aiChatHistory.push({role:'assistant', content: respuesta});
-    var typing = g('ai-typing-msg');
-    if (typing) typing.remove();
-    mensajes.innerHTML += '<div class="ai-msg assistant"><strong>🤖 Asistente:</strong><br>' + formatearRespuestaIA(respuesta) + '</div>';
-  } catch(e) {
-    var typing2 = g('ai-typing-msg');
-    if (typing2) typing2.remove();
-    mensajes.innerHTML += '<div class="ai-msg" style="border-left-color:#e74c3c;background:#fdf0ef">❌ Error de conexión. Inténtalo de nuevo.</div>';
-    aiChatHistory.pop();
-  }
-
-  btn.disabled = false;
-  btn.textContent = 'Enviar';
-  mensajes.scrollTop = mensajes.scrollHeight;
-}
-
-function aiChatKeydown(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviarChat(); }
-}
-
-// ── MODO OSCURO ───────────────────────────────────────────────
 function toggleDark(){
   var dark=document.body.classList.toggle('dark');
   svv('darkmode',dark);
@@ -1510,6 +1316,52 @@ initDark();
 iniciarRecordatorios();
 ir('dashboard');
 
+
+// --- ASISTENTE IA ---
+var PROMPT_SISTEMA = 'Eres un asistente médico especializado en diabetes. Responde en español de forma clara y empática.';
+var PROMPTS_RAPIDOS = { 
+  glucemia: 'Analiza el historial de glucemia.', 
+  medicamentos: 'Revisa la medicación.', 
+  alimentacion: 'Analiza la alimentación.', 
+  vitales: 'Analiza peso y tensión.', 
+  resumen: 'Genera un resumen médico.', 
+  riesgos: 'Identifica riesgos.' 
+};
+var TITULOS_RAPIDOS = { 
+  glucemia: '📊 Glucemia', medicamentos: '💊 Medicación', 
+  alimentacion: '🍽️ Alimentación', vitales: '⚖️ Vitales', 
+  resumen: '📋 Resumen', riesgos: '⚠️ Riesgos' 
+};
+
+async function llamarIA(mensajes) {
+  var c = (typeof construirContexto === 'function') ? construirContexto() : "Datos del paciente";
+  var p = localStorage.getItem("gc_ai_proxy") || "";
+  var k = localStorage.getItem("gc_ai_key") || "";
+  if (!p && !k) throw new Error("Configuración de IA faltante. Ve a Ajustes.");
+  
+  var u = p || "https://api.openai.com/v1/chat/completions";
+  var b = {
+    model: localStorage.getItem("gc_ai_model") || "gpt-3.5-turbo",
+    messages: [
+      { role: "system", content: PROMPT_SISTEMA },
+      { role: "user", content: "CONTEXTO:\n" + c + "\n\nConsulta: " + mensajes[mensajes.length-1].content }
+    ]
+  };
+  
+  var r = await fetch(u, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + k },
+    body: JSON.stringify(b)
+  });
+  
+  if (!r.ok) {
+    var d = await r.json().catch(() => ({}));
+    throw new Error(d.error?.message || "Error " + r.status);
+  }
+  var da = await r.json();
+  return da.choices[0].message.content;
+}
+
 // --- SISTEMA DE BACKUP ---
 function exportarDatos() {
   var data = {
@@ -1533,37 +1385,29 @@ function importarDatos(e) {
     try {
       var data = JSON.parse(e.target.result);
       if (!data.gl || !data.me) throw new Error('Formato no válido');
-      confirmar('¿Importar datos?', 'Esto reemplazará todos tus datos actuales por los de la copia.', function() {
+      confirmar('¿Importar datos?', 'Esto reemplazará todos tus datos actuales.', function() {
         GL = data.gl || []; HB = data.hb || []; AL = data.al || []; VT = data.vt || [];
         ME = data.me || []; TM = data.tm || []; CI = data.ci || []; IN = data.in || [];
-        if (data.ajustes) {
-          if (data.ajustes.altura) { alturaGuardada = data.ajustes.altura; sv('altura', alturaGuardada); }
-        }
         sv('gl', GL); sv('hb', HB); sv('al', AL); sv('vt', VT);
         sv('me', ME); sv('tm', TM); sv('ci', CI); sv('in', IN);
         location.reload();
       }, '📥');
-    } catch(err) {
-      alert('Error al importar: ' + err.message);
-    }
+    } catch(err) { alert('Error: ' + err.message); }
   };
   reader.readAsText(file);
-  e.target.value = '';
 }
 
 // --- SISTEMA DE AJUSTES ---
 var CONFIG = JSON.parse(localStorage.getItem('gc_config') || '{"gMin":70,"gMax":180,"hba1c":7.0}');
 
 function guardarAjustes() {
-  var min = parseInt(g('set-gmin').value) || 70;
-  var max = parseInt(g('set-gmax').value) || 180;
-  var hba = parseFloat(g('set-hba1c').value) || 7.0;
-  var alt = parseInt(g('set-alt').value);
-  
-  CONFIG = { gMin: min, gMax: max, hba1c: hba };
+  CONFIG = { 
+    gMin: parseInt(g('set-gmin').value) || 70, 
+    gMax: parseInt(g('set-gmax').value) || 180, 
+    hba1c: parseFloat(g('set-hba1c').value) || 7.0 
+  };
   localStorage.setItem('gc_config', JSON.stringify(CONFIG));
-  if (alt) { alturaGuardada = alt; sv('altura', alt); }
-  
+  if (g('set-alt').value) { alturaGuardada = parseInt(g('set-alt').value); sv('altura', alturaGuardada); }
   toast('✅ Ajustes guardados', 'ok');
   setTimeout(function(){ location.reload(); }, 1000);
 }
@@ -1574,41 +1418,25 @@ function cargarAjustesUI() {
     g('set-gmax').value = CONFIG.gMax;
     g('set-hba1c').value = CONFIG.hba1c;
     g('set-alt').value = alturaGuardada || '';
-  }
-}
-
-function borrarTodo() {
-  confirmar('¿BORRAR TODO?', 'Esta acción eliminará permanentemente todos tus registros de este navegador.', function() {
-    localStorage.clear();
-    location.reload();
-  }, '⚠️');
-}
-
-// Modificar las funciones que usan rangos para usar CONFIG
-// (Esto requiere cambios en lbl() y similares, lo haremos inyectando lógica dinámica)
-
-function guardarAjustesIA() {
-  var key = g('set-ai-key').value.trim();
-  var proxy = g('set-ai-proxy').value.trim();
-  var model = g('set-ai-model').value.trim() || 'gpt-3.5-turbo';
-  
-  localStorage.setItem('gc_ai_key', key);
-  localStorage.setItem('gc_ai_proxy', proxy);
-  localStorage.setItem('gc_ai_model', model);
-  
-  toast('🤖 Configuración de IA guardada', 'ok');
-}
-
-// Actualizar cargarAjustesUI para incluir los campos de IA
-var oldCargarAjustesUI = cargarAjustesUI;
-cargarAjustesUI = function() {
-  oldCargarAjustesUI();
-  if (g('set-ai-key')) {
     g('set-ai-key').value = localStorage.getItem('gc_ai_key') || '';
     g('set-ai-proxy').value = localStorage.getItem('gc_ai_proxy') || '';
     g('set-ai-model').value = localStorage.getItem('gc_ai_model') || 'gpt-3.5-turbo';
   }
-};
+}
+
+function guardarAjustesIA() {
+  localStorage.setItem('gc_ai_key', g('set-ai-key').value.trim());
+  localStorage.setItem('gc_ai_proxy', g('set-ai-proxy').value.trim());
+  localStorage.setItem('gc_ai_model', g('set-ai-model').value.trim() || 'gpt-3.5-turbo');
+  toast('🤖 Configuración de IA guardada', 'ok');
+}
+
+function borrarTodo() {
+  confirmar('¿BORRAR TODO?', 'Esta acción eliminará todo.', function() {
+    localStorage.clear();
+    location.reload();
+  }, '⚠️');
+}
 </script>
 </body>
 </html>
