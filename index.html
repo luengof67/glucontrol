@@ -304,15 +304,25 @@ tr:hover td{background:var(--surface2)}
     <button id="fab" onclick="abrirModal('mg')" title="Registrar glucemia rápido" aria-label="Nueva medición de glucemia">🩸</button>
 
     
-    <!-- AJUSTES -->
-
-      <div class="card">
-        <h2>🤖 Configuración Asistente IA</h2>
-        <p style="font-size:0.78rem;color:#999;margin-bottom:12px">Para usar la IA, necesitas una API Key de OpenAI o un Proxy compatible.</p>
+    
+        <div class="fg" style="margin-top:12px"><label>Altura (cm) — para IMC</label><input type="number" id="set-alt" placeholder="170"></div>
+        <button class="btn bp" style="margin-top:16px;width:100%" onclick="guardarAjustes()">Guardar Ajustes</button>
       </div>
+      <div class="card">
+        <h2>🗑️ Gestión de Datos</h2>
+        <p style="font-size:0.78rem;color:#999;margin-bottom:12px">Acciones críticas sobre tu información local.</p>
+        <div style="display:flex;gap:10px">
+          <button class="btn bg" style="flex:1" onclick="exportarDatos()">📤 Copia de seguridad</button>
+          <button class="btn bd" style="flex:1" onclick="borrarTodo()">💀 Borrar todo</button>
+        </div>
+      </div>
+    </div>
 
+    
+    <!-- AJUSTES -->
     <div class="sec" id="sec-ajustes">
       <div style="margin-bottom:14px"><h1 style="font-size:1.15rem;color:#0f4a61">Ajustes del Perfil</h1></div>
+      
       <div class="card">
         <h2>🎯 Objetivos Personalizados</h2>
         <p style="font-size:0.78rem;color:#999;margin-bottom:12px">Configura tus rangos según las indicaciones de tu médico.</p>
@@ -322,8 +332,18 @@ tr:hover td{background:var(--surface2)}
           <div class="fg"><label>Objetivo HbA1c (%)</label><input type="number" id="set-hba1c" step="0.1" placeholder="7.0"></div>
         </div>
         <div class="fg" style="margin-top:12px"><label>Altura (cm) — para IMC</label><input type="number" id="set-alt" placeholder="170"></div>
-        <button class="btn bp" style="margin-top:16px;width:100%" onclick="guardarAjustes()">Guardar Ajustes</button>
+        <button class="btn bp" style="margin-top:16px;width:100%" onclick="guardarAjustes()">Guardar Ajustes Perfil</button>
       </div>
+
+      <div class="card">
+        <h2>🤖 Configuración Asistente IA</h2>
+        <p style="font-size:0.78rem;color:#999;margin-bottom:12px">Para usar la IA, necesitas una API Key de OpenAI o un Proxy compatible.</p>
+        <div class="fg" style="margin-bottom:9px"><label>API Key (OpenAI compatible)</label><input type="password" id="set-ai-key" placeholder="sk-..."></div>
+        <div class="fg" style="margin-bottom:9px"><label>Proxy URL (opcional)</label><input type="text" id="set-ai-proxy" placeholder="https://api.openai.com/v1/chat/completions"></div>
+        <div class="fg"><label>Modelo</label><input type="text" id="set-ai-model" placeholder="gpt-3.5-turbo"></div>
+        <button class="btn ba" style="margin-top:16px;width:100%" onclick="guardarAjustesIA()">Guardar Configuración IA</button>
+      </div>
+
       <div class="card">
         <h2>🗑️ Gestión de Datos</h2>
         <p style="font-size:0.78rem;color:#999;margin-bottom:12px">Acciones críticas sobre tu información local.</p>
@@ -1414,10 +1434,12 @@ function guardarAjustes() {
 
 function cargarAjustesUI() {
   if (g('set-gmin')) {
-    g('set-gmin').value = CONFIG.gMin;
-    g('set-gmax').value = CONFIG.gMax;
-    g('set-hba1c').value = CONFIG.hba1c;
+    g('set-gmin').value = CONFIG.gMin || 70;
+    g('set-gmax').value = CONFIG.gMax || 180;
+    g('set-hba1c').value = CONFIG.hba1c || 7.0;
     g('set-alt').value = alturaGuardada || '';
+  }
+  if (g('set-ai-key')) {
     g('set-ai-key').value = localStorage.getItem('gc_ai_key') || '';
     g('set-ai-proxy').value = localStorage.getItem('gc_ai_proxy') || '';
     g('set-ai-model').value = localStorage.getItem('gc_ai_model') || 'gpt-3.5-turbo';
