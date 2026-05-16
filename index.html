@@ -1610,11 +1610,7 @@ async function llamarIA(mensajes) {
 
   // Intentar llamada directa primero, si falla usar proxy CORS
   // Lista de proxies CORS a intentar en orden
-  var PROXIES = [
-    'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.anthropic.com/v1/messages'),
-    'https://corsproxy.io/?' + encodeURIComponent('https://api.anthropic.com/v1/messages'),
-    'https://cors-anywhere.herokuapp.com/https://api.anthropic.com/v1/messages'
-  ];
+  var PROXIES = ['https://glucocontrol-proxy.luengoguadiana.workers.dev'];
   var DIRECT = 'https://api.anthropic.com/v1/messages';
   var bodyData = JSON.stringify({
     model: 'claude-haiku-4-5-20251001',
