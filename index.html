@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<title>GlucoControl v8</title>
+<title>GlucoControl v8.3</title>
 <style>
 :root{
   --bg:#eef2f5;--surface:#fff;--surface2:#f5f8fb;--border:#dde4ec;
@@ -212,31 +212,7 @@ tr:hover td{background:var(--surface2)}
   .card{padding:11px 11px}.sc .sv{font-size:1.1rem}#mobnav{display:flex!important}
   #fab{bottom:74px}
 }
-/* ASISTENTE IA */
-.ai-quick-btn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:12px 13px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;text-align:left;transition:all var(--trans);width:100%}
-.ai-quick-btn:hover{border-color:var(--accent);background:var(--accent-light);transform:translateY(-2px);box-shadow:var(--shadow)}
-.ai-quick-btn:active{transform:translateY(0)}
-.ai-quick-btn.loading{border-color:var(--primary-mid);background:var(--primary-light);opacity:0.8;pointer-events:none}
-.aqi{font-size:1.2rem;line-height:1}
-.aqt{font-size:0.82rem;font-weight:700;color:var(--primary)}
-.aqs{font-size:0.68rem;color:var(--text2)}
-.ai-msg{padding:10px 13px;border-radius:var(--radius-sm);margin-bottom:8px;font-size:0.82rem;line-height:1.55}
-.ai-msg.user{background:var(--primary-light);border-left:3px solid var(--primary-mid);color:var(--text)}
-.ai-msg.assistant{background:var(--accent-light);border-left:3px solid var(--accent);color:var(--text)}
-.ai-msg.loading{background:var(--surface2);border-left:3px solid var(--border);color:var(--text2);font-style:italic}
-.ai-msg strong{color:var(--primary)}
-.ai-msg ul{margin:6px 0 6px 16px}
-.ai-msg li{margin-bottom:3px}
-.ai-msg h4{color:var(--primary);font-size:0.87rem;margin:8px 0 4px}
-.ai-msg .ai-badge{display:inline-block;padding:1px 7px;border-radius:10px;font-size:0.68rem;font-weight:700;margin:1px}
-.ai-msg .ai-badge.ok{background:var(--ok-bg);color:var(--ok)}
-.ai-msg .ai-badge.hi{background:var(--hi-bg);color:var(--hi)}
-.ai-msg .ai-badge.lo{background:var(--lo-bg);color:var(--lo)}
-.ai-typing{display:flex;align-items:center;gap:4px;padding:10px 13px}
-.ai-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:aidot 1.2s infinite}
-.ai-dot:nth-child(2){animation-delay:0.2s}
-.ai-dot:nth-child(3){animation-delay:0.4s}
-@keyframes aidot{0%,80%,100%{opacity:0.2}40%{opacity:1}}
+
 /* TOAST */
 #toast-container{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
 .toast{padding:10px 18px;border-radius:22px;font-size:0.82rem;font-weight:700;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,0.18);opacity:0;transform:translateY(12px);transition:opacity 0.25s,transform 0.25s;white-space:nowrap}
@@ -258,9 +234,34 @@ tr:hover td{background:var(--surface2)}
 .empty-state{text-align:center;padding:32px 16px;color:var(--text2)}
 .empty-state .empty-ico{font-size:2.5rem;margin-bottom:10px;opacity:0.5}
 .empty-state p{font-size:0.82rem;line-height:1.6}
+/* PANTALLA DE BIENVENIDA */
+#welcome-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;position:fixed;inset:0;background:var(--primary);z-index:1000;padding:32px 24px;transition:opacity 0.5s ease}
+#welcome-screen.hide{opacity:0;pointer-events:none}
+.wl-logo{font-size:3.5rem;margin-bottom:10px}
+.wl-title{font-size:1.8rem;font-weight:800;color:#fff;letter-spacing:-0.03em;margin-bottom:4px}
+.wl-sub{font-size:0.9rem;color:rgba(255,255,255,0.6);margin-bottom:32px}
+#wl-body{width:100%;max-width:380px}
+.wl-name-wrap{display:flex;flex-direction:column;gap:10px}
+.wl-name-wrap input{padding:12px 16px;border-radius:10px;border:none;font-size:1rem;font-family:var(--font);outline:none;background:rgba(255,255,255,0.15);color:#fff;text-align:center}
+.wl-name-wrap input::placeholder{color:rgba(255,255,255,0.5)}
+.wl-name-wrap button{padding:12px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:1rem;font-weight:700;cursor:pointer;font-family:var(--font)}
+.wl-resumen{width:100%;text-align:center;color:#fff}
+.wl-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.wl-card{background:rgba(255,255,255,0.12);border-radius:12px;padding:14px 10px}
+.wl-dato{font-size:2rem;font-weight:800;font-family:var(--font-mono);margin-bottom:4px}
+.wl-label{font-size:0.75rem;color:rgba(255,255,255,0.65)}
+.wl-btn-entrar{width:100%;padding:13px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:1rem;font-weight:700;cursor:pointer;font-family:var(--font);margin-top:8px}
 </style>
 </head>
 <body>
+<!-- PANTALLA DE BIENVENIDA -->
+<div id="welcome-screen">
+  <div class="wl-logo">💉</div>
+  <div class="wl-title">GlucoControl</div>
+  <div class="wl-sub">Tu compañero de diabetes</div>
+  <div id="wl-body"></div>
+</div>
+
 <div id="wrap">
 <aside id="side">
   <div class="logo"><h1>🩸 GlucoControl</h1><p>Control de diabetes v8</p></div>
@@ -276,13 +277,20 @@ tr:hover td{background:var(--surface2)}
     <button id="n-recordatorios"  onclick="ir('recordatorios')">🔔 Recordatorios</button>
     <button id="n-citas"          onclick="ir('citas')">📅 Citas</button>
     <button id="n-informes"       onclick="ir('informes')">📋 Informes</button>
-    <button id="n-asistente"      onclick="ir('asistente')" style="border-top:1px solid rgba(255,255,255,0.12);margin-top:6px">🤖 Asistente IA</button>
+    <button id="n-asistente"      onclick="ir('asistente')">🤖 Asistente IA</button>
+
   </nav>
   <div class="sfooter">
-    <p>GlucoControl v8.0</p>
+    <p>GlucoControl v8.3</p>
+    <button onclick="abrirResumenMedico()" style="background:rgba(46,184,154,0.18);border:1px solid rgba(46,184,154,0.35)">🩺 Informe para el médico</button>
+    <button onclick="abrirSyncDrive()" style="background:rgba(66,133,244,0.18);border:1px solid rgba(66,133,244,0.35)">☁️ Sync Google Drive</button>
+    <button onclick="doBackupJSON()" style="background:rgba(26,110,142,0.18);border:1px solid rgba(26,110,142,0.35)">💾 Backup datos</button>
+    <button onclick="g('backup-input').click()" style="background:rgba(26,110,142,0.18);border:1px solid rgba(26,110,142,0.35)">📂 Restaurar backup</button>
+    <input type="file" id="backup-input" accept=".json" style="display:none" onchange="doRestaurarJSON(this)">
     <button onclick="compartirWhatsApp()" style="background:rgba(37,211,102,0.18);border:1px solid rgba(37,211,102,0.35);color:#fff">📲 Compartir por WhatsApp</button>
     <button onclick="doImprimir()">🖨️ Imprimir</button>
-    <button class="pdf" onclick="doExportPDF()">📄 Exportar PDF</button>
+    <button class="pdf" onclick="doExportPDF()">📄 Exportar PDF (sección)</button>
+    <button class="pdf" onclick="doExportPDFCompleto()" style="background:rgba(123,59,155,0.18);border-color:rgba(123,59,155,0.35)">📑 PDF completo</button>
     <button class="xls" onclick="doExportExcel()">📊 Exportar Excel</button>
     <button class="pwa" onclick="instalarPWA()">📱 Instalar app</button>
   </div>
@@ -298,7 +306,14 @@ tr:hover td{background:var(--surface2)}
   </div>
   <div id="content">
     <!-- FAB acción rápida -->
-    <button id="fab" onclick="abrirModal('mg')" title="Registrar glucemia rápido" aria-label="Nueva medición de glucemia">🩸</button>
+    <div id="fab-wrap">
+  <div class="fab-opts" id="fab-opts">
+    <div class="fab-opt" id="fopt-mg"><span class="fab-opt-btn" onclick="fabAccion('mg')">Glucemia</span><div class="fab-opt-icon">🩸</div></div>
+    <div class="fab-opt" id="fopt-mvit"><span class="fab-opt-btn" onclick="fabAccion('mvit')">Peso / Tensión</span><div class="fab-opt-icon">⚖️</div></div>
+    <div class="fab-opt" id="fopt-mm"><span class="fab-opt-btn" onclick="fabAccion('mm')">Medicamento</span><div class="fab-opt-icon">💊</div></div>
+  </div>
+  <button id="fab" onclick="toggleFab()" title="Registrar" aria-label="Acciones rápidas">＋</button>
+</div>
 
     <!-- DASHBOARD -->
     <div class="sec on" id="sec-dashboard">
@@ -312,6 +327,25 @@ tr:hover td{background:var(--surface2)}
         </div>
         <div>
           <div class="card" style="margin-bottom:14px"><h2>📈 Esta semana</h2><div id="d-semana"></div></div>
+          <div class="card" style="margin-bottom:14px" id="card-racha">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div id="racha-emoji" style="font-size:2.2rem">🔥</div>
+              <div style="flex:1">
+                <div style="font-size:0.7rem;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:0.05em">Racha de registros</div>
+                <div id="racha-numero" style="font-size:1.6rem;font-weight:800;color:var(--primary);line-height:1.1">—</div>
+                <div id="racha-texto" style="font-size:0.75rem;color:var(--text2)">Cargando...</div>
+              </div>
+              <div id="racha-badges" style="display:flex;flex-direction:column;gap:4px;align-items:flex-end"></div>
+            </div>
+            <div id="racha-calendario" style="margin-top:10px"></div>
+          </div>
+          <div class="card" style="margin-bottom:14px" id="card-resumen-semana">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+              <h2 style="margin-bottom:0">📋 Resumen semanal</h2>
+              <span id="resumen-semana-fecha" style="font-size:0.72rem;color:var(--text2)"></span>
+            </div>
+            <div id="resumen-semana-body"></div>
+          </div>
           <div class="card" style="margin-bottom:14px"><h2>💊 Medicamentos</h2><div id="d-meds"></div><button class="btn bg bs" style="margin-top:6px" onclick="ir('medicamentos')">Ver todos →</button></div>
           <div class="card" style="margin-bottom:14px"><h2>📅 Próximas citas</h2><div id="d-citas"></div></div>
           <div class="card" style="margin-bottom:14px">
@@ -340,7 +374,10 @@ tr:hover td{background:var(--surface2)}
     <div class="sec" id="sec-glucemia">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
         <div><h1 style="font-size:1.15rem;color:#0f4a61">Registro de Glucemia</h1></div>
-        <button class="btn bp" onclick="abrirModal('mg')">+ Nueva</button>
+        <div style="display:flex;gap:7px">
+          <button class="btn bg bs" onclick="exportarCSVGlucemia()" title="Exportar glucemias visibles a CSV">📥 CSV</button>
+          <button class="btn bp" onclick="abrirModal('mg')">+ Nueva</button>
+        </div>
       </div>
       <div class="card">
         <h2>Filtrar por momento</h2>
@@ -356,13 +393,42 @@ tr:hover td{background:var(--surface2)}
           <div class="mc" onclick="filtroMomento('antes_dormir',this)"><div class="mi">🛌</div><div class="mn">Antes dormir</div></div>
         </div>
       </div>
-      <div class="card"><h2>Historial</h2><div class="tw"><table><thead><tr><th>Fecha</th><th>Hora</th><th>Momento</th><th>mg/dL</th><th>Estado</th><th>Notas</th><th></th></tr></thead><tbody id="gtbody"></tbody></table></div></div>
+      <div class="card">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px">
+          <div class="fg" style="min-width:140px;flex:1">
+            <label>🔍 Buscar</label>
+            <input type="text" id="g-search" placeholder="Fecha, valor, nota..." oninput="pintaGTable()">
+          </div>
+          <div class="fg" style="min-width:110px;max-width:160px">
+            <label>Desde</label>
+            <input type="date" id="g-desde" onchange="pintaGTable()">
+          </div>
+          <div class="fg" style="min-width:110px;max-width:160px">
+            <label>Hasta</label>
+            <input type="date" id="g-hasta" onchange="pintaGTable()">
+          </div>
+          <div class="fg" style="min-width:80px;max-width:110px">
+            <label>Mostrar</label>
+            <select id="g-psize" onchange="gPagina=1;pintaGTable()">
+              <option value="25">25</option>
+              <option value="50" selected>50</option>
+              <option value="100">100</option>
+              <option value="0">Todos</option>
+            </select>
+          </div>
+          <button class="btn bg bs" onclick="limpiarFiltrosG()" style="align-self:flex-end">✕ Limpiar</button>
+        </div>
+        <h2>Historial <span id="g-count" style="font-size:0.75rem;color:var(--text2);font-weight:400"></span></h2>
+        <div class="tw"><table><thead><tr><th>Fecha</th><th>Hora</th><th>Momento</th><th>mg/dL</th><th>Estado</th><th>Notas</th><th></th></tr></thead><tbody id="gtbody"></tbody></table></div>
+        <div id="g-pagination" style="display:flex;justify-content:center;align-items:center;gap:6px;margin-top:12px;flex-wrap:wrap"></div>
+      </div>
     </div>
 
     <!-- ESTADÍSTICAS -->
     <div class="sec" id="sec-estadisticas">
       <div style="margin-bottom:14px"><h1 style="font-size:1.15rem;color:#0f4a61">Estadísticas Avanzadas</h1></div>
-      <div class="g3" id="est-cards" style="margin-bottom:14px"></div>
+      <div class="g3" id="est-cards" style="margin-bottom:6px"></div>
+      <div id="cv-nota" style="margin-bottom:14px"></div>
       <div class="g2">
         <div class="card">
           <h2>🎯 Tiempo en rango</h2>
@@ -550,100 +616,44 @@ tr:hover td{background:var(--surface2)}
 
     <!-- ASISTENTE IA -->
     <div class="sec" id="sec-asistente">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
-        <div>
-          <h1 style="font-size:1.15rem;color:#0f4a61">🤖 Asistente IA</h1>
-          <p style="font-size:0.78rem;color:#999;margin-top:2px">Análisis personalizado basado en tus datos reales</p>
-        </div>
-        <button onclick="abrirConfig()" style="flex-shrink:0;background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:6px 12px;border-radius:7px;font-size:0.78rem;font-weight:600">⚙️ API Key</button>
-      </div>
-
-      <!-- Banner estado API key -->
-      <div id="ai-key-banner" style="display:none;padding:12px 14px;border-radius:9px;margin-bottom:14px;font-size:0.82rem;display:flex;align-items:center;justify-content:space-between;gap:10px"></div>
-
-      <!-- Análisis rápidos -->
-      <div class="card" style="margin-bottom:14px">
-        <h2>⚡ Análisis rápidos</h2>
-        <p style="font-size:0.78rem;color:#999;margin-bottom:12px">Genera un análisis con un solo toque usando todos tus registros.</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="analisis-rapidos">
-          <button class="ai-quick-btn" onclick="analisisRapido('glucemia')">
-            <span class="aqi">📊</span><span class="aqt">Análisis glucemia</span><span class="aqs">Tendencias y recomendaciones</span>
-          </button>
-          <button class="ai-quick-btn" onclick="analisisRapido('medicamentos')">
-            <span class="aqi">💊</span><span class="aqt">Revisión medicación</span><span class="aqs">Stock y cumplimiento</span>
-          </button>
-          <button class="ai-quick-btn" onclick="analisisRapido('alimentacion')">
-            <span class="aqi">🍽️</span><span class="aqt">Hábitos alimenticios</span><span class="aqs">Calorías e índice glucémico</span>
-          </button>
-          <button class="ai-quick-btn" onclick="analisisRapido('resumen')">
-            <span class="aqi">📋</span><span class="aqt">Resumen completo</span><span class="aqs">Informe para tu médico</span>
-          </button>
-          <button class="ai-quick-btn" onclick="analisisRapido('vitales')">
-            <span class="aqi">⚖️</span><span class="aqt">Peso y tensión</span><span class="aqs">Evolución y objetivos</span>
-          </button>
-          <button class="ai-quick-btn" onclick="analisisRapido('riesgos')">
-            <span class="aqi">⚠️</span><span class="aqt">Alertas y riesgos</span><span class="aqs">Detección de patrones</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Respuesta IA -->
-      <div class="card" id="ai-respuesta-card" style="display:none;margin-bottom:14px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <h2 id="ai-respuesta-titulo">Análisis</h2>
-          <div style="display:flex;gap:6px">
-            <button class="btn bs" onclick="compartirAnalisisIA()" style="background:#25d366;border-color:#25d366;color:#fff;font-size:0.75rem">📲 WhatsApp</button>
-            <button class="btn bg bs" onclick="limpiarIA()">✕</button>
-          </div>
-        </div>
-        <div id="ai-respuesta-body"></div>
-      </div>
-
-      <!-- Chat libre -->
-      <div class="card">
-        <h2>💬 Pregunta lo que quieras</h2>
-        <p style="font-size:0.78rem;color:#999;margin-bottom:10px">El asistente tiene acceso a todos tus registros para darte respuestas personalizadas.</p>
-        <div id="ai-chat-mensajes" style="min-height:60px;margin-bottom:10px"></div>
+      <div style="margin-bottom:14px"><h1 style="font-size:1.15rem;color:#0f4a61">Asistente IA</h1><p style="font-size:0.78rem;color:#999">Pregúntame sobre tu glucemia, medicación o hábitos.</p></div>
+      <div class="card" style="display:flex;flex-direction:column;min-height:420px">
+        <div id="ai-messages" style="flex:1;overflow-y:auto;max-height:380px;display:flex;flex-direction:column;gap:10px;margin-bottom:12px;padding-right:4px"></div>
         <div style="display:flex;gap:8px;align-items:flex-end">
-          <div class="fg" style="flex:1">
-            <textarea id="ai-chat-input" placeholder="Ej: ¿Por qué sube mi glucosa después de cenar? ¿Cuándo tengo que renovar el stock de metformina?..." style="min-height:52px;resize:none" onkeydown="aiChatKeydown(event)"></textarea>
-          </div>
-          <button class="btn ba" style="padding:10px 14px;flex-shrink:0;align-self:flex-end" onclick="enviarChat()" id="ai-send-btn">Enviar</button>
+          <textarea id="ai-input" rows="2" placeholder="Escribe tu pregunta..." style="flex:1;resize:none" onkeydown="aiChatKeydown(event)"></textarea>
+          <button class="btn bp" onclick="enviarChat()" style="padding:9px 14px;align-self:flex-end">Enviar</button>
         </div>
-        <div style="margin-top:6px;font-size:0.7rem;color:#bbb">⚠️ Este asistente es informativo. Consulta siempre con tu médico para decisiones clínicas.</div>
+        <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px">
+          <div style="font-size:0.7rem;color:var(--text3)">⚙️ Necesita API Key de Anthropic · <button onclick="abrirConfig()" style="background:none;border:none;color:var(--primary-mid);font-size:0.7rem;cursor:pointer;text-decoration:underline">Configurar</button></div>
+          <button onclick="limpiarChatIA()" style="background:none;border:1px solid var(--border);color:var(--text2);font-size:0.7rem;padding:3px 9px;border-radius:6px;cursor:pointer" title="Borrar historial del chat">🗑️ Limpiar chat</button>
+        </div>
       </div>
     </div>
 
-  </div>
+    </div>
 </main>
 </div>
 
-<!-- MODAL CONFIG API KEY -->
-<div class="ov" id="mconfig" onclick="cerrarOv(event,this)"><div class="mo" style="max-width:440px">
-  <h2>⚙️ Configuración del Asistente IA</h2>
-  <div style="background:var(--primary-light);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:14px;font-size:0.78rem;color:var(--text2);line-height:1.6">
-    <strong style="color:var(--primary)">¿Por qué necesito una API Key?</strong><br>
-    El asistente usa la API de Claude (Anthropic) para analizar tus datos. Necesitas una clave propia gratuita para usarlo.<br><br>
-    <strong>Cómo obtenerla:</strong><br>
-    1. Visita <a href="https://console.anthropic.com" target="_blank" style="color:var(--accent)">console.anthropic.com</a><br>
-    2. Crea una cuenta gratuita<br>
-    3. Ve a <em>API Keys</em> → <em>Create Key</em><br>
-    4. Copia la clave y pégala aquí
-  </div>
-  <div class="fg" style="margin-bottom:6px">
+
+<!-- MODAL CONFIGURACIÓN API KEY -->
+<div class="ov" id="mconfig" onclick="cerrarOv(event,this)"><div class="mo">
+  <h2>⚙️ Configuración</h2>
+  <div class="fg" style="margin-bottom:10px">
     <label>API Key de Anthropic <span style="color:#e74c3c">*</span></label>
-    <input type="password" id="cfg-apikey" placeholder="sk-ant-api03-..." style="font-family:monospace;font-size:0.8rem">
+    <input type="password" id="cfg-apikey" placeholder="sk-ant-..." autocomplete="off">
     <span class="err-msg" id="err-cfg-apikey"></span>
   </div>
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-    <input type="checkbox" id="cfg-show" onchange="toggleVerKey()">
-    <label for="cfg-show" style="font-size:0.78rem;color:var(--text2);cursor:pointer">Mostrar clave</label>
-    <span id="cfg-key-status" style="margin-left:auto;font-size:0.73rem;font-weight:700"></span>
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+    <input type="checkbox" id="cfg-show" onchange="toggleVerKey()" style="width:auto">
+    <label for="cfg-show" style="font-size:0.78rem;color:var(--text2);margin:0">Mostrar clave</label>
   </div>
-  <div style="font-size:0.72rem;color:var(--text3);margin-bottom:14px">🔒 Tu clave se guarda solo en este dispositivo (localStorage). Nunca se envía a ningún servidor nuestro.</div>
+  <div id="cfg-estado" style="margin-bottom:12px"></div>
+  <div style="font-size:0.73rem;color:var(--text2);margin-bottom:14px;line-height:1.5">
+    La clave se guarda solo en este dispositivo (localStorage).<br>
+    Obtén una en <a href="https://console.anthropic.com" target="_blank" style="color:var(--primary-mid)">console.anthropic.com</a>
+  </div>
   <div class="mfoot">
     <button class="btn bg" onclick="cerrar('mconfig')">Cancelar</button>
-    <button class="btn bd" onclick="borrarApiKey()" style="background:var(--hi-bg);border-color:var(--hi);color:var(--hi)">🗑️ Borrar</button>
     <button class="btn bp" onclick="guardarApiKey()">Guardar</button>
   </div>
 </div></div>
@@ -708,9 +718,9 @@ tr:hover td{background:var(--surface2)}
 </div></div>
 
 <div class="ov" id="mr" onclick="cerrarOv(event,this)"><div class="mo">
-  <h2>🔔 Recordatorio</h2>
-  <div class="fg" style="margin-bottom:9px"><label>Nombre</label><input type="text" id="rn" placeholder="Tomar Metformina..."></div>
-  <div class="fr"><div class="fg"><label>Hora</label><input type="time" id="rh"></div><div class="fg"><label>Tipo</label><select id="rt"><option value="medicacion">Medicación</option><option value="glucemia">Medir glucemia</option><option value="cita">Recordatorio cita</option><option value="otro">Otro</option></select></div></div>
+  <h2 id="mr-titulo">🔔 Nuevo Recordatorio</h2>
+  <div class="fg" style="margin-bottom:9px"><label>Nombre <span style="color:#e74c3c">*</span></label><input type="text" id="rn" placeholder="Tomar Metformina..."><span class="err-msg" id="err-rn"></span></div>
+  <div class="fr"><div class="fg"><label>Hora <span style="color:#e74c3c">*</span></label><input type="time" id="rh"><span class="err-msg" id="err-rh"></span></div><div class="fg"><label>Tipo</label><select id="rt"><option value="medicacion">Medicación</option><option value="glucemia">Medir glucemia</option><option value="cita">Recordatorio cita</option><option value="otro">Otro</option></select></div></div>
   <div class="fg" style="margin-bottom:9px"><label>Días</label>
     <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:4px" id="dias-selector">
       <label style="display:flex;align-items:center;gap:3px;font-size:0.78rem"><input type="checkbox" value="1" style="width:auto"> Lu</label>
@@ -723,16 +733,16 @@ tr:hover td{background:var(--surface2)}
       <button type="button" class="btn bg bs" onclick="selTodosDias()">Todos</button>
     </div>
   </div>
-  <div class="mfoot"><button class="btn bg" onclick="cerrar('mr')">Cancelar</button><button class="btn bp" onclick="guardarRec()">Guardar</button></div>
+  <div class="mfoot"><button class="btn bg" onclick="cerrarMrModal()">Cancelar</button><button class="btn bp" onclick="guardarRec()">Guardar</button></div>
 </div></div>
 
 <div class="ov" id="mc" onclick="cerrarOv(event,this)"><div class="mo">
-  <h2>📅 Nueva Cita</h2>
-  <div class="fr"><div class="fg"><label>Fecha</label><input type="date" id="cf"></div><div class="fg"><label>Hora</label><input type="time" id="ch"></div></div>
+  <h2 id="mc-titulo">📅 Nueva Cita</h2>
+  <div class="fr"><div class="fg"><label>Fecha <span style="color:#e74c3c">*</span></label><input type="date" id="cf"><span class="err-msg" id="err-cf"></span></div><div class="fg"><label>Hora <span style="color:#e74c3c">*</span></label><input type="time" id="ch"><span class="err-msg" id="err-ch"></span></div></div>
   <div class="fg" style="margin-bottom:9px"><label>Tipo</label><select id="ctp"><option value="med">Médico/a</option><option value="enf">Enfermería</option><option value="ana">Análisis</option></select></div>
   <div class="fg" style="margin-bottom:9px"><label>Especialista / Centro</label><input type="text" id="ce" placeholder="Dr. García"></div>
   <div class="fg" style="margin-bottom:9px"><label>Motivo</label><textarea id="cn" placeholder="Revisión anual..."></textarea></div>
-  <div class="mfoot"><button class="btn bg" onclick="cerrar('mc')">Cancelar</button><button class="btn bp" onclick="guardarC()">Guardar</button></div>
+  <div class="mfoot"><button class="btn bg" onclick="cerrarMcModal()">Cancelar</button><button class="btn bp" onclick="guardarC()">Guardar</button></div>
 </div></div>
 
 <div class="ov" id="mi" onclick="cerrarOv(event,this)"><div class="mo">
@@ -787,8 +797,63 @@ tr:hover td{background:var(--surface2)}
 </div>
 <div id="mas-overlay" onclick="cerrarMas()" style="display:none;position:fixed;inset:0;bottom:60px;z-index:198;background:rgba(0,0,0,0.3)"></div>
 
+<!-- MODAL RESUMEN MÉDICO IA -->
+<div class="ov" id="mresumen" onclick="cerrarOv(event,this)"><div class="mo" style="max-width:600px">
+  <h2>🩺 Informe para el médico</h2>
+  <div id="mresumen-body">
+    <p style="font-size:0.82rem;color:var(--text2);margin-bottom:14px">Genera un resumen clínico de los últimos 30 días con tus datos de glucemia, medicación y vitales, listo para compartir con tu médico.</p>
+    <div class="fg" style="margin-bottom:10px">
+      <label>Periodo</label>
+      <select id="mresumen-periodo">
+        <option value="30">Últimos 30 días</option>
+        <option value="90">Últimos 90 días</option>
+        <option value="180">Últimos 6 meses</option>
+      </select>
+    </div>
+    <div class="fg" style="margin-bottom:14px">
+      <label>Motivo de consulta (opcional)</label>
+      <textarea id="mresumen-motivo" rows="2" placeholder="Ej: revisión trimestral, ajuste de medicación..."></textarea>
+    </div>
+    <button class="btn ba" onclick="generarResumenMedico()" id="btn-generar-resumen" style="width:100%">🤖 Generar informe con IA</button>
+  </div>
+  <div id="mresumen-resultado" style="display:none;margin-top:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span style="font-size:0.78rem;font-weight:700;color:var(--primary)">Informe generado</span>
+      <div style="display:flex;gap:6px">
+        <button class="btn bg bs" onclick="copiarResumen()">📋 Copiar</button>
+        <button class="btn bp bs" onclick="imprimirResumen()">🖨️ Imprimir</button>
+      </div>
+    </div>
+    <div id="mresumen-texto" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;font-size:0.8rem;line-height:1.7;color:var(--text);white-space:pre-wrap;max-height:340px;overflow-y:auto"></div>
+  </div>
+  <div class="mfoot"><button class="btn bg" onclick="cerrar('mresumen')">Cerrar</button></div>
+</div></div>
+
+<!-- MODAL SYNC GOOGLE DRIVE -->
+<div class="ov" id="msync" onclick="cerrarOv(event,this)"><div class="mo" style="max-width:480px">
+  <h2>☁️ Sync con Google Drive</h2>
+  <div id="msync-body">
+    <div class="cj i" style="margin-bottom:12px"><h4>📱 Sincroniza entre dispositivos</h4><p>Guarda tus datos en Google Drive y accede desde cualquier dispositivo. El archivo se guarda en tu Drive personal.</p></div>
+    <div id="msync-estado" style="margin-bottom:14px"></div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button class="btn bp" onclick="syncSubirDrive()" id="btn-subir-drive">☁️ Guardar en Drive</button>
+      <button class="btn bg" onclick="syncDescargarDrive()" id="btn-bajar-drive">📥 Restaurar desde Drive</button>
+    </div>
+    <div style="margin-top:12px;font-size:0.71rem;color:var(--text3);line-height:1.5">
+      Se guarda como <strong>GlucoControl_sync.json</strong> en la raíz de tu Google Drive.<br>
+      Necesitas tener conectado Google Drive en Claude para que funcione.
+    </div>
+  </div>
+  <div class="mfoot"><button class="btn bg" onclick="cerrar('msync')">Cerrar</button></div>
+</div></div>
+
+<!-- IFRAME oculto para impresión de informe médico -->
+<div id="print-frame-wrap" style="display:none">
+  <div id="print-content"></div>
+</div>
+
 <script>
-var MLAB={ayunas:'Ayunas',antes_desayuno:'Antes desayuno',despues_desayuno:'Despues desayuno',antes_comida:'Antes comida',despues_comida:'Despues comida',antes_cena:'Antes cena',despues_cena:'Despues cena',antes_dormir:'Antes dormir'};
+var MLAB={ayunas:'Ayunas',antes_desayuno:'Antes desayuno',despues_desayuno:'Después desayuno',antes_comida:'Antes comida',despues_comida:'Después comida',antes_cena:'Antes cena',despues_cena:'Después cena',antes_dormir:'Antes dormir'};
 var MICO={ayunas:'🌅',antes_desayuno:'☕',despues_desayuno:'🥐',antes_comida:'🍽️',despues_comida:'🥘',antes_cena:'🌆',despues_cena:'🌙',antes_dormir:'🛌'};
 var MORDEN=['ayunas','antes_desayuno','despues_desayuno','antes_comida','despues_comida','antes_cena','despues_cena','antes_dormir'];
 var MESES=['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
@@ -841,6 +906,7 @@ function ir(sec){
   else if(sec==='recordatorios'){pintaRecs();pintarEstadoNotificaciones();setTimeout(function(){var sel=g('alerta-horas-sel');if(sel)sel.value=String(ldv('alerta_horas',8));},30);}
   else if(sec==='citas')pintaCitas();
   else if(sec==='informes')pintaInformes();
+  else if(sec==='asistente'){pintaAiWelcome();}
 }
 
 // ── TOPBAR ───────────────────────────────────────────────────
@@ -848,22 +914,36 @@ function pintaTopbar(){
   var b=g('lastbadge');if(!b)return;
   if(!GL.length){b.className='nd';b.textContent='Sin datos';return;}
   var last=GL[0],e=est(last.valor);b.className=e;
-  b.textContent=last.valor+' mg/dL · '+(e==='ok'?'Normal':e==='hi'?'Alta':'Baja');
+
+  // Calcular tendencia comparando las 2 últimas mediciones del mismo día o las 2 últimas en general
+  var flecha='';
+  if(GL.length>=2){
+    var diff=last.valor-GL[1].valor;
+    if(Math.abs(diff)<10)flecha=' →';
+    else if(diff>0)flecha=diff>30?' ↑↑':' ↑';
+    else flecha=diff<-30?' ↓↓':' ↓';
+  }
+
+  b.textContent=last.valor+' mg/dL'+flecha+' · '+(e==='ok'?'Normal':e==='hi'?'Alta':'Baja');
+  b.title=GL.length>=2?'Anterior: '+GL[1].valor+' mg/dL':'';
 }
 
 // ── DASHBOARD ────────────────────────────────────────────────
-function pintaDash(){pintaTopbar();pintaStats();pintaHoy();pintaChart();pintaDSemana();pintaDMeds();pintaDCitas();pintaAlertas();pinta30Dias();}
+function pintaDash(){pintaTopbar();pintaStats();pintaHoy();pintaChart();pintaDSemana();pintaDMeds();pintaDCitas();pintaAlertas();pinta30Dias();pintaRacha();pintaResumenSemanal();}
 
 function pintaStats(){
   var today=hoy(),tg=GL.filter(function(g2){return g2.fecha===today;});
   var avg=tg.length?Math.round(tg.reduce(function(s,g2){return s+g2.valor;},0)/tg.length):null;
   var ulthb=HB.length?HB[0].valor:null;
+  var ehba=calcularEHba1c();
+  var hbaMostrar=ulthb?ulthb:ehba;
+  var hbaLabel=ulthb?'HbA1c':'eHbA1c ≈';
   var ultVit=VT.length?VT[0]:null;
   var el=g('dstats');if(!el)return;
   function sc(lb,val,unit,cls){return '<div class="sc '+cls+'"><div class="sl">'+lb+'</div><div class="sv">'+val+(val!='—'?'<span style="font-size:0.68rem;color:#999"> '+unit+'</span>':'')+'</div></div>';}
   var pesoCls='',pesoVal=ultVit&&ultVit.peso?ultVit.peso+' kg':'—';
   var tenVal=ultVit&&ultVit.ts?ultVit.ts+'/'+ultVit.td:'—';
-  el.innerHTML=sc('Glucosa hoy',avg||'—',avg?'mg/dL':'',avg?(avg<=180?'ok':avg<=250?'lo':'hi'):'')+sc('HbA1c',ulthb?ulthb+'%':'—','',ulthb?estHba(ulthb):'')+sc('Peso',pesoVal,'','')+sc('Tension',tenVal,'','');
+  el.innerHTML=sc('Glucosa hoy',avg||'—',avg?'mg/dL':'',avg?(avg<=180?'ok':avg<=250?'lo':'hi'):'')+sc(hbaLabel,hbaMostrar?hbaMostrar+'%':'—','',hbaMostrar?estHba(hbaMostrar):'')+sc('Peso',pesoVal,'','')+sc('Tension',tenVal,'','');
 }
 
 function pintaDSemana(){
@@ -894,19 +974,38 @@ function pintaChart(){
 
 function svgLineChart(el,data,labels,ref1,ref2,color){
   if(!data.some(function(v){return v!==null;})){el.innerHTML='<div style="text-align:center;color:#999;font-size:0.78rem;padding:16px 0">Sin datos</div>';return;}
-  var W=480,H=140,PL=34,PR=8,PT=10,PB=24,cW=W-PL-PR,cH=H-PT-PB;
+  var W=480,H=140,PL=38,PR=8,PT=10,PB=24,cW=W-PL-PR,cH=H-PT-PB;
   var vals=data.filter(function(v){return v!==null;});
   var minV=Math.min.apply(null,vals.concat([ref1]))-15,maxV=Math.max.apply(null,vals.concat([ref2]))+15;
   function fy(v){return PT+cH-((v-minV)/(maxV-minV))*cH;}
-  function fx(i){return PL+i*(cW/(data.length-1));}
-  var refs='';[[ref1,'#f39c12'],[ref2,'#27ae60']].forEach(function(r){if(r[0]>=minV&&r[0]<=maxV){var y=fy(r[0]);refs+='<line x1="'+PL+'" y1="'+y+'" x2="'+(W-PR)+'" y2="'+y+'" stroke="'+r[1]+'" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/><text x="'+(PL-2)+'" y="'+(y+3)+'" text-anchor="end" font-size="8" fill="'+r[1]+'">'+r[0]+'</text>';}});
+  var divisor=data.length>1?data.length-1:1;
+  function fx(i){return PL+i*(cW/divisor);}
+
+  // Banda verde de rango objetivo (entre ref1 y ref2)
+  var bandTop=fy(ref2),bandBot=fy(ref1);
+  var band='';
+  if(ref1>=minV&&ref2<=maxV){
+    band='<rect x="'+PL+'" y="'+bandTop+'" width="'+cW+'" height="'+(bandBot-bandTop)+'" fill="#27ae60" fill-opacity="0.07" rx="2"/>';
+  }
+
+  // Líneas de referencia más visibles con etiquetas claras
+  var refs='';
+  [[ref1,'#f39c12','▸ '+ref1],[ref2,'#27ae60','▸ '+ref2]].forEach(function(r){
+    if(r[0]>=minV&&r[0]<=maxV){
+      var y=fy(r[0]);
+      refs+='<line x1="'+PL+'" y1="'+y+'" x2="'+(W-PR)+'" y2="'+y+'" stroke="'+r[1]+'" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.7"/>'
+        +'<text x="'+(PL-3)+'" y="'+(y+3.5)+'" text-anchor="end" font-size="8.5" fill="'+r[1]+'" font-weight="bold">'+r[0]+'</text>';
+    }
+  });
+
   var pts=data.map(function(v,i){return v!==null?[fx(i),fy(v)]:null;});
   var path='',first=true;
   pts.forEach(function(p,i){if(p){if(first){path+='M '+p[0]+','+p[1];first=false;}else{var prev=null;for(var j=i-1;j>=0;j--){if(pts[j]){prev=pts[j];break;}}if(prev){var cx1=prev[0]+(p[0]-prev[0])*0.4,cx2=p[0]-(p[0]-prev[0])*0.4;path+=' C '+cx1+','+prev[1]+' '+cx2+','+p[1]+' '+p[0]+','+p[1];}}}else{first=true;}});
-  var area=path+' L '+fx(data.length-1)+','+(H-PB)+' L '+PL+','+(H-PB)+' Z';
+  var lastValidIdx=0;pts.forEach(function(p,i){if(p)lastValidIdx=i;});
+  var area=path+' L '+fx(lastValidIdx)+','+(H-PB)+' L '+PL+','+(H-PB)+' Z';
   var dots='';pts.forEach(function(p,i){if(!p)return;var v=data[i],col=v<ref1?'#f39c12':v<=ref2?'#27ae60':'#e74c3c';dots+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="'+col+'" stroke="#fff" stroke-width="1.5"/><text x="'+p[0]+'" y="'+(p[1]-7)+'" text-anchor="middle" font-size="8" fill="'+col+'" font-weight="bold">'+v+'</text>';});
   var xl=labels.map(function(l,i){return '<text x="'+fx(i)+'" y="'+(H-4)+'" text-anchor="middle" font-size="8" fill="#999">'+l+'</text>';}).join('');
-  el.innerHTML='<svg width="100%" viewBox="0 0 '+W+' '+H+'" style="overflow:visible"><defs><linearGradient id="ga'+color.replace('#','')+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+color+'" stop-opacity="0.12"/><stop offset="100%" stop-color="'+color+'" stop-opacity="0.01"/></linearGradient></defs>'+refs+'<path d="'+area+'" fill="url(#ga'+color.replace('#','')+')"/><path d="'+path+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'+dots+xl+'</svg>';
+  el.innerHTML='<svg width="100%" viewBox="0 0 '+W+' '+H+'" style="overflow:visible"><defs><linearGradient id="ga'+color.replace('#','')+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+color+'" stop-opacity="0.13"/><stop offset="100%" stop-color="'+color+'" stop-opacity="0.01"/></linearGradient></defs>'+band+refs+'<path d="'+area+'" fill="url(#ga'+color.replace('#','')+')"/><path d="'+path+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'+dots+xl+'</svg>';
 }
 
 function pintaDMeds(){var el=g('d-meds');if(!el)return;if(!ME.length){el.innerHTML='<p style="color:#999;font-size:0.8rem">Sin medicamentos.</p>';return;}el.innerHTML=ME.slice(0,3).map(function(m){var cls=m.stock===0?'no':m.stock<=m.alerta?'lo':'ok';return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0f4f7;font-size:0.8rem"><span>💊 '+m.nombre+'</span><span class="mstock '+cls+'">'+m.stock+'</span></div>';}).join('');}
@@ -925,6 +1024,7 @@ function pintaAlertas(){
 
 // ── ALERTA SIN MEDICIÓN ──────────────────────────────────────
 function registrarGlucemiaRapido(){abrirModal('mg');}
+
 function comprobarAlertaMedicion(){
   var umbrales=ldv('alerta_horas',8); // horas configurables
   if(!umbrales||!GL.length)return '';
@@ -1036,12 +1136,81 @@ function pintaObjetivoPeso(){
 }
 
 // ── GLUCEMIA ─────────────────────────────────────────────────
-function filtroMomento(m,el2){filtroG=m;document.querySelectorAll('.mc').forEach(function(c){c.classList.remove('on');});if(el2)el2.classList.add('on');pintaGTable();}
+var gPagina=1;
+function exportarCSVGlucemia(){
+  // Aplica los mismos filtros que pintaGTable para exportar lo visible
+  var lista=filtroG==='todos'?GL:GL.filter(function(g2){return g2.momento===filtroG;});
+  var search=(g('g-search')&&g('g-search').value.trim().toLowerCase())||'';
+  if(search){lista=lista.filter(function(gl){return(fmtF(gl.fecha)+' '+gl.valor+' '+(gl.notas||'')+' '+(MLAB[gl.momento]||'')).toLowerCase().indexOf(search)!==-1;});}
+  var desde=g('g-desde')&&g('g-desde').value,hasta=g('g-hasta')&&g('g-hasta').value;
+  if(desde)lista=lista.filter(function(gl){return gl.fecha>=desde;});
+  if(hasta)lista=lista.filter(function(gl){return gl.fecha<=hasta;});
+  if(!lista.length){toast('⚠️ No hay datos para exportar','warn');return;}
+  var BOM='\uFEFF'; // BOM para que Excel abra con tildes correctas
+  var cab='Fecha,Hora,Momento,Glucosa (mg/dL),Estado,Notas\n';
+  var filas=lista.map(function(gl){
+    var estado=gl.valor<70?'Baja':gl.valor<=180?'Normal':'Alta';
+    var notas=(gl.notas||'').replace(/"/g,'""');
+    return '"'+fmtF(gl.fecha)+'","'+gl.hora+'","'+(MLAB[gl.momento]||gl.momento)+'",'+gl.valor+',"'+estado+'","'+notas+'"';
+  }).join('\n');
+  var blob=new Blob([BOM+cab+filas],{type:'text/csv;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;a.download='GlucoControl_glucemia_'+hoy()+'.csv';
+  document.body.appendChild(a);a.click();
+  setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},200);
+  toast('📥 CSV exportado ('+lista.length+' registros)','ok');
+}
+function limpiarFiltrosG(){
+  var s=g('g-search'),d=g('g-desde'),h2=g('g-hasta');
+  if(s)s.value='';if(d)d.value='';if(h2)h2.value='';
+  filtroG='todos';
+  document.querySelectorAll('.mc').forEach(function(c){c.classList.remove('on');});
+  var first=document.querySelector('.mc');if(first)first.classList.add('on');
+  gPagina=1;pintaGTable();
+}
+function filtroMomento(m,el2){filtroG=m;document.querySelectorAll('.mc').forEach(function(c){c.classList.remove('on');});if(el2)el2.classList.add('on');gPagina=1;pintaGTable();}
 function pintaGTable(){
   var lista=filtroG==='todos'?GL:GL.filter(function(g2){return g2.momento===filtroG;});
-  var tb=g('gtbody');if(!tb)return;
-  if(!lista.length){tb.innerHTML='<tr><td colspan="8" style="text-align:center;color:#999;padding:18px">Sin mediciones</td></tr>';return;}
-  tb.innerHTML=lista.map(function(gl){return '<tr><td>'+fmtF(gl.fecha)+'</td><td>'+gl.hora+'</td><td>'+(MICO[gl.momento]||'📊')+' '+(MLAB[gl.momento]||gl.momento)+'</td><td><strong>'+gl.valor+'</strong></td><td><span class="pill '+pcls(gl.valor)+'">'+lbl(gl.valor)+'</span></td><td style="color:#999;font-size:0.76rem">'+(gl.notas||'—')+'</td><td style="white-space:nowrap"><button class="btn bg bs" onclick="editarG('+gl.id+')" style="margin-right:3px">✏️</button><button class="btn bd bs" onclick="confirmar(\'¿Eliminar medición?\',\''+gl.valor+' mg/dL · '+fmtF(gl.fecha)+'\',function(){borrarG('+gl.id+');})">🗑️</button></td></tr>';}).join('');
+  // Filtro búsqueda texto
+  var search=(g('g-search')&&g('g-search').value.trim().toLowerCase())||'';
+  if(search){lista=lista.filter(function(gl){return (fmtF(gl.fecha)+' '+gl.valor+' '+(gl.notas||'')+' '+(MLAB[gl.momento]||'')).toLowerCase().indexOf(search)!==-1;});}
+  // Filtro rango fechas
+  var desde=g('g-desde')&&g('g-desde').value,hasta=g('g-hasta')&&g('g-hasta').value;
+  if(desde)lista=lista.filter(function(gl){return gl.fecha>=desde;});
+  if(hasta)lista=lista.filter(function(gl){return gl.fecha<=hasta;});
+
+  var tb=g('gtbody'),countEl=g('g-count'),pagEl=g('g-pagination');
+  if(!tb)return;
+  if(!lista.length){
+    tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:#999;padding:18px">Sin mediciones</td></tr>';
+    if(countEl)countEl.textContent='';if(pagEl)pagEl.innerHTML='';return;
+  }
+
+  // Paginación
+  var psize=parseInt((g('g-psize')&&g('g-psize').value)||'50');
+  var total=lista.length;
+  var pages=psize>0?Math.ceil(total/psize):1;
+  if(gPagina>pages)gPagina=pages;
+  var slice=psize>0?lista.slice((gPagina-1)*psize,gPagina*psize):lista;
+
+  if(countEl)countEl.textContent='('+total+' registros'+(psize>0&&pages>1?' · página '+gPagina+'/'+pages:'')+')';
+
+  tb.innerHTML=slice.map(function(gl){return '<tr><td>'+fmtF(gl.fecha)+'</td><td>'+gl.hora+'</td><td>'+(MICO[gl.momento]||'📊')+' '+(MLAB[gl.momento]||gl.momento)+'</td><td><strong>'+gl.valor+'</strong></td><td><span class="pill '+pcls(gl.valor)+'">'+lbl(gl.valor)+'</span></td><td style="color:#999;font-size:0.76rem">'+(gl.notas||'—')+'</td><td style="white-space:nowrap"><button class="btn bg bs" onclick="editarG('+gl.id+')" style="margin-right:3px">✏️</button><button class="btn bd bs" onclick="borrarGConfirm('+gl.id+')">🗑️</button></td></tr>';}).join('');
+
+  // Botones de paginación
+  if(pagEl){
+    if(pages<=1){pagEl.innerHTML='';return;}
+    var html='';
+    html+='<button class="btn bg bs" onclick="gPagina=1;pintaGTable()" '+(gPagina===1?'disabled':'')+'>«</button>';
+    html+='<button class="btn bg bs" onclick="gPagina=Math.max(1,gPagina-1);pintaGTable()" '+(gPagina===1?'disabled':'')+'>‹</button>';
+    // Páginas cercanas
+    var start=Math.max(1,gPagina-2),end=Math.min(pages,gPagina+2);
+    for(var p=start;p<=end;p++){html+='<button class="btn '+(p===gPagina?'bp':'bg')+' bs" onclick="gPagina='+p+';pintaGTable()">'+p+'</button>';}
+    html+='<button class="btn bg bs" onclick="gPagina=Math.min('+pages+',gPagina+1);pintaGTable()" '+(gPagina===pages?'disabled':'')+'>›</button>';
+    html+='<button class="btn bg bs" onclick="gPagina='+pages+';pintaGTable()" '+(gPagina===pages?'disabled':'')+'>»</button>';
+    pagEl.innerHTML=html;
+  }
 }
 var editGId=null;
 function editarG(id){
@@ -1053,6 +1222,21 @@ function editarG(id){
   g('mg').classList.add('on');
 }
 function cerrarMgModal(){editGId=null;g('mg-titulo').textContent='📊 Nueva Medición';cerrar('mg');}
+
+// Prellenar momento según hora del día
+function momentoSegunHora(){
+  var h=new Date().getHours();
+  if(h>=5&&h<8)return'ayunas';
+  if(h>=8&&h<10)return'antes_desayuno';
+  if(h>=10&&h<11)return'despues_desayuno';
+  if(h>=12&&h<14)return'antes_comida';
+  if(h>=14&&h<16)return'despues_comida';
+  if(h>=20&&h<22)return'antes_cena';
+  if(h>=22&&h<23)return'despues_cena';
+  if(h>=23||h<5)return'antes_dormir';
+  return'ayunas';
+}
+
 function guardarG(){
   var f=g('gf').value,h=g('gh').value,m=g('gm').value,vRaw=g('gv').value,v=parseInt(vRaw),n=g('gn').value;
   var ok=true;
@@ -1061,6 +1245,8 @@ function guardarG(){
   if(!h){marcarError('gh','Hora obligatoria');ok=false;}
   if(!vRaw||isNaN(v)){marcarError('gv','Valor obligatorio');ok=false;}
   else if(v<20||v>600){marcarError('gv','Valor entre 20 y 600 mg/dL');ok=false;}
+  else if(v<54){marcarError('gv','⚠️ Hipoglucemia grave — busca atención médica inmediata');}
+  else if(v>400){marcarError('gv','🔴 Hiperglucemia grave — contacta con tu médico');}
   if(!ok)return;
   if(editGId){
     var idx=GL.findIndex(function(x){return x.id===editGId;});
@@ -1072,6 +1258,7 @@ function guardarG(){
   }
   sv('gl',GL);cerrarMgModal();pintaTopbar();pintaGTable();if(secActual==='dashboard')pintaDash();
 }
+function borrarGConfirm(id){var rec=GL.find(function(x){return x.id===id;});confirmar('¿Eliminar medición?',(rec?rec.valor+' mg/dL · '+fmtF(rec.fecha):'Esta medición')+' se eliminará permanentemente.',function(){borrarG(id);});}
 function borrarG(id){GL=GL.filter(function(g2){return g2.id!==id;});sv('gl',GL);pintaGTable();pintaTopbar();if(secActual==='dashboard')pintaDash();toast('🗑️ Medición eliminada','warn');}
 
 // ── ESTADÍSTICAS ─────────────────────────────────────────────
@@ -1086,13 +1273,29 @@ function pintaEstadisticas(){
   var bajas=todas.filter(function(g2){return g2.valor<70;}).length;
   var avg=total?Math.round(todas.reduce(function(s,g2){return s+g2.valor;},0)/total):null;
   var pctRango=total?Math.round((enRango/total)*100):0;
-  // Desviación estándar
-  var sd=0;if(avg&&total>1){var sum2=todas.reduce(function(s,g2){return s+Math.pow(g2.valor-avg,2);},0);sd=Math.round(Math.sqrt(sum2/total));}
+  // Desviación estándar y CV%
+  var sd=0,cv=0;
+  if(avg&&total>1){
+    var sum2=todas.reduce(function(s,g2){return s+Math.pow(g2.valor-avg,2);},0);
+    sd=Math.round(Math.sqrt(sum2/total));
+    cv=Math.round((sd/avg)*100);
+  }
 
   // Cards
   var ec=g('est-cards');if(ec){
-    function sc(lb,val,unit,cls){return '<div class="sc '+cls+'"><div class="sl">'+lb+'</div><div class="sv">'+val+'<span style="font-size:0.68rem;color:#999"> '+unit+'</span></div></div>';}
-    ec.innerHTML=sc('Promedio 28d',avg||'—','mg/dL',avg?(avg<=180?'ok':avg<=250?'lo':'hi'):'')+sc('Tiempo en rango',pctRango,'%',pctRango>=70?'ok':pctRango>=50?'lo':'hi')+sc('Desv. estándar',sd||'—','mg/dL','')+sc('Total mediciones',total,'','');
+    function sc(lb,val,unit,cls,title){return '<div class="sc '+cls+'" '+(title?'title="'+title+'"':'')+' style="cursor:'+(title?'help':'default')+'">'+'<div class="sl">'+lb+'</div><div class="sv">'+val+'<span style="font-size:0.68rem;color:#999"> '+unit+'</span></div></div>';}
+    var cvCls=!cv?'':cv<36?'ok':cv<50?'lo':'hi';
+    ec.innerHTML=
+      sc('Promedio 28d',avg||'—','mg/dL',avg?(avg<=180?'ok':avg<=250?'lo':'hi'):'')+
+      sc('Tiempo en rango',pctRango,'%',pctRango>=70?'ok':pctRango>=50?'lo':'hi')+
+      sc('CV% variabilidad',cv||'—','%',cvCls,'Coeficiente de variación: SD/promedio×100. Objetivo clínico <36%')+
+      sc('Total mediciones',total,'','');
+    // Añadir nota de CV si hay datos
+    if(cv){
+      var cvnota=g('cv-nota');
+      var cvhtml='<div style="margin-top:8px;font-size:0.75rem;padding:7px 10px;border-radius:var(--radius-sm);display:flex;align-items:center;gap:7px;'+(cv<36?'background:var(--ok-bg);color:var(--ok)':cv<50?'background:var(--lo-bg);color:#b7770d':'background:var(--hi-bg);color:var(--hi)')+'">'+(cv<36?'✅ Variabilidad controlada (CV '+cv+'%) — objetivo clínico cumplido':cv<50?'⚠️ Variabilidad moderada (CV '+cv+'%) — objetivo: &lt;36%':'🔴 Variabilidad alta (CV '+cv+'%) — consulta con tu médico')+'</div>';
+      if(cvnota)cvnota.innerHTML=cvhtml;
+    }
   }
 
   // TIR chart (donut SVG)
@@ -1106,6 +1309,21 @@ function pintaEstadisticas(){
       function arc(pct,offset,col){var len=C*(pct/100);return '<circle cx="50" cy="50" r="'+R+'" fill="none" stroke="'+col+'" stroke-width="14" stroke-dasharray="'+len+' '+(C-len)+'" stroke-dashoffset="'+(-offset*C/100)+'" transform="rotate(-90 50 50)"/>';}
       var o=0,oa=pctR,ob=pctR+pctA;
       tir.innerHTML='<div class="stat-ring"><svg width="90" height="90" viewBox="0 0 100 100" style="flex-shrink:0"><circle cx="50" cy="50" r="40" fill="none" stroke="#f0f4f7" stroke-width="14"/>'+arc(pctR,0,'#27ae60')+arc(pctA,oa,'#e74c3c')+arc(pctB,ob,'#f39c12')+'<text x="50" y="46" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a6e8e">'+pctR+'%</text><text x="50" y="58" text-anchor="middle" font-size="8" fill="#999">en rango</text></svg><div>'+barRow('En rango (70-180)',enRango,total,'#27ae60')+barRow('Altas (>180)',altas,total,'#e74c3c')+barRow('Bajas (<70)',bajas,total,'#f39c12')+'</div></div>';
+    }
+  }
+
+  // Distribución por estado (barras)
+  var dc=g('dist-chart');if(dc){
+    if(!total){dc.innerHTML='<p style="color:#999;font-size:0.8rem">Sin datos</p>';}
+    else{
+      var pctOk=total?Math.round((enRango/total)*100):0;
+      var pctHi=total?Math.round((altas/total)*100):0;
+      var pctLo=total?Math.round((bajas/total)*100):0;
+      dc.innerHTML='<div style="margin-top:8px">'+
+        barRow('✅ En rango (70–180)',enRango,total,'#27ae60')+
+        barRow('🔴 Altas (>180)',altas,total,'#e74c3c')+
+        barRow('⚠️ Bajas (<70)',bajas,total,'#f39c12')+
+        '<div style="margin-top:10px;font-size:0.75rem;color:var(--text2)">Total: <strong>'+total+'</strong> mediciones en 28 días</div></div>';
     }
   }
 
@@ -1138,6 +1356,116 @@ function pintaEstadisticas(){
   }
 }
 
+// ── RACHA DE REGISTROS ───────────────────────────────────────
+function pintaRacha(){
+  var rnEl=g('racha-numero'),rtEl=g('racha-texto'),reEl=g('racha-emoji'),rbEl=g('racha-badges'),rcEl=g('racha-calendario');
+  if(!rnEl)return;
+
+  // Obtener días únicos con al menos una medición, ordenados desc
+  var diasConMed={};
+  GL.forEach(function(gl){diasConMed[gl.fecha]=true;});
+  var diasOrdenados=Object.keys(diasConMed).sort().reverse();
+
+  // Calcular racha actual (días consecutivos hasta hoy)
+  var racha=0;
+  var cursor=new Date();
+  cursor.setHours(0,0,0,0);
+  for(var i=0;i<365;i++){
+    var ds=cursor.toISOString().slice(0,10);
+    if(diasConMed[ds]){racha++;cursor.setDate(cursor.getDate()-1);}
+    else{break;}
+  }
+
+  // Calcular racha máxima histórica
+  var maxRacha=0,rachaTemp=1;
+  var todosLosDias=Object.keys(diasConMed).sort();
+  for(var j=1;j<todosLosDias.length;j++){
+    var prev=new Date(todosLosDias[j-1]),curr=new Date(todosLosDias[j]);
+    var diff=(curr-prev)/(1000*60*60*24);
+    if(diff===1){rachaTemp++;maxRacha=Math.max(maxRacha,rachaTemp);}
+    else{rachaTemp=1;}
+  }
+  if(todosLosDias.length===1)maxRacha=1;
+
+  // Emoji y texto según racha
+  var emoji=racha===0?'😴':racha<3?'🌱':racha<7?'🔥':racha<14?'⚡':racha<30?'🏆':'👑';
+  var texto=racha===0?'Sin mediciones recientes':racha===1?'¡Llevas 1 día!':racha+' días consecutivos';
+
+  reEl.textContent=emoji;
+  rnEl.textContent=racha>0?racha+'d':'0';
+  rtEl.textContent=texto;
+
+  // Badges
+  var badges='';
+  if(maxRacha>0)badges+='<div style="background:var(--primary-light);color:var(--primary-mid);padding:2px 8px;border-radius:10px;font-size:0.65rem;font-weight:700">Máx '+maxRacha+'d</div>';
+  if(racha>=7)badges+='<div style="background:var(--accent-light);color:var(--accent);padding:2px 8px;border-radius:10px;font-size:0.65rem;font-weight:700">+7🔥</div>';
+  if(racha>=30)badges+='<div style="background:var(--lo-bg);color:var(--lo);padding:2px 8px;border-radius:10px;font-size:0.65rem;font-weight:700">+30🏆</div>';
+  rbEl.innerHTML=badges;
+
+  // Mini calendario últimas 2 semanas
+  var cal='<div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:4px">';
+  for(var k=13;k>=0;k--){
+    var d=new Date();d.setDate(d.getDate()-k);
+    var ds2=d.toISOString().slice(0,10);
+    var tiene=diasConMed[ds2];
+    var esHoy=k===0;
+    cal+='<div title="'+ds2+'" style="width:18px;height:18px;border-radius:4px;background:'+(tiene?'var(--accent)':'var(--surface2)')+';border:1px solid '+(esHoy?'var(--primary-mid)':'transparent')+';flex-shrink:0"></div>';
+  }
+  cal+='</div><div style="font-size:0.62rem;color:var(--text3);margin-top:3px">Últimos 14 días</div>';
+  rcEl.innerHTML=cal;
+}
+
+// ── RESUMEN SEMANAL ──────────────────────────────────────────
+function pintaResumenSemanal(){
+  var bodyEl=g('resumen-semana-body'),fechaEl=g('resumen-semana-fecha');
+  if(!bodyEl)return;
+
+  // Semana actual: lunes a hoy
+  var hoyDate=new Date();
+  var diaSemana=hoyDate.getDay(); // 0=Dom
+  var lunes=new Date(hoyDate);
+  lunes.setDate(hoyDate.getDate()-(diaSemana===0?6:diaSemana-1));
+  lunes.setHours(0,0,0,0);
+  var lunesStr=lunes.toISOString().slice(0,10);
+  var hoyStr=hoy();
+
+  if(fechaEl){
+    var p=lunesStr.split('-');
+    fechaEl.textContent=p[2]+'/'+p[1]+' – hoy';
+  }
+
+  var glSemana=GL.filter(function(g2){return g2.fecha>=lunesStr&&g2.fecha<=hoyStr;});
+
+  if(!glSemana.length){
+    bodyEl.innerHTML='<p style="color:var(--text3);font-size:0.8rem">Sin mediciones esta semana.</p>';
+    return;
+  }
+
+  var vals=glSemana.map(function(g2){return g2.valor;});
+  var avg=Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length);
+  var minV=Math.min.apply(null,vals);
+  var maxV=Math.max.apply(null,vals);
+  var enRango=vals.filter(function(v){return v>=70&&v<=180;}).length;
+  var altas=vals.filter(function(v){return v>180;}).length;
+  var bajas=vals.filter(function(v){return v<70;}).length;
+  var pctRango=Math.round((enRango/vals.length)*100);
+
+  var colAvg=avg<70?'var(--lo)':avg<=180?'var(--ok)':'var(--hi)';
+
+  bodyEl.innerHTML=
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">'+
+    '<div style="text-align:center;padding:8px;background:var(--surface2);border-radius:8px"><div style="font-size:0.62rem;color:var(--text2);font-weight:700;text-transform:uppercase">Promedio</div><div style="font-size:1.1rem;font-weight:800;color:'+colAvg+'">'+avg+'</div><div style="font-size:0.6rem;color:var(--text3)">mg/dL</div></div>'+
+    '<div style="text-align:center;padding:8px;background:var(--surface2);border-radius:8px"><div style="font-size:0.62rem;color:var(--text2);font-weight:700;text-transform:uppercase">En rango</div><div style="font-size:1.1rem;font-weight:800;color:var(--ok)">'+pctRango+'%</div><div style="font-size:0.6rem;color:var(--text3)">'+enRango+'/'+vals.length+'</div></div>'+
+    '<div style="text-align:center;padding:8px;background:var(--surface2);border-radius:8px"><div style="font-size:0.62rem;color:var(--text2);font-weight:700;text-transform:uppercase">Mediciones</div><div style="font-size:1.1rem;font-weight:800;color:var(--primary-mid)">'+vals.length+'</div><div style="font-size:0.6rem;color:var(--text3)">esta semana</div></div>'+
+    '</div>'+
+    '<div style="font-size:0.76rem;color:var(--text2);display:flex;gap:12px;flex-wrap:wrap">'+
+    '<span>📉 Mín: <strong style="color:var(--lo)">'+minV+' mg/dL</strong></span>'+
+    '<span>📈 Máx: <strong style="color:var(--hi)">'+maxV+' mg/dL</strong></span>'+
+    (altas?'<span>🔴 Altas: <strong>'+altas+'</strong></span>':'')+
+    (bajas?'<span>⚠️ Bajas: <strong>'+bajas+'</strong></span>':'')+
+    '</div>';
+}
+
 function barRowVal(lb,val,unit,col,sub){return '<div class="bar-row" style="margin-bottom:8px"><div style="flex:1"><div style="font-size:0.8rem;font-weight:700">'+lb+'</div><div style="font-size:0.7rem;color:#999">'+sub+'</div></div><div style="text-align:right"><div style="font-size:1rem;font-weight:700;color:'+col+'">'+val+'</div><div style="font-size:0.7rem;color:#999">'+unit+'</div></div></div>';}
 
 // ── HBA1C ────────────────────────────────────────────────────
@@ -1160,12 +1488,44 @@ function pintaHba1cChart(){
   var labels=datos.map(function(d){var p=d.fecha.split('-');return p[2]+'/'+p[1];});
   svgLineChart(g('hba1cChart'),data,labels,5.7,7,'#7b3b9b');
 }
+function calcularEHba1c(){
+  // Fórmula Nathan 2008 (validada clínicamente, usada por ADA/EASD):
+  // eHbA1c (%) = (promedio_mg/dL + 46.7) / 28.7
+  // Equivalente IFCC: eHbA1c (mmol/mol) = (promedio_mg/dL - 2.52) / 1.583
+  // Usamos la versión % que es la más familiar para el paciente.
+  // Requiere mínimo 14 mediciones en 90 días para ser clínicamente útil.
+  var hace90=new Date();hace90.setDate(hace90.getDate()-90);
+  var hace90s=hace90.toISOString().slice(0,10);
+  var gl90=GL.filter(function(g2){return g2.fecha>=hace90s;});
+  if(gl90.length<14)return null;
+  var prom=gl90.reduce(function(s,g2){return s+g2.valor;},0)/gl90.length;
+  return Math.round(((prom+46.7)/28.7)*10)/10;
+}
 function pintaHba1cIndicator(){
   var el=g('hba1c-indicator');if(!el)return;
-  if(!HB.length){el.innerHTML='<p style="color:#999;font-size:0.8rem">Sin datos.</p>';return;}
+  // Calcular eHbA1c estimado siempre que haya datos suficientes
+  var ehba=calcularEHba1c();
+  var ehbaHTML='';
+  if(ehba!==null){
+    var ec=estHba(ehba),ecol=ec==='ok'?'var(--ok)':ec==='lo'?'var(--lo)':'var(--hi)';
+    var hace90=new Date();hace90.setDate(hace90.getDate()-90);
+    var gl90=GL.filter(function(g2){return g2.fecha>=hace90.toISOString().slice(0,10);});
+    ehbaHTML='<div style="margin-top:12px;padding:10px 12px;background:var(--primary-light);border-radius:var(--radius-sm);border-left:3px solid var(--primary-mid)">'
+      +'<div style="font-size:0.68rem;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px">🧮 HbA1c estimada (eHbA1c)</div>'
+      +'<div style="display:flex;align-items:baseline;gap:8px">'
+      +'<span style="font-size:1.4rem;font-weight:700;color:'+ecol+'">'+ehba+'%</span>'
+      +'<span style="font-size:0.75rem;color:var(--text2)">'+lblHba(ehba)+'</span>'
+      +'</div>'
+      +'<div style="font-size:0.68rem;color:var(--text3);margin-top:3px">Basado en '+gl90.length+' mediciones de los últimos 90 días · Fórmula Nathan 2008 (ADA/EASD)</div>'
+      +'</div>';
+  }
+  if(!HB.length){
+    el.innerHTML='<p style="color:#999;font-size:0.8rem;margin-bottom:8px">Sin analítica registrada.</p>'+ehbaHTML;
+    return;
+  }
   var last=HB[0],e=estHba(last.valor),pct=Math.min(100,Math.max(0,((last.valor-4)/(12-4))*100));
   var col=e==='ok'?'#27ae60':e==='lo'?'#f39c12':'#e74c3c';
-  el.innerHTML='<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><div class="hba1c-val '+e+'" style="font-size:1.6rem;font-weight:700;color:'+col+'">'+last.valor+'%</div><div><div style="font-weight:700;font-size:0.87rem">'+lblHba(last.valor)+'</div><div style="font-size:0.73rem;color:#999">'+fmtF(last.fecha)+(last.centro?' · '+last.centro:'')+'</div></div></div><div class="hba1c-bar"><div class="hba1c-ind" style="left:'+pct+'%"></div></div><div class="hba1c-labels"><span>4%</span><span>5.7</span><span>6.5</span><span>7</span><span>12%</span></div>';
+  el.innerHTML='<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><div class="hba1c-val '+e+'" style="font-size:1.6rem;font-weight:700;color:'+col+'">'+last.valor+'%</div><div><div style="font-weight:700;font-size:0.87rem">'+lblHba(last.valor)+'</div><div style="font-size:0.73rem;color:#999">'+fmtF(last.fecha)+(last.centro?' · '+last.centro:'')+'</div></div></div><div class="hba1c-bar"><div class="hba1c-ind" style="left:'+pct+'%"></div></div><div class="hba1c-labels"><span>4%</span><span>5.7</span><span>6.5</span><span>7</span><span>12%</span></div>'+ehbaHTML;
 }
 function pintaHba1cTable(){var tb=g('hba1c-tbody');if(!tb)return;if(!HB.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:#999;padding:16px">Sin registros</td></tr>';return;}tb.innerHTML=HB.map(function(h){var e=estHba(h.valor);return '<tr><td>'+fmtF(h.fecha)+'</td><td><strong>'+h.valor+'%</strong></td><td><span class="pill '+(e==='ok'?'pok':e==='lo'?'plo':'phi')+'">'+lblHba(h.valor)+'</span></td><td style="color:#999;font-size:0.76rem">'+(h.centro||'—')+'</td><td style="color:#999;font-size:0.76rem">'+(h.notas||'—')+'</td><td><button class="btn bd bs" onclick="borrarHba('+h.id+')">🗑️</button></td></tr>';}).join('');}
 
@@ -1299,6 +1659,16 @@ function limpiarErrores(ids){
 
 // ── RECORDATORIOS ────────────────────────────────────────────
 function selTodosDias(){document.querySelectorAll('#dias-selector input[type=checkbox]').forEach(function(cb){cb.checked=true;});}
+function editarRec(id){
+  var r=RE.find(function(x){return x.id===id;});if(!r)return;
+  editRecId=id;
+  g('mr-titulo').textContent='✏️ Editar Recordatorio';
+  g('rn').value=r.nombre;g('rh').value=r.hora;g('rt').value=r.tipo;
+  document.querySelectorAll('#dias-selector input[type=checkbox]').forEach(function(cb){cb.checked=r.dias.indexOf(parseInt(cb.value))!==-1;});
+  limpiarErrores(['rn','rh']);
+  g('mr').classList.add('on');
+}
+function cerrarMrModal(){editRecId=null;g('mr-titulo').textContent='🔔 Nuevo Recordatorio';cerrar('mr');}
 function guardarRec(){
   var nombre=g('rn').value.trim(),hora=g('rh').value,tipo=g('rt').value;
   var dias=[];document.querySelectorAll('#dias-selector input[type=checkbox]:checked').forEach(function(cb){dias.push(parseInt(cb.value));});
@@ -1308,7 +1678,15 @@ function guardarRec(){
   if(!hora){marcarError('rh','Hora obligatoria');ok=false;}
   if(!dias.length){toast('⚠️ Selecciona al menos un día','warn');return;}
   if(!ok)return;
-  RE.push({id:Date.now(),nombre:nombre,hora:hora,tipo:tipo,dias:dias,activo:true});sv('re',RE);cerrar('mr');pintaRecs();iniciarRecordatorios();toast('✅ Recordatorio guardado','ok');
+  if(editRecId){
+    var idx=RE.findIndex(function(x){return x.id===editRecId;});
+    if(idx!==-1)RE[idx]={id:editRecId,nombre:nombre,hora:hora,tipo:tipo,dias:dias,activo:RE[idx].activo};
+    editRecId=null;toast('✅ Recordatorio actualizado','ok');
+  } else {
+    RE.push({id:Date.now(),nombre:nombre,hora:hora,tipo:tipo,dias:dias,activo:true});
+    toast('✅ Recordatorio guardado','ok');
+  }
+  sv('re',RE);cerrar('mr');pintaRecs();iniciarRecordatorios();
 }
 function toggleRec(id){var r=RE.find(function(x){return x.id===id;});if(!r)return;r.activo=!r.activo;sv('re',RE);pintaRecs();iniciarRecordatorios();}
 function borrarRec(id){confirmar('¿Eliminar recordatorio?','Esta acción no se puede deshacer.',function(){RE=RE.filter(function(r){return r.id!==id;});sv('re',RE);pintaRecs();iniciarRecordatorios();toast('🗑️ Recordatorio eliminado','warn');});}
@@ -1316,18 +1694,16 @@ function pintaRecs(){
   var el=g('lista-rec');if(!el)return;
   if(!RE.length){el.innerHTML='<p style="color:#999;font-size:0.8rem">Sin recordatorios.</p>';return;}
   var tIco={medicacion:'💊',glucemia:'📊',cita:'📅',otro:'🔔'};
-  el.innerHTML=RE.map(function(r){var ds=r.dias.length===7?'Todos los días':r.dias.map(function(d){return DIAS_LABEL[d];}).join(', ');return '<div class="rec-card"><div style="display:flex;align-items:center;gap:9px;flex:1"><div style="font-size:1.2rem">'+(tIco[r.tipo]||'🔔')+'</div><div><div style="font-weight:700;font-size:0.85rem">'+r.nombre+'</div><div style="font-size:0.73rem;color:#1a6e8e;font-weight:700">'+r.hora+'</div><div style="font-size:0.7rem;color:#999">'+ds+'</div></div></div><div style="display:flex;gap:5px;align-items:center"><button class="rec-toggle '+(r.activo?'on':'off')+'" onclick="toggleRec('+r.id+')"></button><button class="btn bd bs" onclick="borrarRec('+r.id+')">🗑️</button></div></div>';}).join('');
+  el.innerHTML=RE.map(function(r){var ds=r.dias.length===7?'Todos los días':r.dias.map(function(d){return DIAS_LABEL[d];}).join(', ');return '<div class="rec-card"><div style="display:flex;align-items:center;gap:9px;flex:1"><div style="font-size:1.2rem">'+(tIco[r.tipo]||'🔔')+'</div><div><div style="font-weight:700;font-size:0.85rem">'+r.nombre+'</div><div style="font-size:0.73rem;color:#1a6e8e;font-weight:700">'+r.hora+'</div><div style="font-size:0.7rem;color:#999">'+ds+'</div></div></div><div style="display:flex;gap:5px;align-items:center"><button class="rec-toggle '+(r.activo?'on':'off')+'" onclick="toggleRec('+r.id+')"></button><button class="btn bg bs" onclick="editarRec('+r.id+')">✏️</button><button class="btn bd bs" onclick="borrarRec('+r.id+')">🗑️</button></div></div>';}).join('');
 }
 function iniciarRecordatorios(){
   recTimers.forEach(function(t){clearTimeout(t);});
   recTimers=[];
   if(!('Notification' in window))return;
 
-  // Pedir permiso si no lo hemos hecho
+  // Solo pedir permiso si el usuario ya interactuó (no al cargar)
   if(Notification.permission==='default'){
-    Notification.requestPermission().then(function(perm){
-      if(perm==='granted'){iniciarRecordatorios();}
-    });
+    // No pedir permiso automáticamente; se pide al pulsar "Activar" en Recordatorios
     return;
   }
   if(Notification.permission!=='granted')return;
@@ -1405,6 +1781,7 @@ function iniciarRecordatorios(){
 }
 
 // ── CITAS ────────────────────────────────────────────────────
+var editCitaId=null;
 function guardarC(){
   var f=g('cf').value,h=g('ch').value,t=g('ctp').value,e=g('ce').value,n=g('cn').value;
   limpiarErrores(['cf','ch']);
@@ -1412,12 +1789,30 @@ function guardarC(){
   if(!f){marcarError('cf','Fecha obligatoria');ok=false;}
   if(!h){marcarError('ch','Hora obligatoria');ok=false;}
   if(!ok)return;
-  CI.push({id:Date.now(),fecha:f,hora:h,tipo:t,especialista:e,notas:n});CI.sort(function(a,b){return(a.fecha+a.hora).localeCompare(b.fecha+b.hora);});sv('ci',CI);cerrar('mc');pintaCitas();toast('✅ Cita guardada','ok');
+  if(editCitaId){
+    var idx=CI.findIndex(function(c){return c.id===editCitaId;});
+    if(idx!==-1)CI[idx]={id:editCitaId,fecha:f,hora:h,tipo:t,especialista:e,notas:n};
+    editCitaId=null;toast('✅ Cita actualizada','ok');
+  } else {
+    CI.push({id:Date.now(),fecha:f,hora:h,tipo:t,especialista:e,notas:n});
+    toast('✅ Cita guardada','ok');
+  }
+  CI.sort(function(a,b){return(a.fecha+a.hora).localeCompare(b.fecha+b.hora);});
+  sv('ci',CI);cerrar('mc');pintaCitas();
 }
+function editarCita(id){
+  var c=CI.find(function(x){return x.id===id;});if(!c)return;
+  editCitaId=id;
+  g('mc-titulo').textContent='✏️ Editar Cita';
+  g('cf').value=c.fecha;g('ch').value=c.hora;g('ctp').value=c.tipo;g('ce').value=c.especialista||'';g('cn').value=c.notas||'';
+  limpiarErrores(['cf','ch']);
+  g('mc').classList.add('on');
+}
+function cerrarMcModal(){editCitaId=null;g('mc-titulo').textContent='📅 Nueva Cita';cerrar('mc');}
 function borrarCita(id){confirmar('¿Eliminar cita?','Esta acción no se puede deshacer.',function(){CI=CI.filter(function(c){return c.id!==id;});sv('ci',CI);pintaCitas();toast('🗑️ Cita eliminada','warn');});}
 function pintaCitas(){
   var today=hoy(),prox=CI.filter(function(c){return c.fecha>=today;}),hist=CI.filter(function(c){return c.fecha<today;}).reverse();
-  function cH(c){var p=c.fecha.split('-'),tl={med:'Medico',enf:'Enfermeria',ana:'Analisis'};return '<div class="citarow"><div class="cfecha"><div class="cd">'+p[2]+'</div><div class="cm">'+MESES[parseInt(p[1])-1]+'</div></div><div class="cinfo"><span class="ctbadge '+(c.tipo||'med')+'">'+(tl[c.tipo]||c.tipo)+'</span><h4>'+(c.especialista||'—')+'</h4><p>'+(c.notas||'')+'</p></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px"><span style="font-weight:700;color:#1a6e8e;font-size:0.83rem">'+c.hora+'</span><button class="btn bd bs" onclick="borrarCita('+c.id+')">🗑️</button></div></div>';}
+  function cH(c){var p=c.fecha.split('-'),tl={med:'Medico',enf:'Enfermeria',ana:'Analisis'};return '<div class="citarow"><div class="cfecha"><div class="cd">'+p[2]+'</div><div class="cm">'+MESES[parseInt(p[1])-1]+'</div></div><div class="cinfo"><span class="ctbadge '+(c.tipo||'med')+'">'+(tl[c.tipo]||c.tipo)+'</span><h4>'+(c.especialista||'—')+'</h4><p>'+(c.notas||'')+'</p></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px"><span style="font-weight:700;color:#1a6e8e;font-size:0.83rem">'+c.hora+'</span><div style="display:flex;gap:3px"><button class="btn bg bs" onclick="editarCita('+c.id+')">✏️</button><button class="btn bd bs" onclick="borrarCita('+c.id+')">🗑️</button></div></div></div>';}
   var pe=g('proxcitas');if(pe)pe.innerHTML=prox.length?prox.map(cH).join(''):'<p style="color:#999;font-size:0.8rem">Sin citas proximas.</p>';
   var he=g('histcitas');if(he)he.innerHTML=hist.length?hist.map(cH).join(''):'<p style="color:#999;font-size:0.8rem">Sin historial.</p>';
 }
@@ -1449,17 +1844,17 @@ function pintaInformes(){
 // ── MODALES ──────────────────────────────────────────────────
 function abrirModal(id){
   var f=hoy(),h=ahora();
-  if(id==='mg'){editGId=null;g('mg-titulo').textContent='📊 Nueva Medición';g('gf').value=f;g('gh').value=h;g('gv').value='';g('gn').value='';limpiarErrores(['gf','gh','gv']);}
+  if(id==='mg'){editGId=null;g('mg-titulo').textContent='📊 Nueva Medición';g('gf').value=f;g('gh').value=h;g('gm').value=momentoSegunHora();g('gv').value='';g('gn').value='';limpiarErrores(['gf','gh','gv']);}
   if(id==='mhba'){g('hf').value=f;g('hv').value='';g('hc').value='';g('hn').value='';limpiarErrores(['hf','hv']);}
   if(id==='mal'){g('alf').value=f;g('alh').value=h;g('ala').value='';g('alc').value='';g('aln').value='';limpiarErrores(['alf','ala']);}
   if(id==='mvit'){g('vf').value=f;g('vh').value=h;g('vp').value='';g('valt').value=alturaGuardada||'';g('vts').value='';g('vtd').value='';g('vpu').value='';limpiarErrores(['vf']);}
-  if(id==='mc'){g('cf').value=f;g('ch').value=h;g('ce').value='';g('cn').value='';limpiarErrores(['cf','ch']);}
+  if(id==='mc'){editCitaId=null;g('mc-titulo').textContent='📅 Nueva Cita';g('cf').value=f;g('ch').value=h;g('ce').value='';g('cn').value='';limpiarErrores(['cf','ch']);}
   if(id==='mi'){g('ife').value=f;g('it').value='';g('imd').value='';g('ic').value='';var fp=g('foto-preview');if(fp){fp.src='';fp.style.display='none';}var fi=g('ifoto');if(fi)fi.value='';limpiarErrores(['it','ife']);}
-  if(id==='mr'&&!editRecId){g('rn').value='';g('rh').value=h;document.querySelectorAll('#dias-selector input[type=checkbox]').forEach(function(cb){cb.checked=false;});limpiarErrores(['rn','rh']);}
+  if(id==='mr'&&!editRecId){editRecId=null;g('mr-titulo').textContent='🔔 Nuevo Recordatorio';g('rn').value='';g('rh').value=h;document.querySelectorAll('#dias-selector input[type=checkbox]').forEach(function(cb){cb.checked=false;});limpiarErrores(['rn','rh']);}
   if(id==='mm'&&!editMedId){g('mn').value='';g('md').value='';g('mh').value='';g('ms').value='';g('ma').value='10';g('minstr').value='';limpiarErrores(['mn']);}
   g(id).classList.add('on');
 }
-function cerrar(id){g(id).classList.remove('on');editMedId=null;editRecId=null;}
+function cerrar(id){g(id).classList.remove('on');if(id==='mm')editMedId=null;if(id==='mr')editRecId=null;if(id==='mc')editCitaId=null;}
 function cerrarOv(e,el2){if(e.target===el2)el2.classList.remove('on');}
 
 // ── PWA ──────────────────────────────────────────────────────
@@ -1499,6 +1894,85 @@ function doExportPDF(){
   else gen();
 }
 
+// ── PDF COMPLETO (todas las secciones) ───────────────────────
+function doExportPDFCompleto(){
+  var ov=g('pdfov'),msg=g('pdfmsg');ov.classList.add('on');msg.textContent='Cargando librerías...';
+  var SECCIONES=['dashboard','glucemia','estadisticas','hba1c','medicamentos','vitales','alimentacion','citas','informes'];
+  function loadSc(src,cb){if(document.querySelector('script[src="'+src+'"]')){cb(null);return;}var s=document.createElement('script');s.src=src;s.onload=function(){cb(null);};s.onerror=function(){cb(new Error());};document.head.appendChild(s);}
+  var jU='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',hU='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+
+  function gen(){
+    var jsPDF=window.jspdf.jsPDF;
+    var pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    var pW=pdf.internal.pageSize.getWidth(),pH=pdf.internal.pageSize.getHeight(),mg=10,iW=pW-mg*2;
+    var nm={dashboard:'Dashboard',glucemia:'Glucemia',estadisticas:'Estadísticas',hba1c:'HbA1c',medicamentos:'Medicamentos',vitales:'Peso y Tensión',alimentacion:'Alimentación',citas:'Citas',informes:'Informes'};
+
+    // Mostrar cada sección temporalmente, capturarla, restaurar
+    var secOriginal=secActual;
+    var idx=0;
+
+    function capturarSiguiente(){
+      if(idx>=SECCIONES.length){
+        // Restaurar sección original
+        document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('on');});
+        var elOrig=g('sec-'+secOriginal);if(elOrig)elOrig.classList.add('on');
+        secActual=secOriginal;
+        msg.textContent='Guardando PDF...';
+        pdf.save('GlucoControl_Completo_'+hoy()+'.pdf');
+        ov.classList.remove('on');
+        toast('✅ PDF completo generado','ok');
+        return;
+      }
+      var sec=SECCIONES[idx];
+      msg.textContent='Capturando '+nm[sec]+'... ('+(idx+1)+'/'+SECCIONES.length+')';
+
+      // Activar sección
+      document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('on');});
+      var el=g('sec-'+sec);if(!el){idx++;capturarSiguiente();return;}
+      el.classList.add('on');
+
+      // Renderizar datos de la sección
+      if(sec==='dashboard')pintaDash();
+      else if(sec==='glucemia')pintaGTable();
+      else if(sec==='estadisticas')pintaEstadisticas();
+      else if(sec==='hba1c')pintaHba1c();
+      else if(sec==='medicamentos')pintaMeds();
+      else if(sec==='vitales')pintaVitales();
+      else if(sec==='alimentacion')pintaAlimentacion();
+      else if(sec==='citas')pintaCitas();
+      else if(sec==='informes')pintaInformes();
+
+      // Añadir cabecera temporal
+      var ph=document.createElement('div');ph.className='ph';ph.style.display='block';
+      ph.innerHTML='<h1>🩸 GlucoControl – '+(nm[sec]||sec)+'</h1><p>'+new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'})+'</p>';
+      el.insertBefore(ph,el.firstChild);
+
+      setTimeout(function(){
+        window.html2canvas(el,{scale:1.2,useCORS:true,backgroundColor:'#eef2f5',logging:false,windowWidth:1100}).then(function(canvas){
+          try{el.removeChild(ph);}catch(e){}
+          if(idx>0)pdf.addPage();
+          var sliceH=pH-mg*2,src=(sliceH/iW)*canvas.width,pages=Math.ceil(canvas.height/src);
+          for(var p=0;p<pages;p++){
+            if(p>0)pdf.addPage();
+            var sc2=document.createElement('canvas');sc2.width=canvas.width;sc2.height=Math.min(src,canvas.height-p*src);
+            var ctx=sc2.getContext('2d');ctx.drawImage(canvas,0,p*src,sc2.width,sc2.height,0,0,sc2.width,sc2.height);
+            pdf.addImage(sc2.toDataURL('image/jpeg',0.82),'JPEG',mg,mg,iW,(sc2.height*iW)/canvas.width);
+          }
+          idx++;capturarSiguiente();
+        }).catch(function(){try{el.removeChild(ph);}catch(e){}idx++;capturarSiguiente();});
+      },120);
+    }
+    capturarSiguiente();
+  }
+
+  function cargarLibs(cb){
+    if(!window.jspdf){loadSc(jU,function(e){if(e){ov.classList.remove('on');alert('Sin conexión.');return;}if(!window.html2canvas){loadSc(hU,function(e2){if(e2){ov.classList.remove('on');alert('Sin conexión.');return;}cb();});}else cb();});}
+    else if(!window.html2canvas){loadSc(hU,function(e){if(e){ov.classList.remove('on');alert('Sin conexión.');return;}cb();});}
+    else cb();
+  }
+  cargarLibs(gen);
+}
+
 // ── PWA MANIFEST INLINE ──────────────────────────────────────
 (function(){
   var manifest={name:'GlucoControl',short_name:'GlucoControl',description:'Control de diabetes',start_url:'.',display:'standalone',background_color:'#0f4a61',theme_color:'#0f4a61',orientation:'portrait',icons:[{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%230f4a61"/><text y=".9em" font-size="80" x="10">🩸</text></svg>',sizes:'192x192',type:'image/svg+xml'},{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%230f4a61"/><text y=".9em" font-size="80" x="10">🩸</text></svg>',sizes:'512x512',type:'image/svg+xml'}]};
@@ -1507,221 +1981,232 @@ function doExportPDF(){
   var link=g('manifest-link');if(link)link.href=url;
 })();
 
-
-// ── ASISTENTE IA ─────────────────────────────────────────────
-var aiChatHistory = [];
-
-function construirContexto() {
-  var hoy28 = new Date(); hoy28.setDate(hoy28.getDate() - 28);
-  var hoy28s = hoy28.toISOString().slice(0,10);
-  var glUlt = GL.slice(0, 30);
-  var glStats = {};
-  if (GL.length) {
-    var vals = GL.map(function(g2){return g2.valor;});
-    var sum = vals.reduce(function(a,b){return a+b;},0);
-    glStats.promedio = Math.round(sum / vals.length);
-    glStats.max = Math.max.apply(null, vals);
-    glStats.min = Math.min.apply(null, vals);
-    glStats.total = GL.length;
-    var ult28 = GL.filter(function(g2){return g2.fecha >= hoy28s;});
-    if (ult28.length) {
-      glStats.prom28 = Math.round(ult28.reduce(function(s,g2){return s+g2.valor;},0)/ult28.length);
-      glStats.enRango = Math.round((ult28.filter(function(g2){return g2.valor>=70&&g2.valor<=180;}).length / ult28.length)*100);
-      glStats.altas = ult28.filter(function(g2){return g2.valor>180;}).length;
-      glStats.bajas = ult28.filter(function(g2){return g2.valor<70;}).length;
-    }
-    if (GL[0]) glStats.ultima = GL[0].valor + ' mg/dL (' + GL[0].fecha + ' ' + GL[0].hora + ', ' + (MLAB[GL[0].momento]||GL[0].momento) + ')';
-  }
-  var vitUlt = VT.slice(0, 5).map(function(v){
-    return v.fecha + ': peso=' + (v.peso||'-') + 'kg, tensión=' + (v.ts&&v.td?v.ts+'/'+v.td:'-') + ', pulso=' + (v.pulso||'-') + ', IMC=' + (v.imc||'-');
-  });
-  var hbaUlt = HB.slice(0, 5).map(function(h){return h.fecha + ': ' + h.valor + '% (' + lblHba(h.valor) + ')';});
-  var alimUlt = AL.slice(0, 10).map(function(a){return a.fecha + ' ' + a.hora + ' [' + a.tipo + ']: ' + a.alimentos + (a.kcal?' ('+a.kcal+' kcal, IG '+a.ig+')':'');});
-  var medsResumen = ME.map(function(m){return m.nombre + ' ' + m.dosis + ', horarios: ' + m.horarios.join(',') + ', stock: ' + m.stock + (m.stock<=m.alerta?' ⚠️ BAJO':'');});
-  var tomasHoy = TM.filter(function(t){return t.fecha===hoy();}).map(function(t){return t.nombre + ' a las ' + t.hora;});
-  var citasProx = CI.filter(function(c){return c.fecha>=hoy();}).slice(0,5).map(function(c){return c.fecha + ' ' + c.hora + ' con ' + (c.especialista||'—') + ' (' + c.tipo + ')';});
-  var informesUlt = IN.slice(0,5).map(function(i){return i.fecha + ': [' + i.tipo + '] ' + i.titulo + (i.contenido?' — '+i.contenido.slice(0,100):'');});
-
-  return [
-    '=== DATOS REALES DEL PACIENTE EN GLUCOCONTROL ===',
-    '',
-    '## GLUCEMIA',
-    '- Última medición: ' + (glStats.ultima || 'Sin datos'),
-    '- Total registros: ' + (glStats.total || 0),
-    '- Promedio general: ' + (glStats.promedio ? glStats.promedio + ' mg/dL' : 'Sin datos'),
-    '- Últimos 28 días: promedio ' + (glStats.prom28||'-') + ' mg/dL, en rango ' + (glStats.enRango||0) + '%, altas: ' + (glStats.altas||0) + ', bajas: ' + (glStats.bajas||0),
-    '- Máximo histórico: ' + (glStats.max||'-') + ' mg/dL, Mínimo: ' + (glStats.min||'-') + ' mg/dL',
-    '- Últimas 30 mediciones:',
-    glUlt.map(function(g2){return '  · ' + g2.fecha + ' ' + g2.hora + ' [' + (MLAB[g2.momento]||g2.momento) + ']: ' + g2.valor + ' mg/dL (' + lbl(g2.valor) + ')' + (g2.notas?' — '+g2.notas:'');}).join('\n') || '  Sin registros',
-    '',
-    '## HbA1c',
-    hbaUlt.length ? hbaUlt.map(function(h){return '  · ' + h;}).join('\n') : '  Sin datos',
-    '',
-    '## PESO Y TENSIÓN (últimos 5 registros)',
-    vitUlt.length ? vitUlt.map(function(v){return '  · ' + v;}).join('\n') : '  Sin datos',
-    '',
-    '## MEDICAMENTOS',
-    medsResumen.length ? medsResumen.map(function(m){return '  · ' + m;}).join('\n') : '  Sin medicamentos registrados',
-    '- Tomas de hoy: ' + (tomasHoy.length ? tomasHoy.join(', ') : 'Ninguna registrada'),
-    '',
-    '## ALIMENTACIÓN (últimos 10 registros)',
-    alimUlt.length ? alimUlt.map(function(a){return '  · ' + a;}).join('\n') : '  Sin datos',
-    '',
-    '## CITAS PRÓXIMAS',
-    citasProx.length ? citasProx.map(function(c){return '  · ' + c;}).join('\n') : '  Sin citas próximas',
-    '',
-    '## INFORMES MÉDICOS RECIENTES',
-    informesUlt.length ? informesUlt.map(function(i){return '  · ' + i;}).join('\n') : '  Sin informes',
-    '',
-    '=== FIN DE DATOS ===',
+// ── SERVICE WORKER (OFFLINE) ──────────────────────────────────
+(function(){
+  if(!('serviceWorker' in navigator))return;
+  var swCode=[
+    'var CACHE="glucocontrol-v1";',
+    'var ASSETS=["/"];',
+    'self.addEventListener("install",function(e){',
+    '  e.waitUntil(caches.open(CACHE).then(function(c){',
+    '    return c.addAll(ASSETS).catch(function(){return;});',
+    '  }));',
+    '  self.skipWaiting();',
+    '});',
+    'self.addEventListener("activate",function(e){',
+    '  e.waitUntil(caches.keys().then(function(keys){',
+    '    return Promise.all(keys.filter(function(k){return k!==CACHE;}).map(function(k){return caches.delete(k);}));',
+    '  }));',
+    '  self.clients.claim();',
+    '});',
+    'self.addEventListener("fetch",function(e){',
+    '  if(e.request.method!=="GET")return;',
+    '  if(e.request.url.indexOf("anthropic.com")!==-1)return;',
+    '  e.respondWith(',
+    '    caches.match(e.request).then(function(cached){',
+    '      var fresh=fetch(e.request).then(function(resp){',
+    '        if(resp&&resp.status===200&&resp.type==="basic"){',
+    '          var clone=resp.clone();',
+    '          caches.open(CACHE).then(function(c){c.put(e.request,clone);});',
+    '        }',
+    '        return resp;',
+    '      }).catch(function(){return cached;});',
+    '      return cached||fresh;',
+    '    })',
+    '  );',
+    '});'
   ].join('\n');
+  var swBlob=new Blob([swCode],{type:'application/javascript'});
+  var swUrl=URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl,{scope:'./'}).then(function(reg){
+    reg.addEventListener('updatefound',function(){
+      var nw=reg.installing;
+      if(nw)nw.addEventListener('statechange',function(){
+        if(nw.state==='installed'&&navigator.serviceWorker.controller){
+          toast('🔄 Actualización disponible — recarga la página','warn',4000);
+        }
+      });
+    });
+  }).catch(function(){});
+  // Indicador de estado de red
+  function onOffline(){toast('📵 Sin conexión — la app sigue funcionando offline','warn',4000);}
+  function onOnline(){toast('✅ Conexión restaurada','ok',2500);}
+  window.addEventListener('offline',onOffline);
+  window.addEventListener('online',onOnline);
+})();
+
+
+// ── BACKUP / RESTAURAR JSON ──────────────────────────────────
+function doBackupJSON(){
+  var backup={
+    version:1,
+    fecha:new Date().toISOString(),
+    gl:GL,me:ME,tm:TM,ci:CI,in_:IN,hb:HB,re:RE,al:AL,vt:VT,
+    altura:alturaGuardada,
+    darkmode:ldv('darkmode',false),
+    user_nombre:ldv('user_nombre',''),
+    alerta_horas:ldv('alerta_horas',8),
+    peso_objetivo:ldv('peso_objetivo',null)
+  };
+  var json=JSON.stringify(backup,null,2);
+  var blob=new Blob([json],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;a.download='GlucoControl_backup_'+hoy()+'.json';
+  document.body.appendChild(a);a.click();
+  setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},200);
+  toast('💾 Backup guardado','ok');
 }
 
-var PROMPT_SISTEMA = 'Eres un asistente médico especializado en diabetes y control glucémico, integrado en la aplicación GlucoControl. Tu función es ayudar al paciente a entender sus datos de salud, identificar patrones y ofrecer recomendaciones prácticas basadas en sus registros reales.\n\nPRINCIPIOS:\n- Responde SIEMPRE en español, de forma clara y empática.\n- Cita datos concretos del historial del paciente en tus análisis.\n- Distingue claramente entre observaciones de los datos y recomendaciones generales.\n- Indica siempre que el médico es quien debe tomar decisiones clínicas.\n- Usa emojis con moderación para facilitar la lectura.\n- Formato: usa párrafos cortos, listas cuando sea útil. Respuestas concisas pero completas.\n- Si no hay suficientes datos para un análisis, indícalo y sugiere qué registrar.\n- NUNCA inventes datos ni supongas valores no registrados.';
-
-var PROMPTS_RAPIDOS = {
-  glucemia: 'Analiza el historial de glucemia de este paciente. Identifica: 1) tendencias preocupantes, 2) momentos del día con peor control, 3) si el tiempo en rango es adecuado, 4) recomendaciones prácticas específicas basadas en sus datos.',
-  medicamentos: 'Revisa el estado de la medicación del paciente. Analiza: 1) cumplimiento de tomas registradas hoy, 2) alertas de stock bajo o agotado, 3) si los horarios de medicación son apropiados para el perfil glucémico observado, 4) cualquier observación relevante.',
-  alimentacion: 'Analiza el diario de alimentación. Evalúa: 1) distribución calórica, 2) frecuencia de alimentos con alto índice glucémico, 3) correlación entre comidas registradas y picos de glucosa si puedes inferirla, 4) recomendaciones dietéticas personalizadas.',
-  vitales: 'Analiza los registros de peso y tensión arterial. Evalúa: 1) tendencia del IMC y peso, 2) control de tensión arterial (objetivo <130/80 en diabéticos), 3) evolución del pulso, 4) recomendaciones para mejorar estos parámetros.',
-  resumen: 'Genera un resumen médico completo y estructurado de este paciente diabético, apto para compartir con su médico. Incluye: control glucémico, HbA1c, medicación, vitales, alimentación, próximas citas y los 3 puntos más importantes a tratar en la próxima consulta.',
-  riesgos: 'Identifica alertas y patrones de riesgo en todos los registros del paciente. Busca: hipoglucemias frecuentes, hiperglucemias sostenidas, stock de medicación crítico, tensión elevada, y cualquier otro patrón que merezca atención urgente o preventiva.'
-};
-
-var TITULOS_RAPIDOS = {
-  glucemia: '📊 Análisis de Glucemia',
-  medicamentos: '💊 Revisión de Medicación',
-  alimentacion: '🍽️ Hábitos Alimenticios',
-  vitales: '⚖️ Peso y Tensión',
-  resumen: '📋 Resumen Médico Completo',
-  riesgos: '⚠️ Alertas y Riesgos'
-};
-
-async function llamarIA(mensajes) {
-  var apiKey = ldv('ai_api_key', '');
-  if (!apiKey) {
-    throw new Error('NO_API_KEY');
-  }
-  var contexto = construirContexto();
-  var msgsConContexto = [{
-    role: 'user',
-    content: 'CONTEXTO — datos del paciente:\n' + contexto + '\n\nMi pregunta: ' + mensajes[0].content
-  }].concat(mensajes.slice(1));
-
-  // Intentar llamada directa primero, si falla usar proxy CORS
-   var bodyData = JSON.stringify({
-    model: 'claude-haiku-4-5-20251001',
-    max_tokens: 500,
-    system: PROMPT_SISTEMA,
-    messages: msgsConContexto
-  });
-  var resp;
-  var controller = new AbortController();
-  var timeoutId = setTimeout(function(){ controller.abort(); }, 30000);
-  resp = await fetch('https://glucocontrol-proxy.luengoguadiana.workers.dev', {
-    method: 'POST',
-    signal: controller.signal,
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-    },
-    body: bodyData
-  });
-  clearTimeout(timeoutId);
-  if (!resp.ok) {
-    var errData = await resp.json().catch(function(){return {};});
-    throw new Error(errData.error ? errData.error.message : 'Error ' + resp.status);
-  }
-  var data = await resp.json();
-  return data.content.map(function(b){return b.type==='text'?b.text:'';}).join('');
+function doRestaurarJSON(input){
+  if(!input.files||!input.files[0])return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var data=JSON.parse(e.target.result);
+      if(!data.version||!data.gl){toast('❌ Archivo no válido','err');return;}
+      confirmar(
+        '¿Restaurar backup?',
+        'Esto reemplazará TODOS tus datos actuales con los del archivo. La acción no se puede deshacer.',
+        function(){
+          if(data.gl)  {GL=data.gl;  sv('gl',GL);}
+          if(data.me)  {ME=data.me;  sv('me',ME);}
+          if(data.tm)  {TM=data.tm;  sv('tm',TM);}
+          if(data.ci)  {CI=data.ci;  sv('ci',CI);}
+          if(data.in_) {IN=data.in_; sv('in',IN);}
+          if(data.hb)  {HB=data.hb;  sv('hb',HB);}
+          if(data.re)  {RE=data.re;  sv('re',RE);}
+          if(data.al)  {AL=data.al;  sv('al',AL);}
+          if(data.vt)  {VT=data.vt;  sv('vt',VT);}
+          if(data.altura!=null)    {alturaGuardada=data.altura;svv('altura',data.altura);}
+          if(data.user_nombre)      svv('user_nombre',data.user_nombre);
+          if(data.alerta_horas!=null) svv('alerta_horas',data.alerta_horas);
+          if(data.peso_objetivo!=null) svv('peso_objetivo',data.peso_objetivo);
+          toast('✅ Backup restaurado correctamente','ok');
+          setTimeout(function(){ir(secActual);},400);
+        },
+        '📂'
+      );
+    }catch(err){toast('❌ Error al leer el archivo','err');}
+  };
+  reader.readAsText(input.files[0]);
+  input.value=''; // permitir volver a seleccionar el mismo fichero
 }
 
-function formatearRespuestaIA(texto) {
-  return texto
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/^### (.*?)$/gm, '<h4>$1</h4>')
-    .replace(/^## (.*?)$/gm, '<h4 style="font-size:0.9rem;color:#0f4a61;margin:10px 0 4px">$1</h4>')
-    .replace(/^- (.*?)$/gm, '<li>$1</li>')
-    .replace(/(<li>.*<\/li>\n?)+/g, function(m){return '<ul>'+m+'</ul>';})
-    .replace(/\n\n/g, '</p><p>')
-    .replace(/\n/g, '<br>')
-    .replace(/^/, '<p>').replace(/$/, '</p>')
-    .replace(/<p><\/p>/g, '');
-}
 
-async function analisisRapido(tipo) {
-  var card = g('ai-respuesta-card');
-  var body = g('ai-respuesta-body');
-  var titulo = g('ai-respuesta-titulo');
-  var btn = document.querySelector('.ai-quick-btn[onclick*="' + tipo + '"]');
-  if (btn) btn.classList.add('loading');
-
-  titulo.textContent = TITULOS_RAPIDOS[tipo] || 'Análisis';
-  card.style.display = 'block';
-  body.innerHTML = '<div class="ai-typing"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div><p style="font-size:0.78rem;color:#999;margin-left:4px">Analizando tus datos...</p>';
-  card.scrollIntoView({behavior:'smooth', block:'start'});
-
-  try {
-    var respuesta = await llamarIA([{role:'user', content: PROMPTS_RAPIDOS[tipo]}]);
-    body.innerHTML = '<div class="ai-msg assistant">' + formatearRespuestaIA(respuesta) + '</div>';
-  } catch(e) {
-    if (e.message === 'NO_API_KEY') {
-      body.innerHTML = '<div class="ai-msg" style="border-left-color:#f39c12;background:var(--lo-bg)">🔑 Configura tu API Key de Anthropic para usar el asistente. Encuéntrala en el panel de configuración (⚙️ arriba a la derecha).</div>';
-    } else {
-      body.innerHTML = '<div class="ai-msg" style="border-left-color:#e74c3c;background:var(--hi-bg)">❌ <strong>Error:</strong> ' + e.message + '<br><small style="color:#999">Verifica que tu API Key es correcta y tiene saldo disponible.</small></div>';
-    }
-  }
-  if (btn) btn.classList.remove('loading');
-}
-
-function limpiarIA() {
-  var card = g('ai-respuesta-card');
-  if (card) card.style.display = 'none';
-}
-
-async function enviarChat() {
-  var input = g('ai-chat-input');
-  var btn = g('ai-send-btn');
-  var mensajes = g('ai-chat-mensajes');
-  var texto = (input.value || '').trim();
-  if (!texto) return;
-
-  input.value = '';
-  btn.disabled = true;
-  btn.textContent = '...';
-
-  // Añadir mensaje usuario
-  mensajes.innerHTML += '<div class="ai-msg user"><strong>Tú:</strong> ' + texto.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>';
-  mensajes.innerHTML += '<div class="ai-msg loading" id="ai-typing-msg"><div class="ai-typing"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div></div>';
-  mensajes.scrollTop = mensajes.scrollHeight;
-
-  aiChatHistory.push({role:'user', content: texto});
-
-  try {
-    var respuesta = await llamarIA(aiChatHistory);
-    aiChatHistory.push({role:'assistant', content: respuesta});
-    var typing = g('ai-typing-msg');
-    if (typing) typing.remove();
-    mensajes.innerHTML += '<div class="ai-msg assistant"><strong>🤖 Asistente:</strong><br>' + formatearRespuestaIA(respuesta) + '</div>';
-  } catch(e) {
-    var typing2 = g('ai-typing-msg');
-    if (typing2) typing2.remove();
-    if (e.message === 'NO_API_KEY') {
-      mensajes.innerHTML += '<div class="ai-msg" style="border-left-color:#f39c12;background:var(--lo-bg)">🔑 Configura tu API Key en el panel ⚙️ para usar el chat.</div>';
-    } else {
-      mensajes.innerHTML += '<div class="ai-msg" style="border-left-color:#e74c3c;background:var(--hi-bg)">❌ <strong>Error:</strong> ' + e.message + '</div>';
-    }
-    aiChatHistory.pop();
-  }
-
-  btn.disabled = false;
-  btn.textContent = 'Enviar';
-  mensajes.scrollTop = mensajes.scrollHeight;
-}
+var aiChatHistory = (function(){try{var s=localStorage.getItem('gc_ai_chat');return s?JSON.parse(s):[];}catch(e){return[];}})();
+function _saveAiChat(){try{localStorage.setItem('gc_ai_chat',JSON.stringify(aiChatHistory.slice(-20)));}catch(e){}}
+function limpiarChatIA(){aiChatHistory=[];_saveAiChat();pintaAiWelcome();toast('🗑️ Chat eliminado','warn');}
 
 function aiChatKeydown(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviarChat(); }
+}
+
+function pintaAiWelcome(){
+  var box=g('ai-messages');if(!box)return;
+  if(!aiChatHistory.length){
+    box.innerHTML='<div style="background:var(--primary-light);border-radius:10px;padding:12px 14px;font-size:0.83rem;color:var(--primary-mid);max-width:85%"><strong>🤖 Asistente GlucoControl</strong><br>Hola, puedo ayudarte a interpretar tus datos de glucemia, medicación o hábitos. ¿En qué te puedo ayudar?</div>';
+  } else {
+    renderAiMessages();
+  }
+}
+
+function renderAiMessages(){
+  var box=g('ai-messages');if(!box)return;
+  var html='';
+  aiChatHistory.forEach(function(m){
+    if(m.role==='user'){
+      html+='<div style="align-self:flex-end;background:var(--primary-mid);color:#fff;border-radius:10px 10px 2px 10px;padding:9px 13px;font-size:0.83rem;max-width:80%">'+m.content.replace(/</g,'&lt;')+'</div>';
+    } else {
+      html+='<div style="background:var(--surface2);border-radius:10px 10px 10px 2px;padding:9px 13px;font-size:0.83rem;color:var(--text);max-width:85%;border:1px solid var(--border)"><strong style="color:var(--primary-mid)">🤖</strong> '+m.content.replace(/</g,'&lt;').replace(/\n/g,'<br>')+'</div>';
+    }
+  });
+  box.innerHTML=html;
+  box.scrollTop=box.scrollHeight;
+}
+
+function construirContextoIA(){
+  var hoyStr=hoy();
+  var glHoy=GL.filter(function(g2){return g2.fecha===hoyStr;});
+  var avg=glHoy.length?Math.round(glHoy.reduce(function(s,g2){return s+g2.valor;},0)/glHoy.length):null;
+  var ultGL=GL[0],ultHB=HB[0],ultVT=VT[0];
+
+  // Tendencia últimos 7 días
+  var dias7=[],desde7=new Date();desde7.setDate(desde7.getDate()-6);
+  for(var i=0;i<7;i++){var d=new Date(desde7);d.setDate(desde7.getDate()+i);dias7.push(d.toISOString().slice(0,10));}
+  var promedios7=dias7.map(function(d){var gs=GL.filter(function(g2){return g2.fecha===d;});return gs.length?{fecha:d,avg:Math.round(gs.reduce(function(s,g2){return s+g2.valor;},0)/gs.length),n:gs.length}:null;}).filter(Boolean);
+  var total7=GL.filter(function(g2){return g2.fecha>=dias7[0];});
+  var enRango7=total7.filter(function(g2){return g2.valor>=70&&g2.valor<=180;}).length;
+  var pctRango7=total7.length?Math.round(enRango7/total7.length*100):null;
+
+  // eHbA1c estimada
+  var ehba=calcularEHba1c();
+
+  // Patrón postprandial (ayunas vs después de comidas)
+  var gsAyunas=GL.filter(function(g2){return g2.momento==='ayunas';}).slice(0,10);
+  var avgAyunas=gsAyunas.length?Math.round(gsAyunas.reduce(function(s,g2){return s+g2.valor;},0)/gsAyunas.length):null;
+  var gsPost=GL.filter(function(g2){return g2.momento==='despues_comida'||g2.momento==='despues_desayuno'||g2.momento==='despues_cena';}).slice(0,10);
+  var avgPost=gsPost.length?Math.round(gsPost.reduce(function(s,g2){return s+g2.valor;},0)/gsPost.length):null;
+
+  var ctx='Datos del paciente en GlucoControl:\n';
+  if(avg)ctx+='- Glucosa promedio hoy: '+avg+' mg/dL ('+glHoy.length+' mediciones)\n';
+  if(ultGL)ctx+='- Última glucemia: '+ultGL.valor+' mg/dL el '+fmtF(ultGL.fecha)+' ('+( MLAB[ultGL.momento]||ultGL.momento)+')\n';
+  if(ultHB)ctx+='- Última HbA1c real: '+ultHB.valor+'% ('+lblHba(ultHB.valor)+') — '+fmtF(ultHB.fecha)+'\n';
+  if(!ultHB&&ehba)ctx+='- eHbA1c estimada (fórmula IFCC): '+ehba+'%\n';
+  if(pctRango7!==null)ctx+='- Tiempo en rango últimos 7 días: '+pctRango7+'% ('+total7.length+' mediciones)\n';
+  if(promedios7.length){ctx+='- Promedios diarios última semana: ';ctx+=promedios7.map(function(d){return d.fecha.slice(5)+': '+d.avg+'mg/dL';}).join(', ')+'\n';}
+  if(avgAyunas)ctx+='- Promedio en ayunas (últimas '+gsAyunas.length+' mediciones): '+avgAyunas+' mg/dL\n';
+  if(avgPost)ctx+='- Promedio postprandial (últimas '+gsPost.length+' mediciones): '+avgPost+' mg/dL\n';
+  if(ME.length)ctx+='- Medicamentos activos: '+ME.map(function(m){return m.nombre+' '+m.dosis+(m.horarios&&m.horarios.length?' ('+m.horarios.join(', ')+')':'')+(m.stock!==undefined?' — stock: '+m.stock+'u':'');}).join('; ')+'\n';
+  if(ultVT&&ultVT.peso)ctx+='- Peso: '+ultVT.peso+' kg'+(ultVT.imc?' — IMC: '+ultVT.imc+' ('+lblImc(ultVT.imc)+')':'')+'\n';
+  if(ultVT&&ultVT.ts)ctx+='- Tensión: '+ultVT.ts+'/'+ultVT.td+' mmHg'+(ultVT.pulso?' — pulso: '+ultVT.pulso+' ppm':'')+'\n';
+  ctx+='Responde siempre en español, de forma clara, empática y práctica. Recuerda siempre que no eres médico y que decisiones clínicas deben consultarse con el profesional sanitario correspondiente. Sé conciso y directo.';
+  return ctx;
+}
+
+function enviarChat(){
+  var input=g('ai-input');if(!input)return;
+  var texto=input.value.trim();if(!texto)return;
+  var apiKey=ldv('ai_api_key','');
+  if(!apiKey){toast('⚠️ Configura tu API Key primero (⚙️)','warn');abrirConfig();return;}
+
+  aiChatHistory.push({role:'user',content:texto});
+  _saveAiChat();
+  input.value='';
+  renderAiMessages();
+
+  var btn=document.querySelector('#sec-asistente .btn');
+  if(btn){btn.disabled=true;btn.textContent='...';}
+
+  var messages=[{role:'user',content:construirContextoIA()+'\n\nPregunta del usuario: '+texto}];
+  if(aiChatHistory.length>2){
+    // incluir historial (sin el contexto, solo últimos intercambios)
+    messages=[];
+    var hist=aiChatHistory.slice(-6);
+    hist.forEach(function(m,i){
+      if(i===0&&m.role==='user'){messages.push({role:'user',content:construirContextoIA()+'\n\nPregunta: '+m.content});}
+      else{messages.push({role:m.role,content:m.content});}
+    });
+  }
+
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,messages:messages})
+  }).then(function(r){return r.json();}).then(function(data){
+    var texto2=(data.content&&data.content[0]&&data.content[0].text)||'No se pudo obtener respuesta.';
+    if(data.error)texto2='Error: '+(data.error.message||'API Error');
+    aiChatHistory.push({role:'assistant',content:texto2});
+    _saveAiChat();
+    renderAiMessages();
+  }).catch(function(e){
+    aiChatHistory.push({role:'assistant',content:'Error de conexión. Comprueba tu API Key y conexión a internet.'});
+    _saveAiChat();
+    renderAiMessages();
+  }).finally(function(){
+    var btn2=document.querySelector('#sec-asistente .btn');
+    if(btn2){btn2.disabled=false;btn2.textContent='Enviar';}
+  });
 }
 
 // ── WHATSAPP ─────────────────────────────────────────────────
@@ -1893,14 +2378,33 @@ function probarNotificacion(){
 }
 
 // ── WHATSAPP en sección IA ────────────────────────────────────
-function compartirAnalisisIA(){
-  var body = g('ai-respuesta-body');
-  if(!body||!body.textContent.trim()){toast('⚠️ Genera un análisis primero','warn');return;}
-  var texto = '🤖 *Análisis GlucoControl IA*\n\n' + body.innerText + '\n\n_Generado por GlucoControl 🩸_';
-  window.open('https://wa.me/?text='+encodeURIComponent(texto),'_blank');
+function actualizarEstadoKey(){
+  var el=g('cfg-estado');if(!el)return;
+  var key=ldv('ai_api_key','');
+  if(!key){
+    el.innerHTML='<div style="font-size:0.76rem;color:var(--text2)">Sin API Key configurada.</div>';
+  } else {
+    var preview=key.slice(0,10)+'…'+key.slice(-4);
+    el.innerHTML='<div style="display:flex;align-items:center;gap:7px;font-size:0.76rem"><span style="color:var(--ok);font-weight:700">✅ Clave guardada</span><span style="color:var(--text3)">'+preview+'</span><button onclick="borrarApiKey()" style="background:none;border:none;color:var(--hi);font-size:0.72rem;cursor:pointer;text-decoration:underline">Eliminar</button></div>';
+  }
+}
+function guardarApiKey(){
+  var input=g('cfg-apikey');if(!input)return;
+  var val=input.value.trim();
+  if(!val){marcarError('cfg-apikey','Introduce una API Key');return;}
+  if(!val.startsWith('sk-')){marcarError('cfg-apikey','La clave debe empezar por sk-');return;}
+  svv('ai_api_key',val);
+  actualizarEstadoKey();
+  cerrar('mconfig');
+  toast('✅ API Key guardada','ok');
+}
+function borrarApiKey(){
+  svv('ai_api_key','');
+  var input=g('cfg-apikey');if(input)input.value='';
+  actualizarEstadoKey();
+  toast('🗑️ API Key eliminada','warn');
 }
 
-// ── CONFIG API KEY ────────────────────────────────────────────
 function abrirConfig(){
   var key = ldv('ai_api_key','');
   var input = g('cfg-apikey');
@@ -1914,44 +2418,6 @@ function toggleVerKey(){
   var cb = g('cfg-show');
   if(input) input.type = cb.checked ? 'text' : 'password';
 }
-function guardarApiKey(){
-  var key = (g('cfg-apikey').value || '').trim();
-  limpiarErrores(['cfg-apikey']);
-  if(!key){ marcarError('cfg-apikey','Introduce una API Key'); return; }
-  if(!key.startsWith('sk-ant-')){ marcarError('cfg-apikey','La clave debe empezar con sk-ant-'); return; }
-  svv('ai_api_key', key);
-  cerrar('mconfig');
-  actualizarBannerKey();
-  toast('🔑 API Key guardada correctamente','ok');
-}
-function borrarApiKey(){
-  svv('ai_api_key','');
-  if(g('cfg-apikey')) g('cfg-apikey').value = '';
-  actualizarEstadoKey();
-  actualizarBannerKey();
-  toast('🗑️ API Key eliminada','warn');
-}
-function actualizarEstadoKey(){
-  var key = ldv('ai_api_key','');
-  var el = g('cfg-key-status');
-  if(!el) return;
-  if(key){ el.textContent = '✅ Configurada'; el.style.color = 'var(--ok)'; }
-  else { el.textContent = '❌ No configurada'; el.style.color = 'var(--hi)'; }
-}
-function actualizarBannerKey(){
-  var banner = g('ai-key-banner');
-  if(!banner) return;
-  var key = ldv('ai_api_key','');
-  if(key){
-    banner.style.cssText = 'display:flex;padding:10px 14px;border-radius:9px;margin-bottom:14px;font-size:0.82rem;align-items:center;justify-content:space-between;gap:10px;background:var(--ok-bg);border:1px solid var(--ok-border);color:var(--ok)';
-    banner.innerHTML = '<span>✅ Asistente listo — API Key configurada</span><button onclick="abrirConfig()" style="background:none;border:none;color:var(--ok);font-size:0.75rem;font-weight:700;text-decoration:underline;cursor:pointer">Cambiar</button>';
-  } else {
-    banner.style.cssText = 'display:flex;padding:10px 14px;border-radius:9px;margin-bottom:14px;font-size:0.82rem;align-items:center;justify-content:space-between;gap:10px;background:var(--lo-bg);border:1px solid var(--lo-border);color:#b7770d';
-    banner.innerHTML = '<span>🔑 Necesitas una API Key de Anthropic para usar el asistente</span><button onclick="abrirConfig()" style="background:var(--lo);border:none;color:#fff;padding:5px 11px;border-radius:6px;font-size:0.75rem;font-weight:700;cursor:pointer">Configurar</button>';
-  }
-}
-
-// ── MODO OSCURO ───────────────────────────────────────────────
 function toggleDark(){
   var dark=document.body.classList.toggle('dark');
   svv('darkmode',dark);
@@ -1966,15 +2432,389 @@ function initDark(){
 // ── FAB VISIBILIDAD ───────────────────────────────────────────
 function actualizarFab(sec){
   var fab=g('fab');if(!fab)return;
-  // Mostrar FAB solo en secciones donde tiene sentido registrar glucemia
-  var mostrar=['dashboard','glucemia','estadisticas','asistente'].indexOf(sec)!==-1;
+  var mostrar=['dashboard','glucemia','estadisticas','medicamentos','vitales','alimentacion','citas','hba1c'].indexOf(sec)!==-1;
   fab.classList.toggle('hidden',!mostrar);
+
+  // Actualizar opciones del FAB según sección
+  var optMg=g('fopt-mg'),optVit=g('fopt-mvit'),optMm=g('fopt-mm'),optAl=g('fopt-mal'),optCi=g('fopt-mc'),optHb=g('fopt-mhba');
+  var opts=[optMg,optVit,optMm,optAl,optCi,optHb];
+  opts.forEach(function(o){if(o)o.style.display='none';});
+
+  if(sec==='glucemia'||sec==='dashboard'||sec==='estadisticas'){
+    if(optMg)optMg.style.display='';
+  } else if(sec==='medicamentos'){
+    if(optMm)optMm.style.display='';
+    if(optMg)optMg.style.display='';
+  } else if(sec==='vitales'){
+    if(optVit)optVit.style.display='';
+  } else if(sec==='alimentacion'){
+    if(optAl)optAl.style.display='';
+  } else if(sec==='citas'){
+    if(optCi)optCi.style.display='';
+  } else if(sec==='hba1c'){
+    if(optHb)optHb.style.display='';
+  } else {
+    // Secciones genéricas: mostrar glucemia y vitales
+    if(optMg)optMg.style.display='';
+    if(optVit)optVit.style.display='';
+  }
 }
 
-// ── INICIO ───────────────────────────────────────────────────
+// ── PANTALLA DE BIENVENIDA ───────────────────────────────────
+function mostrarBienvenida(){
+  var nombre=ldv('user_nombre','');
+  var el=g('wl-body'),ws=g('welcome-screen');
+  if(!el||!ws)return;
+  ws.style.display='flex';ws.classList.remove('hide');
+  if(!nombre){
+    el.innerHTML='<div class="wl-name-wrap"><input type="text" id="wl-input-nombre" placeholder="¿Cómo te llamas?" maxlength="30" onkeydown="wlKeyCheck(event)"><button onclick="guardarNombreBienvenida()">Entrar →</button></div>';
+    setTimeout(function(){var inp=g('wl-input-nombre');if(inp)inp.focus();},300);
+  } else {
+    var hora=new Date().getHours();
+    var saludo=hora<12?'¡Buenos días, ':hora<18?'¡Buenas tardes, ':'¡Buenas noches, ';
+    var today=hoy(),glHoy=GL.filter(function(g2){return g2.fecha===today;}),mediHoy=glHoy.length;
+    var promHoy=mediHoy?Math.round(glHoy.reduce(function(s,g2){return s+g2.valor;},0)/mediHoy):null;
+    var col=promHoy?(promHoy<70?'#f39c12':promHoy<=180?'#2ecc71':'#e74c3c'):'#fff';
+    el.innerHTML='<div class="wl-resumen"><div style="font-size:1.1rem;margin-bottom:16px;opacity:0.9">'+saludo+'<strong>'+nombre+'</strong>!</div>'
+      +'<div class="wl-grid"><div class="wl-card"><div class="wl-dato" style="color:'+col+'">'+(promHoy||'—')+'</div><div class="wl-label">Prom. hoy'+(promHoy?' mg/dL':'')+'</div></div>'
+      +'<div class="wl-card"><div class="wl-dato">'+mediHoy+'</div><div class="wl-label">Mediciones hoy</div></div></div>'
+      +'<button class="wl-btn-entrar" onclick="cerrarBienvenida()">Entrar a la app →</button></div>';
+  }
+}
+function wlKeyCheck(e){if(e.key==='Enter')guardarNombreBienvenida();}
+function guardarNombreBienvenida(){
+  var inp=g('wl-input-nombre'),nombre=inp?inp.value.trim():'';
+  if(!nombre){if(inp)inp.style.outline='2px solid #e74c3c';return;}
+  svv('user_nombre',nombre);cerrarBienvenida();
+}
+function cerrarBienvenida(){
+  var ws=g('welcome-screen');
+  if(ws){ws.classList.add('hide');setTimeout(function(){ws.style.display='none';},500);}
+}
+// ── FAB DESPLEGABLE ──────────────────────────────────────────
+var fabOpen=false;
+function toggleFab(){
+  fabOpen=!fabOpen;
+  var fab=g('fab'),opts=document.querySelectorAll('.fab-opt');
+  if(fab)fab.classList.toggle('open',fabOpen);
+  opts.forEach(function(o,i){setTimeout(function(){o.classList.toggle('show',fabOpen);},fabOpen?i*60:(opts.length-1-i)*40);});
+}
+function fabAccion(modal){toggleFab();setTimeout(function(){abrirModal(modal);},150);}
+document.addEventListener('click',function(e){if(fabOpen&&!e.target.closest('#fab-wrap'))toggleFab();});
+
+// ── RESUMEN MÉDICO IA ────────────────────────────────────────
+function abrirResumenMedico(){
+  g('mresumen-resultado').style.display='none';
+  g('mresumen-texto').textContent='';
+  g('mresumen').classList.add('on');
+}
+
+function construirDatosResumen(dias){
+  var desde=new Date();desde.setDate(desde.getDate()-dias);
+  var desdeS=desde.toISOString().slice(0,10);
+  var glP=GL.filter(function(g2){return g2.fecha>=desdeS;});
+  var nombre=ldv('user_nombre','Paciente');
+  var total=glP.length;
+  if(!total)return null;
+
+  var avg=Math.round(glP.reduce(function(s,g2){return s+g2.valor;},0)/total);
+  var enR=glP.filter(function(g2){return g2.valor>=70&&g2.valor<=180;}).length;
+  var altas=glP.filter(function(g2){return g2.valor>180;}).length;
+  var bajas=glP.filter(function(g2){return g2.valor<70;}).length;
+  var pctR=Math.round(enR/total*100);
+  var vals=glP.map(function(g2){return g2.valor;});
+  var mn=Math.min.apply(null,vals),mx=Math.max.apply(null,vals);
+  var sd=Math.round(Math.sqrt(glP.reduce(function(s,g2){return s+Math.pow(g2.valor-avg,2);},0)/total));
+  var cv=Math.round(sd/avg*100);
+
+  // Por momentos
+  var porMomento={};
+  MORDEN.forEach(function(m){
+    var gs=glP.filter(function(g2){return g2.momento===m;});
+    if(gs.length)porMomento[m]={avg:Math.round(gs.reduce(function(s,g2){return s+g2.valor;},0)/gs.length),n:gs.length};
+  });
+
+  // eHbA1c
+  var ehba=calcularEHba1c();
+  var ultHba=HB.length?HB[0]:null;
+
+  // Vitales
+  var vtP=VT.filter(function(v){return v.fecha>=desdeS;});
+  var ultVT=VT[0];
+
+  // Medicamentos
+  var meds=ME.map(function(m){return m.nombre+' '+m.dosis+(m.horarios&&m.horarios.length?' ('+m.horarios.join(', ')+'hrs)':'');});
+
+  // Citas próximas
+  var hoyS=hoy();
+  var proxCitas=CI.filter(function(c){return c.fecha>=hoyS;}).slice(0,3);
+
+  return {nombre:nombre,dias:dias,desdeS:desdeS,total:total,avg:avg,mn:mn,mx:mx,sd:sd,cv:cv,
+    enR:enR,altas:altas,bajas:bajas,pctR:pctR,porMomento:porMomento,
+    ehba:ehba,ultHba:ultHba,ultVT:ultVT,meds:meds,proxCitas:proxCitas};
+}
+
+function generarResumenMedico(){
+  var apiKey=ldv('ai_api_key','');
+  if(!apiKey){toast('⚠️ Configura tu API Key primero','warn');cerrar('mresumen');abrirConfig();return;}
+  var dias=parseInt(g('mresumen-periodo').value)||30;
+  var motivo=(g('mresumen-motivo')&&g('mresumen-motivo').value.trim())||'';
+  var datos=construirDatosResumen(dias);
+  if(!datos){toast('⚠️ Sin datos suficientes para el periodo seleccionado','warn');return;}
+
+  var btn=g('btn-generar-resumen');
+  btn.disabled=true;btn.textContent='⏳ Generando...';
+
+  var prompt='Eres un asistente médico especializado en diabetes. Genera un informe clínico estructurado y profesional en español para que el paciente lleve a su médico.\n\n'
+    +'DATOS DEL PACIENTE ('+datos.dias+' días, desde '+datos.desdeS+'):\n'
+    +'- Nombre: '+datos.nombre+'\n'
+    +'- Total mediciones: '+datos.total+'\n'
+    +'- Glucemia media: '+datos.avg+' mg/dL\n'
+    +'- Rango: '+datos.mn+' – '+datos.mx+' mg/dL\n'
+    +'- Desviación estándar: '+datos.sd+' mg/dL | CV: '+datos.cv+'%\n'
+    +'- Tiempo en rango (70-180): '+datos.pctR+'% ('+datos.enR+'/'+datos.total+')\n'
+    +'- Hiperglucemias (>180): '+datos.altas+' | Hipoglucemias (<70): '+datos.bajas+'\n';
+
+  var momentosStr=Object.keys(datos.porMomento).map(function(m){return (MLAB[m]||m)+': '+datos.porMomento[m].avg+' mg/dL (n='+datos.porMomento[m].n+')';}).join(', ');
+  if(momentosStr)prompt+='- Promedios por momento: '+momentosStr+'\n';
+  if(datos.ultHba)prompt+='- Última HbA1c real: '+datos.ultHba.valor+'% ('+fmtF(datos.ultHba.fecha)+')\n';
+  if(!datos.ultHba&&datos.ehba)prompt+='- eHbA1c estimada (Nathan 2008): '+datos.ehba+'%\n';
+  if(datos.meds.length)prompt+='- Medicación actual: '+datos.meds.join('; ')+'\n';
+  if(datos.ultVT){
+    if(datos.ultVT.peso)prompt+='- Último peso: '+datos.ultVT.peso+' kg'+(datos.ultVT.imc?' (IMC '+datos.ultVT.imc+')':'')+'\n';
+    if(datos.ultVT.ts)prompt+='- Última tensión: '+datos.ultVT.ts+'/'+datos.ultVT.td+' mmHg\n';
+  }
+  if(motivo)prompt+='- Motivo de consulta: '+motivo+'\n';
+  prompt+='\nGenera el informe con estas secciones: 1) Resumen ejecutivo (3-4 líneas), 2) Control glucémico (análisis detallado), 3) Patrones relevantes, 4) Medicación, 5) Preguntas sugeridas para el médico, 6) Próximos objetivos. Sé clínico, preciso y objetivo. No uses markdown con asteriscos, usa formato de texto plano con mayúsculas para los títulos.';
+
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,messages:[{role:'user',content:prompt}]})
+  }).then(function(r){return r.json();}).then(function(data){
+    var texto=(data.content&&data.content[0]&&data.content[0].text)||'Error al generar el informe.';
+    if(data.error)texto='Error: '+(data.error.message||'API Error');
+    g('mresumen-texto').textContent=texto;
+    g('mresumen-resultado').style.display='block';
+    // Scroll al resultado
+    setTimeout(function(){g('mresumen-resultado').scrollIntoView({behavior:'smooth',block:'start'});},100);
+  }).catch(function(){
+    g('mresumen-texto').textContent='Error de conexión. Comprueba tu API Key e internet.';
+    g('mresumen-resultado').style.display='block';
+  }).finally(function(){
+    btn.disabled=false;btn.textContent='🤖 Generar informe con IA';
+  });
+}
+
+function copiarResumen(){
+  var txt=g('mresumen-texto').textContent;
+  if(!txt)return;
+  navigator.clipboard.writeText(txt).then(function(){toast('📋 Informe copiado','ok');}).catch(function(){toast('⚠️ No se pudo copiar','warn');});
+}
+
+function imprimirResumen(){
+  var txt=g('mresumen-texto').textContent;
+  if(!txt)return;
+  var nombre=ldv('user_nombre','Paciente');
+  var fecha=new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  var win=window.open('','_blank','width=700,height=800');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Informe GlucoControl</title>'
+    +'<style>body{font-family:Arial,sans-serif;font-size:13px;line-height:1.7;color:#222;padding:32px 40px;max-width:700px;margin:0 auto}'
+    +'.header{border-bottom:2px solid #0f4a61;padding-bottom:12px;margin-bottom:20px}'
+    +'.header h1{color:#0f4a61;font-size:18px;margin:0 0 4px}.header p{color:#666;font-size:12px;margin:0}'
+    +'.footer{margin-top:30px;border-top:1px solid #ddd;padding-top:10px;font-size:11px;color:#999}'
+    +'pre{white-space:pre-wrap;font-family:Arial,sans-serif}'
+    +'@media print{body{padding:20px}button{display:none}}</style></head><body>'
+    +'<div class="header"><h1>🩺 GlucoControl — Informe Médico</h1><p>'+nombre+' · '+fecha+'</p></div>'
+    +'<pre>'+txt.replace(/</g,'&lt;')+'</pre>'
+    +'<div class="footer">Generado por GlucoControl · Este informe es orientativo y no sustituye el criterio médico.</div>'
+    +'</body></html>');
+  win.document.close();
+  setTimeout(function(){win.print();},400);
+}
+
+// ── SYNC GOOGLE DRIVE ────────────────────────────────────────
+var DRIVE_FILE_NAME='GlucoControl_sync.json';
+
+function abrirSyncDrive(){
+  pintarEstadoSync();
+  g('msync').classList.add('on');
+}
+
+function pintarEstadoSync(){
+  var el=g('msync-estado');if(!el)return;
+  var ultima=ldv('drive_sync_fecha',null);
+  if(ultima){
+    el.innerHTML='<div class="ab ok">✅ Último sync: '+new Date(ultima).toLocaleString('es-ES',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})+'</div>';
+  } else {
+    el.innerHTML='<div style="font-size:0.78rem;color:var(--text2);padding:6px 0">Sin sincronización previa en este dispositivo.</div>';
+  }
+}
+
+function construirBackupObj(){
+  return {
+    version:2,fecha:new Date().toISOString(),dispositivo:navigator.userAgent.slice(0,60),
+    gl:GL,me:ME,tm:TM,ci:CI,in_:IN,hb:HB,re:RE,al:AL,vt:VT,
+    altura:alturaGuardada,
+    user_nombre:ldv('user_nombre',''),
+    alerta_horas:ldv('alerta_horas',8),
+    peso_objetivo:ldv('peso_objetivo',null),
+    darkmode:ldv('darkmode',false)
+  };
+}
+
+function syncSubirDrive(){
+  var btn=g('btn-subir-drive');
+  btn.disabled=true;btn.textContent='⏳ Subiendo...';
+  var datos=JSON.stringify(construirBackupObj(),null,2);
+  var blob=new Blob([datos],{type:'application/json'});
+
+  // Buscar si ya existe el archivo para actualizarlo
+  gapi_findOrCreateFile(blob,function(ok,info){
+    btn.disabled=false;btn.textContent='☁️ Guardar en Drive';
+    if(ok){
+      svv('drive_sync_fecha',new Date().toISOString());
+      svv('drive_file_id',info.id||'');
+      pintarEstadoSync();
+      toast('✅ Datos guardados en Drive','ok');
+    } else {
+      toast('❌ Error al subir a Drive: '+info,'err');
+    }
+  });
+}
+
+function syncDescargarDrive(){
+  var btn=g('btn-bajar-drive');
+  btn.disabled=true;btn.textContent='⏳ Descargando...';
+  var fileId=ldv('drive_file_id','');
+
+  gapi_descargarArchivo(fileId,function(ok,datos){
+    btn.disabled=false;btn.textContent='📥 Restaurar desde Drive';
+    if(!ok){toast('❌ Error al descargar de Drive: '+datos,'err');return;}
+    confirmar(
+      '¿Restaurar desde Drive?',
+      'Esto reemplazará TODOS tus datos actuales con los del archivo en Drive. No se puede deshacer.',
+      function(){
+        try{
+          var d=JSON.parse(datos);
+          if(!d.version||!d.gl){toast('❌ Archivo no válido','err');return;}
+          if(d.gl)  {GL=d.gl;  sv('gl',GL);}
+          if(d.me)  {ME=d.me;  sv('me',ME);}
+          if(d.tm)  {TM=d.tm;  sv('tm',TM);}
+          if(d.ci)  {CI=d.ci;  sv('ci',CI);}
+          if(d.in_) {IN=d.in_; sv('in',IN);}
+          if(d.hb)  {HB=d.hb;  sv('hb',HB);}
+          if(d.re)  {RE=d.re;  sv('re',RE);}
+          if(d.al)  {AL=d.al;  sv('al',AL);}
+          if(d.vt)  {VT=d.vt;  sv('vt',VT);}
+          if(d.altura!=null)    {alturaGuardada=d.altura;svv('altura',d.altura);}
+          if(d.user_nombre)     svv('user_nombre',d.user_nombre);
+          if(d.alerta_horas!=null) svv('alerta_horas',d.alerta_horas);
+          if(d.peso_objetivo!=null) svv('peso_objetivo',d.peso_objetivo);
+          svv('drive_sync_fecha',new Date().toISOString());
+          pintarEstadoSync();
+          cerrar('msync');
+          toast('✅ Datos restaurados desde Drive','ok');
+          setTimeout(function(){ir(secActual);},400);
+        }catch(err){toast('❌ Error al procesar el archivo','err');}
+      },'☁️'
+    );
+  });
+}
+
+// Usa la API REST de Google Drive con fetch + token del usuario
+function gapi_getToken(cb){
+  // Intenta obtener el token de Google OAuth via el MCP de Drive si está disponible
+  // Como alternativa, pide al usuario que pegue su access token
+  var token=ldv('gdrive_token','');
+  var expiry=ldv('gdrive_token_expiry',0);
+  if(token&&Date.now()<expiry){cb(null,token);return;}
+  // Mostrar diálogo para token manual
+  var win=g('msync-token-wrap');
+  if(!win){
+    var wrap=document.createElement('div');
+    wrap.id='msync-token-wrap';
+    wrap.style.cssText='margin-top:12px;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)';
+    wrap.innerHTML='<div style="font-size:0.78rem;font-weight:700;color:var(--primary);margin-bottom:6px">🔑 Token de acceso de Google</div>'
+      +'<p style="font-size:0.72rem;color:var(--text2);margin-bottom:8px">Ve a <a href="https://developers.google.com/oauthplayground" target="_blank" style="color:var(--primary-mid)">OAuth Playground</a>, autoriza la API de Drive y pega el access token aquí:</p>'
+      +'<input type="password" id="gdrive-token-input" placeholder="ya29.A0..." style="width:100%;margin-bottom:8px;font-size:0.78rem">'
+      +'<button class="btn bp bs" onclick="guardarTokenDrive()" style="width:100%">Guardar token</button>';
+    g('msync-body').appendChild(wrap);
+  }
+  cb('necesita_token','');
+}
+
+function guardarTokenDrive(){
+  var inp=g('gdrive-token-input');
+  if(!inp||!inp.value.trim()){toast('⚠️ Introduce un token válido','warn');return;}
+  var token=inp.value.trim();
+  svv('gdrive_token',token);
+  svv('gdrive_token_expiry',Date.now()+3500*1000); // ~1h
+  var wrap=g('msync-token-wrap');if(wrap)wrap.remove();
+  toast('🔑 Token guardado','ok');
+}
+
+function gapi_findOrCreateFile(blob,cb){
+  gapi_getToken(function(err,token){
+    if(err){cb(false,'Configura el token primero');return;}
+    // Buscar archivo existente
+    var fileId=ldv('drive_file_id','');
+    if(fileId){
+      // Actualizar existente con PATCH
+      var form=new FormData();
+      form.append('file',blob,DRIVE_FILE_NAME);
+      fetch('https://www.googleapis.com/upload/drive/v3/files/'+fileId+'?uploadType=multipart',{
+        method:'PATCH',headers:{'Authorization':'Bearer '+token},body:form
+      }).then(function(r){return r.json();}).then(function(d){
+        if(d.error){
+          // Si 404, crear nuevo
+          if(d.error.code===404){svv('drive_file_id','');gapi_findOrCreateFile(blob,cb);}
+          else cb(false,d.error.message);
+        } else cb(true,d);
+      }).catch(function(e){cb(false,e.message);});
+    } else {
+      // Crear nuevo archivo
+      var meta=JSON.stringify({name:DRIVE_FILE_NAME,mimeType:'application/json'});
+      var form2=new FormData();
+      form2.append('metadata',new Blob([meta],{type:'application/json'}));
+      form2.append('file',blob,DRIVE_FILE_NAME);
+      fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{
+        method:'POST',headers:{'Authorization':'Bearer '+token},body:form2
+      }).then(function(r){return r.json();}).then(function(d){
+        if(d.error)cb(false,d.error.message);
+        else cb(true,d);
+      }).catch(function(e){cb(false,e.message);});
+    }
+  });
+}
+
+function gapi_descargarArchivo(fileId,cb){
+  gapi_getToken(function(err,token){
+    if(err){cb(false,'Configura el token primero');return;}
+    if(!fileId){
+      // Buscar por nombre
+      fetch('https://www.googleapis.com/drive/v3/files?q=name%3D%27'+DRIVE_FILE_NAME+'%27+and+trashed%3Dfalse&fields=files(id,name,modifiedTime)',{
+        headers:{'Authorization':'Bearer '+token}
+      }).then(function(r){return r.json();}).then(function(d){
+        if(!d.files||!d.files.length){cb(false,'No se encontró el archivo en Drive');return;}
+        var fid=d.files[0].id;svv('drive_file_id',fid);
+        gapi_descargarArchivo(fid,cb);
+      }).catch(function(e){cb(false,e.message);});
+      return;
+    }
+    fetch('https://www.googleapis.com/drive/v3/files/'+fileId+'?alt=media',{
+      headers:{'Authorization':'Bearer '+token}
+    }).then(function(r){
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      return r.text();
+    }).then(function(txt){cb(true,txt);}).catch(function(e){cb(false,e.message);});
+  });
+}
+
+
 initDark();
 iniciarRecordatorios();
-actualizarBannerKey();
+mostrarBienvenida();
 // Iniciar comprobación de alerta sin medición cada 30 min
 setInterval(function(){if(secActual==='dashboard')pintaAlertas();},1800000);
 ir('dashboard');
