@@ -1608,21 +1608,52 @@ async function llamarIA(mensajes) {
     content: 'CONTEXTO — datos del paciente:\n' + contexto + '\n\nMi pregunta: ' + mensajes[0].content
   }].concat(mensajes.slice(1));
 
-  var resp = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-5',
-      max_tokens: 1000,
-      system: PROMPT_SISTEMA,
-      messages: msgsConContexto
-    })
+  // Intentar llamada directa primero, si falla usar proxy CORS
+  // Lista de proxies CORS a intentar en orden
+  var PROXIES = [
+    'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.anthropic.com/v1/messages'),
+    'https://corsproxy.io/?' + encodeURIComponent('https://api.anthropic.com/v1/messages'),
+    'https://cors-anywhere.herokuapp.com/https://api.anthropic.com/v1/messages'
+  ];
+  var DIRECT = 'https://api.anthropic.com/v1/messages';
+  var bodyData = JSON.stringify({
+    model: 'claude-sonnet-4-5',
+    max_tokens: 1000,
+    system: PROMPT_SISTEMA,
+    messages: msgsConContexto
   });
+  var resp;
+  try {
+    resp = await fetch(DIRECT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: bodyData
+    });
+  } catch(e) {
+    // Llamada directa bloqueada, intentar proxies en orden
+    var exito = false;
+    for (var i = 0; i < PROXIES.length; i++) {
+      try {
+        resp = await fetch(PROXIES[i], {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+          },
+          body: bodyData
+        });
+        if (resp.ok) { exito = true; break; }
+      } catch(e2) { continue; }
+    }
+    if (!exito && !resp) throw new Error('No se pudo conectar con la IA. Comprueba tu conexión.');
+  }
   if (!resp.ok) {
     var errData = await resp.json().catch(function(){return {};});
     throw new Error(errData.error ? errData.error.message : 'Error ' + resp.status);
