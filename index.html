@@ -1617,15 +1617,18 @@ async function llamarIA(mensajes) {
   ];
   var DIRECT = 'https://api.anthropic.com/v1/messages';
   var bodyData = JSON.stringify({
-    model: 'claude-sonnet-4-5',
-    max_tokens: 1000,
+    model: 'claude-haiku-4-5-20251001',
+    max_tokens: 500,
     system: PROMPT_SISTEMA,
     messages: msgsConContexto
   });
   var resp;
   try {
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function(){ controller.abort(); }, 25000);
     resp = await fetch(DIRECT, {
       method: 'POST',
+      signal: controller.signal,
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
@@ -1634,6 +1637,7 @@ async function llamarIA(mensajes) {
       },
       body: bodyData
     });
+    clearTimeout(timeoutId);
   } catch(e) {
     // Llamada directa bloqueada, intentar proxies en orden
     var exito = false;
