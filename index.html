@@ -213,6 +213,22 @@ tr:hover td{background:var(--surface2)}
   #fab{bottom:74px}
 }
 
+/* ASISTENTE IA MEJORADO */
+@keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+@keyframes typingDot{0%,80%,100%{transform:scale(0.7);opacity:0.4}40%{transform:scale(1);opacity:1}}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ai-msg-user{align-self:flex-end;background:linear-gradient(135deg,var(--primary-mid),var(--primary));color:#fff;border-radius:18px 18px 4px 18px;padding:10px 14px;font-size:0.83rem;max-width:82%;word-wrap:break-word;animation:msgIn 0.2s ease;box-shadow:0 2px 8px rgba(15,74,97,0.25)}
+.ai-msg-bot{align-self:flex-start;background:var(--surface2);border:1px solid var(--border);border-radius:18px 18px 18px 4px;padding:11px 14px;font-size:0.83rem;max-width:88%;word-wrap:break-word;animation:msgIn 0.2s ease;color:var(--text);line-height:1.55}
+.ai-msg-bot strong{color:var(--primary-mid)}
+.ai-msg-bot ul{padding-left:16px;margin:4px 0}
+.ai-msg-bot li{margin-bottom:3px}
+.ai-msg-bot p{margin-bottom:6px}
+.ai-msg-bot p:last-child{margin-bottom:0}
+.ai-msg-error{align-self:flex-start;background:var(--hi-bg);border:1px solid var(--hi-border);color:var(--hi);border-radius:18px;padding:10px 14px;font-size:0.8rem;max-width:88%;animation:msgIn 0.2s ease}
+.ai-sug-btn{background:var(--primary-light);border:1px solid var(--border);color:var(--primary-mid);border-radius:20px;padding:6px 13px;font-size:0.73rem;font-weight:600;cursor:pointer;transition:all 0.18s;white-space:nowrap;font-family:var(--font)}
+.ai-sug-btn:hover{background:var(--primary-mid);color:#fff;transform:translateY(-1px);box-shadow:0 3px 8px rgba(15,74,97,0.2)}
+.ai-msg-time{font-size:0.62rem;color:var(--text3);margin-top:4px;text-align:right}
+.ai-msg-time.bot{text-align:left}
 /* TOAST */
 #toast-container{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
 .toast{padding:10px 18px;border-radius:22px;font-size:0.82rem;font-weight:700;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,0.18);opacity:0;transform:translateY(12px);transition:opacity 0.25s,transform 0.25s;white-space:nowrap}
@@ -616,16 +632,65 @@ tr:hover td{background:var(--surface2)}
 
     <!-- ASISTENTE IA -->
     <div class="sec" id="sec-asistente">
-      <div style="margin-bottom:14px"><h1 style="font-size:1.15rem;color:#0f4a61">Asistente IA</h1><p style="font-size:0.78rem;color:#999">Pregúntame sobre tu glucemia, medicación o hábitos.</p></div>
-      <div class="card" style="display:flex;flex-direction:column;min-height:420px">
-        <div id="ai-messages" style="flex:1;overflow-y:auto;max-height:380px;display:flex;flex-direction:column;gap:10px;margin-bottom:12px;padding-right:4px"></div>
-        <div style="display:flex;gap:8px;align-items:flex-end">
-          <textarea id="ai-input" rows="2" placeholder="Escribe tu pregunta..." style="flex:1;resize:none" onkeydown="aiChatKeydown(event)"></textarea>
-          <button class="btn bp" onclick="enviarChat()" style="padding:9px 14px;align-self:flex-end">Enviar</button>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div>
+          <h1 style="font-size:1.15rem;color:#0f4a61;display:flex;align-items:center;gap:7px">
+            <span style="background:linear-gradient(135deg,#0f4a61,#2eb89a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">🤖 Asistente IA</span>
+          </h1>
+          <p style="font-size:0.78rem;color:#999">Analizo tus datos y respondo preguntas sobre tu salud.</p>
         </div>
-        <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px">
-          <div style="font-size:0.7rem;color:var(--text3)">⚙️ Necesita API Key de Anthropic · <button onclick="abrirConfig()" style="background:none;border:none;color:var(--primary-mid);font-size:0.7rem;cursor:pointer;text-decoration:underline">Configurar</button></div>
-          <button onclick="limpiarChatIA()" style="background:none;border:1px solid var(--border);color:var(--text2);font-size:0.7rem;padding:3px 9px;border-radius:6px;cursor:pointer" title="Borrar historial del chat">🗑️ Limpiar chat</button>
+        <div style="display:flex;gap:6px;align-items:center">
+          <div id="ai-model-badge" style="display:none;background:var(--accent-light);border:1px solid var(--accent);border-radius:20px;padding:3px 10px;font-size:0.65rem;font-weight:700;color:#1d7a5e">Claude Sonnet</div>
+          <button onclick="limpiarChatIA()" style="background:none;border:1px solid var(--border);color:var(--text2);font-size:0.73rem;padding:5px 11px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:4px" title="Borrar historial">🗑️ Limpiar</button>
+        </div>
+      </div>
+
+      <!-- Sugerencias rápidas -->
+      <div id="ai-sugerencias" style="margin-bottom:12px;display:flex;gap:7px;flex-wrap:wrap"></div>
+
+      <!-- Tarjeta del chat -->
+      <div class="card" style="display:flex;flex-direction:column;padding:0;overflow:hidden">
+        <!-- Cabecera del chat -->
+        <div style="background:linear-gradient(135deg,var(--primary) 0%,var(--primary-mid) 100%);padding:12px 16px;display:flex;align-items:center;gap:10px">
+          <div style="width:36px;height:36px;background:rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem">🤖</div>
+          <div>
+            <div style="color:#fff;font-weight:700;font-size:0.88rem">GlucoAssist</div>
+            <div id="ai-status-dot" style="display:flex;align-items:center;gap:4px">
+              <div style="width:7px;height:7px;border-radius:50%;background:#2eb89a;animation:pulseDot 2s infinite"></div>
+              <span style="color:rgba(255,255,255,0.7);font-size:0.68rem">En línea · Datos sincronizados</span>
+            </div>
+          </div>
+          <div id="ai-typing-header" style="display:none;margin-left:auto;color:rgba(255,255,255,0.6);font-size:0.72rem;font-style:italic">escribiendo...</div>
+        </div>
+
+        <!-- Mensajes -->
+        <div id="ai-messages" style="flex:1;overflow-y:auto;min-height:300px;max-height:420px;display:flex;flex-direction:column;gap:12px;padding:16px;background:var(--surface)"></div>
+
+        <!-- Indicador de escritura -->
+        <div id="ai-typing-indicator" style="display:none;padding:0 16px 10px;align-items:center;gap:8px">
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:18px 18px 18px 4px;padding:10px 14px;display:flex;align-items:center;gap:5px">
+            <span style="width:7px;height:7px;border-radius:50%;background:var(--text3);animation:typingDot 1.2s infinite"></span>
+            <span style="width:7px;height:7px;border-radius:50%;background:var(--text3);animation:typingDot 1.2s 0.2s infinite"></span>
+            <span style="width:7px;height:7px;border-radius:50%;background:var(--text3);animation:typingDot 1.2s 0.4s infinite"></span>
+          </div>
+          <span style="font-size:0.71rem;color:var(--text3)">GlucoAssist está analizando...</span>
+        </div>
+
+        <!-- Input -->
+        <div style="padding:12px 16px;border-top:1px solid var(--border);background:var(--surface2)">
+          <div style="display:flex;gap:8px;align-items:flex-end">
+            <textarea id="ai-input" rows="2" placeholder="Escribe tu pregunta sobre tu glucemia, medicación, dieta..." style="flex:1;resize:none;border-radius:12px;font-size:0.83rem;padding:10px 12px" onkeydown="aiChatKeydown(event)"></textarea>
+            <button id="ai-send-btn" class="btn bp" onclick="enviarChat()" style="padding:10px 16px;align-self:flex-end;border-radius:12px;display:flex;align-items:center;gap:6px;transition:all 0.2s">
+              <span id="ai-send-ico">↑</span>
+            </button>
+          </div>
+          <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px">
+            <div style="font-size:0.67rem;color:var(--text3);display:flex;align-items:center;gap:4px">
+              ⚙️ <button onclick="abrirConfig()" style="background:none;border:none;color:var(--primary-mid);font-size:0.67rem;cursor:pointer;text-decoration:underline;padding:0">Configurar API Key</button>
+              <span id="ai-key-check" style="font-size:0.67rem"></span>
+            </div>
+            <div style="font-size:0.67rem;color:var(--text3)">Enter para enviar · Shift+Enter nueva línea</div>
+          </div>
         </div>
       </div>
     </div>
@@ -2102,13 +2167,101 @@ function aiChatKeydown(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviarChat(); }
 }
 
+// ── SUGERENCIAS CONTEXTUALES ──────────────────────────────────
+var AI_SUGERENCIAS_BASE=[
+  '¿Cómo está mi control glucémico?',
+  '¿Qué significa mi HbA1c?',
+  'Consejos para reducir picos postprandiales',
+  '¿Mi medicación es adecuada?',
+  '¿Cuál es mi tendencia esta semana?',
+  'Alimentos con bajo índice glucémico',
+  '¿Cuándo debo llamar al médico?',
+  'Ejercicio y diabetes tipo 2'
+];
+
+function pintaAiSugerencias(){
+  var cont=g('ai-sugerencias');if(!cont)return;
+  if(aiChatHistory.length>0){cont.style.display='none';return;}
+  cont.style.display='flex';
+  // Sugerencias contextuales según los datos
+  var sugs=[];
+  if(GL.length){
+    var ult=GL[0];
+    if(ult.valor>180)sugs.push('¿Por qué tengo la glucosa alta?');
+    else if(ult.valor<70)sugs.push('¿Qué hago con la hipoglucemia?');
+    else sugs.push('¿Cómo está mi control esta semana?');
+  }
+  if(ME.length){var bajo=ME.filter(function(m){return m.stock<=m.alerta;});if(bajo.length)sugs.push('⚠️ Stock bajo de '+bajo[0].nombre);}
+  if(HB.length&&HB[0].valor>=6.5)sugs.push('¿Cómo puedo bajar mi HbA1c?');
+  // Rellenar con sugerencias base hasta 5
+  AI_SUGERENCIAS_BASE.forEach(function(s){if(sugs.length<5&&sugs.indexOf(s)===-1)sugs.push(s);});
+  cont.innerHTML=sugs.map(function(s){
+    return '<button class="ai-sug-btn" onclick="usarSugerencia(this.textContent)">'+s+'</button>';
+  }).join('');
+}
+
+function usarSugerencia(texto){
+  var inp=g('ai-input');if(!inp)return;
+  inp.value=texto.replace(/^⚠️ /,'');
+  enviarChat();
+}
+
+// ── MARKDOWN SIMPLE ───────────────────────────────────────────
+function mdToHtml(text){
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    // Negritas y cursivas
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    // Listas
+    .replace(/^[-•]\s+(.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g,'<ul>$&</ul>')
+    // Saltos de línea dobles como párrafos
+    .replace(/\n\n+/g,'</p><p>')
+    .replace(/\n/g,'<br>')
+    // Envolver en párrafo si no empieza por lista/ul
+    .replace(/^(?!<ul|<p)(.+)/,'<p>$1')
+    + (text.match(/\n/)? '</p>' : '');
+}
+
+function fmtHora(){
+  var d=new Date();
+  return d.getHours()+':'+(d.getMinutes()<10?'0':'')+d.getMinutes();
+}
+
 function pintaAiWelcome(){
   var box=g('ai-messages');if(!box)return;
+  // Comprobar API key
+  var apiKey=ldv('ai_api_key','');
+  var kCheck=g('ai-key-check');
+  if(kCheck)kCheck.innerHTML=apiKey?'<span style="color:var(--ok)">✓ API Key configurada</span>':'<span style="color:var(--hi)">Sin API Key</span>';
+  var badge=g('ai-model-badge');if(badge)badge.style.display=apiKey?'inline-block':'none';
   if(!aiChatHistory.length){
-    box.innerHTML='<div style="background:var(--primary-light);border-radius:10px;padding:12px 14px;font-size:0.83rem;color:var(--primary-mid);max-width:85%"><strong>🤖 Asistente GlucoControl</strong><br>Hola, puedo ayudarte a interpretar tus datos de glucemia, medicación o hábitos. ¿En qué te puedo ayudar?</div>';
+    var nombre=ldv('user_nombre','')||'';
+    var saludo=nombre?'Hola <strong>'+nombre+'</strong>! 👋' :'¡Hola! 👋';
+    var resumen=_construirResumenBreve();
+    box.innerHTML='<div class="ai-msg-bot">'+saludo+' Soy <strong>GlucoAssist</strong>, tu asistente de salud personalizado.'+(resumen?'<br><br>'+resumen:'')+'<br><br>Puedo ayudarte a interpretar tus mediciones, explicar tendencias, orientarte sobre medicación o hábitos. ¿En qué te puedo ayudar hoy?</div>';
+    pintaAiSugerencias();
   } else {
     renderAiMessages();
+    var sugCont=g('ai-sugerencias');if(sugCont)sugCont.style.display='none';
   }
+}
+
+function _construirResumenBreve(){
+  if(!GL.length)return '';
+  var hoyStr=hoy();
+  var glHoy=GL.filter(function(g2){return g2.fecha===hoyStr;});
+  var ult=GL[0];
+  var partes=[];
+  if(glHoy.length){
+    var avg=Math.round(glHoy.reduce(function(s,g2){return s+g2.valor;},0)/glHoy.length);
+    partes.push('Hoy llevas <strong>'+glHoy.length+'</strong> medición'+(glHoy.length>1?'es':'')+', promedio <strong>'+avg+' mg/dL</strong>');
+  } else if(ult){
+    partes.push('Tu última glucemia fue <strong>'+ult.valor+' mg/dL</strong> ('+MLAB[ult.momento]||ult.momento+')');
+  }
+  if(!partes.length)return '';
+  return '<em style="font-size:0.78rem;color:var(--text2)">📊 '+partes.join(' · ')+'</em>';
 }
 
 function renderAiMessages(){
@@ -2116,13 +2269,29 @@ function renderAiMessages(){
   var html='';
   aiChatHistory.forEach(function(m){
     if(m.role==='user'){
-      html+='<div style="align-self:flex-end;background:var(--primary-mid);color:#fff;border-radius:10px 10px 2px 10px;padding:9px 13px;font-size:0.83rem;max-width:80%">'+m.content.replace(/</g,'&lt;')+'</div>';
+      html+='<div class="ai-msg-user">'+m.content.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</div>';
+      html+='<div class="ai-msg-time">'+((m.hora)||fmtHora())+'</div>';
     } else {
-      html+='<div style="background:var(--surface2);border-radius:10px 10px 10px 2px;padding:9px 13px;font-size:0.83rem;color:var(--text);max-width:85%;border:1px solid var(--border)"><strong style="color:var(--primary-mid)">🤖</strong> '+m.content.replace(/</g,'&lt;').replace(/\n/g,'<br>')+'</div>';
+      html+='<div class="ai-msg-bot">'+mdToHtml(m.content)+'</div>';
+      html+='<div class="ai-msg-time bot">'+((m.hora)||'')+'</div>';
     }
   });
   box.innerHTML=html;
-  box.scrollTop=box.scrollHeight;
+  setTimeout(function(){box.scrollTop=box.scrollHeight;},50);
+}
+
+function _mostrarTyping(show){
+  var ti=g('ai-typing-indicator'),th=g('ai-typing-header');
+  if(ti)ti.style.display=show?'flex':'none';
+  if(th)th.style.display=show?'block':'none';
+}
+
+function _setBtnState(loading){
+  var btn=g('ai-send-btn'),ico=g('ai-send-ico');
+  if(!btn)return;
+  btn.disabled=loading;
+  if(ico)ico.textContent=loading?'⏳':'↑';
+  btn.style.opacity=loading?'0.6':'1';
 }
 
 function construirContextoIA(){
@@ -2131,36 +2300,74 @@ function construirContextoIA(){
   var avg=glHoy.length?Math.round(glHoy.reduce(function(s,g2){return s+g2.valor;},0)/glHoy.length):null;
   var ultGL=GL[0],ultHB=HB[0],ultVT=VT[0];
 
-  // Tendencia últimos 7 días
-  var dias7=[],desde7=new Date();desde7.setDate(desde7.getDate()-6);
-  for(var i=0;i<7;i++){var d=new Date(desde7);d.setDate(desde7.getDate()+i);dias7.push(d.toISOString().slice(0,10));}
-  var promedios7=dias7.map(function(d){var gs=GL.filter(function(g2){return g2.fecha===d;});return gs.length?{fecha:d,avg:Math.round(gs.reduce(function(s,g2){return s+g2.valor;},0)/gs.length),n:gs.length}:null;}).filter(Boolean);
-  var total7=GL.filter(function(g2){return g2.fecha>=dias7[0];});
-  var enRango7=total7.filter(function(g2){return g2.valor>=70&&g2.valor<=180;}).length;
-  var pctRango7=total7.length?Math.round(enRango7/total7.length*100):null;
+  // Tendencia últimos 14 días
+  var dias14=[],desde14=new Date();desde14.setDate(desde14.getDate()-13);
+  for(var i=0;i<14;i++){var d=new Date(desde14);d.setDate(desde14.getDate()+i);dias14.push(d.toISOString().slice(0,10));}
+  var promedios14=dias14.map(function(d){var gs=GL.filter(function(g2){return g2.fecha===d;});return gs.length?{fecha:d,avg:Math.round(gs.reduce(function(s,g2){return s+g2.valor;},0)/gs.length),n:gs.length}:null;}).filter(Boolean);
+  var total14=GL.filter(function(g2){return g2.fecha>=dias14[0];});
+  var enRango14=total14.filter(function(g2){return g2.valor>=70&&g2.valor<=180;}).length;
+  var pctRango14=total14.length?Math.round(enRango14/total14.length*100):null;
+  var altas14=total14.filter(function(g2){return g2.valor>180;}).length;
+  var bajas14=total14.filter(function(g2){return g2.valor<70;}).length;
 
-  // eHbA1c estimada
   var ehba=calcularEHba1c();
 
-  // Patrón postprandial (ayunas vs después de comidas)
-  var gsAyunas=GL.filter(function(g2){return g2.momento==='ayunas';}).slice(0,10);
+  var gsAyunas=GL.filter(function(g2){return g2.momento==='ayunas';}).slice(0,14);
   var avgAyunas=gsAyunas.length?Math.round(gsAyunas.reduce(function(s,g2){return s+g2.valor;},0)/gsAyunas.length):null;
-  var gsPost=GL.filter(function(g2){return g2.momento==='despues_comida'||g2.momento==='despues_desayuno'||g2.momento==='despues_cena';}).slice(0,10);
+  var gsPost=GL.filter(function(g2){return g2.momento==='despues_comida'||g2.momento==='despues_desayuno'||g2.momento==='despues_cena';}).slice(0,14);
   var avgPost=gsPost.length?Math.round(gsPost.reduce(function(s,g2){return s+g2.valor;},0)/gsPost.length):null;
 
-  var ctx='Datos del paciente en GlucoControl:\n';
-  if(avg)ctx+='- Glucosa promedio hoy: '+avg+' mg/dL ('+glHoy.length+' mediciones)\n';
-  if(ultGL)ctx+='- Última glucemia: '+ultGL.valor+' mg/dL el '+fmtF(ultGL.fecha)+' ('+( MLAB[ultGL.momento]||ultGL.momento)+')\n';
-  if(ultHB)ctx+='- Última HbA1c real: '+ultHB.valor+'% ('+lblHba(ultHB.valor)+') — '+fmtF(ultHB.fecha)+'\n';
-  if(!ultHB&&ehba)ctx+='- eHbA1c estimada (fórmula IFCC): '+ehba+'%\n';
-  if(pctRango7!==null)ctx+='- Tiempo en rango últimos 7 días: '+pctRango7+'% ('+total7.length+' mediciones)\n';
-  if(promedios7.length){ctx+='- Promedios diarios última semana: ';ctx+=promedios7.map(function(d){return d.fecha.slice(5)+': '+d.avg+'mg/dL';}).join(', ')+'\n';}
-  if(avgAyunas)ctx+='- Promedio en ayunas (últimas '+gsAyunas.length+' mediciones): '+avgAyunas+' mg/dL\n';
-  if(avgPost)ctx+='- Promedio postprandial (últimas '+gsPost.length+' mediciones): '+avgPost+' mg/dL\n';
-  if(ME.length)ctx+='- Medicamentos activos: '+ME.map(function(m){return m.nombre+' '+m.dosis+(m.horarios&&m.horarios.length?' ('+m.horarios.join(', ')+')':'')+(m.stock!==undefined?' — stock: '+m.stock+'u':'');}).join('; ')+'\n';
-  if(ultVT&&ultVT.peso)ctx+='- Peso: '+ultVT.peso+' kg'+(ultVT.imc?' — IMC: '+ultVT.imc+' ('+lblImc(ultVT.imc)+')':'')+'\n';
-  if(ultVT&&ultVT.ts)ctx+='- Tensión: '+ultVT.ts+'/'+ultVT.td+' mmHg'+(ultVT.pulso?' — pulso: '+ultVT.pulso+' ppm':'')+'\n';
-  ctx+='Responde siempre en español, de forma clara, empática y práctica. Recuerda siempre que no eres médico y que decisiones clínicas deben consultarse con el profesional sanitario correspondiente. Sé conciso y directo.';
+  var ctx='=== DATOS DEL PACIENTE (GlucoControl) ===\n';
+  var nombre=ldv('user_nombre','');
+  if(nombre)ctx+='Nombre: '+nombre+'\n';
+  ctx+='Fecha actual: '+new Date().toLocaleDateString('es-ES')+'\n\n';
+
+  ctx+='--- GLUCEMIA ---\n';
+  if(glHoy.length){
+    ctx+='Hoy ('+glHoy.length+' mediciones): promedio '+avg+' mg/dL\n';
+    glHoy.forEach(function(g2){ctx+='  · '+(MLAB[g2.momento]||g2.momento)+': '+g2.valor+' mg/dL\n';});
+  }
+  if(ultGL&&ultGL.fecha!==hoyStr)ctx+='Última glucemia: '+ultGL.valor+' mg/dL — '+fmtF(ultGL.fecha)+' ('+(MLAB[ultGL.momento]||ultGL.momento)+')\n';
+  if(pctRango14!==null)ctx+='Tiempo en rango 14 días (70-180 mg/dL): '+pctRango14+'% | Altas: '+altas14+' | Bajas: '+bajas14+' | Total: '+total14.length+' mediciones\n';
+  if(promedios14.length>1)ctx+='Promedios diarios (últimos 14 días): '+promedios14.slice(-7).map(function(d){return d.fecha.slice(5)+':'+d.avg;}).join(', ')+'\n';
+  if(avgAyunas)ctx+='Promedio ayunas: '+avgAyunas+' mg/dL ('+gsAyunas.length+' mediciones)\n';
+  if(avgPost)ctx+='Promedio postprandial: '+avgPost+' mg/dL ('+gsPost.length+' mediciones)\n';
+
+  ctx+='\n--- HBA1C ---\n';
+  if(ultHB)ctx+='HbA1c real: '+ultHB.valor+'% — '+lblHba(ultHB.valor)+' ('+fmtF(ultHB.fecha)+')\n';
+  else if(ehba)ctx+='eHbA1c estimada: '+ehba+'% (calculada a partir de glucemias)\n';
+  else ctx+='Sin datos de HbA1c\n';
+  if(HB.length>1)ctx+='Histórico HbA1c: '+HB.slice(0,4).map(function(h){return h.valor+'% ('+fmtF(h.fecha)+')';}).join(', ')+'\n';
+
+  ctx+='\n--- MEDICAMENTOS ---\n';
+  if(ME.length){
+    ME.forEach(function(m){
+      ctx+='  · '+m.nombre+' '+m.dosis;
+      if(m.horarios&&m.horarios.length)ctx+=' — '+m.horarios.join(', ');
+      if(m.stock!==undefined)ctx+=' [Stock: '+m.stock+'u'+(m.stock<=m.alerta?' ⚠️BAJO':'')+']';
+      ctx+='\n';
+    });
+  } else ctx+='Sin medicamentos registrados\n';
+
+  ctx+='\n--- VITALES ---\n';
+  if(ultVT){
+    if(ultVT.peso)ctx+='Peso: '+ultVT.peso+' kg'+(ultVT.imc?' | IMC: '+ultVT.imc+' ('+lblImc(ultVT.imc)+')\n':'\n');
+    if(ultVT.ts&&ultVT.td)ctx+='Tensión: '+ultVT.ts+'/'+ultVT.td+' mmHg'+(ultVT.pulso?' | Pulso: '+ultVT.pulso+' ppm':'')+'\n';
+    ctx+='('+fmtF(ultVT.fecha)+')\n';
+  } else ctx+='Sin datos de vitales\n';
+
+  if(AL.length){
+    ctx+='\n--- ALIMENTACIÓN (últimas comidas) ---\n';
+    AL.slice(0,5).forEach(function(a){ctx+='  · '+fmtF(a.fecha)+' '+a.tipo+': '+a.alimentos.slice(0,60)+(a.alimentos.length>60?'...':'')+(a.kcal?' ('+a.kcal+' kcal)':'')+'\n';});
+  }
+
+  if(CI.length){
+    var prox=CI.filter(function(c){return c.fecha>=hoy();});
+    if(prox.length){ctx+='\n--- PRÓXIMAS CITAS ---\n';prox.slice(0,2).forEach(function(c){ctx+='  · '+fmtF(c.fecha)+' '+c.hora+' — '+(c.especialista||c.tipo)+'\n';});}
+  }
+
+  ctx+='\n=== FIN DE DATOS ===\n\n';
+  ctx+='INSTRUCCIONES: Eres GlucoAssist, asistente de salud integrado en GlucoControl. Responde siempre en español, de forma clara, empática y práctica. Usa formato con negritas (**texto**) y listas donde sea útil para facilitar la lectura. Analiza los datos del paciente cuando sea relevante. SIEMPRE recuerda que no eres médico y que las decisiones clínicas deben consultarse con el profesional sanitario. Sé conciso pero completo.';
   return ctx;
 }
 
@@ -2170,42 +2377,56 @@ function enviarChat(){
   var apiKey=ldv('ai_api_key','');
   if(!apiKey){toast('⚠️ Configura tu API Key primero (⚙️)','warn');abrirConfig();return;}
 
-  aiChatHistory.push({role:'user',content:texto});
+  var hora=fmtHora();
+  aiChatHistory.push({role:'user',content:texto,hora:hora});
   _saveAiChat();
   input.value='';
+
+  // Ocultar sugerencias al iniciar chat
+  var sugCont=g('ai-sugerencias');if(sugCont)sugCont.style.display='none';
+
   renderAiMessages();
+  _mostrarTyping(true);
+  _setBtnState(true);
 
-  var btn=document.querySelector('#sec-asistente .btn');
-  if(btn){btn.disabled=true;btn.textContent='...';}
-
-  var messages=[{role:'user',content:construirContextoIA()+'\n\nPregunta del usuario: '+texto}];
-  if(aiChatHistory.length>2){
-    // incluir historial (sin el contexto, solo últimos intercambios)
-    messages=[];
-    var hist=aiChatHistory.slice(-6);
-    hist.forEach(function(m,i){
-      if(i===0&&m.role==='user'){messages.push({role:'user',content:construirContextoIA()+'\n\nPregunta: '+m.content});}
-      else{messages.push({role:m.role,content:m.content});}
-    });
-  }
+  // Construir mensajes con historial
+  var messages=[];
+  var hist=aiChatHistory.slice(-8); // últimos 8 mensajes
+  hist.forEach(function(m,i){
+    var content=m.content;
+    if(i===0&&m.role==='user')content=construirContextoIA()+'\nPregunta del usuario: '+m.content;
+    messages.push({role:m.role,content:content});
+  });
 
   fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',
-    headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,messages:messages})
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key':apiKey,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true'
+    },
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:1000,
+      system:'Eres GlucoAssist, un asistente de salud especializado en diabetes integrado en GlucoControl. Responde siempre en español. Usa **negritas** y listas con - para organizar la información. Sé empático, claro y práctico. No eres médico; siempre recomienda consultar al profesional sanitario para decisiones clínicas.',
+      messages:messages.map(function(m){return{role:m.role,content:m.content};})
+    })
   }).then(function(r){return r.json();}).then(function(data){
-    var texto2=(data.content&&data.content[0]&&data.content[0].text)||'No se pudo obtener respuesta.';
-    if(data.error)texto2='Error: '+(data.error.message||'API Error');
-    aiChatHistory.push({role:'assistant',content:texto2});
+    _mostrarTyping(false);
+    var respuesta=(data.content&&data.content[0]&&data.content[0].text)||'No se pudo obtener respuesta.';
+    if(data.error)respuesta='❌ Error: '+(data.error.message||JSON.stringify(data.error));
+    aiChatHistory.push({role:'assistant',content:respuesta,hora:fmtHora()});
     _saveAiChat();
     renderAiMessages();
   }).catch(function(e){
-    aiChatHistory.push({role:'assistant',content:'Error de conexión. Comprueba tu API Key y conexión a internet.'});
+    _mostrarTyping(false);
+    var errMsg='Error de conexión. Comprueba tu API Key e internet.\n\nDetalle: '+e.message;
+    aiChatHistory.push({role:'assistant',content:errMsg,hora:fmtHora()});
     _saveAiChat();
     renderAiMessages();
   }).finally(function(){
-    var btn2=document.querySelector('#sec-asistente .btn');
-    if(btn2){btn2.disabled=false;btn2.textContent='Enviar';}
+    _setBtnState(false);
   });
 }
 
