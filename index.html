@@ -1609,51 +1609,26 @@ async function llamarIA(mensajes) {
   }].concat(mensajes.slice(1));
 
   // Intentar llamada directa primero, si falla usar proxy CORS
-  // Lista de proxies CORS a intentar en orden
-  var PROXIES = ['https://glucocontrol-proxy.luengoguadiana.workers.dev'];
-  var DIRECT = 'https://api.anthropic.com/v1/messages';
-  var bodyData = JSON.stringify({
+   var bodyData = JSON.stringify({
     model: 'claude-haiku-4-5-20251001',
     max_tokens: 500,
     system: PROMPT_SISTEMA,
     messages: msgsConContexto
   });
   var resp;
-  try {
-    var controller = new AbortController();
-    var timeoutId = setTimeout(function(){ controller.abort(); }, 25000);
-    resp = await fetch(DIRECT, {
-      method: 'POST',
-      signal: controller.signal,
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: bodyData
-    });
-    clearTimeout(timeoutId);
-  } catch(e) {
-    // Llamada directa bloqueada, intentar proxies en orden
-    var exito = false;
-    for (var i = 0; i < PROXIES.length; i++) {
-      try {
-        resp = await fetch(PROXIES[i], {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': apiKey,
-            'anthropic-version': '2023-06-01',
-            'anthropic-dangerous-direct-browser-access': 'true'
-          },
-          body: bodyData
-        });
-        if (resp.ok) { exito = true; break; }
-      } catch(e2) { continue; }
-    }
-    if (!exito && !resp) throw new Error('No se pudo conectar con la IA. Comprueba tu conexión.');
-  }
+  var controller = new AbortController();
+  var timeoutId = setTimeout(function(){ controller.abort(); }, 30000);
+  resp = await fetch('https://glucocontrol-proxy.luengoguadiana.workers.dev', {
+    method: 'POST',
+    signal: controller.signal,
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+    },
+    body: bodyData
+  });
+  clearTimeout(timeoutId);
   if (!resp.ok) {
     var errData = await resp.json().catch(function(){return {};});
     throw new Error(errData.error ? errData.error.message : 'Error ' + resp.status);
