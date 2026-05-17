@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<title>GlucoControl v8.3</title>
+<title>GlucoControl v9.0</title>
 <style>
 :root{
   --bg:#eef2f5;--surface:#fff;--surface2:#f5f8fb;--border:#dde4ec;
@@ -280,7 +280,7 @@ tr:hover td{background:var(--surface2)}
 
 <div id="wrap">
 <aside id="side">
-  <div class="logo"><h1>🩸 GlucoControl</h1><p>Control de diabetes v8</p></div>
+  <div class="logo"><h1>🩸 GlucoControl</h1><p>Control de diabetes v9</p></div>
   <nav>
     <button id="n-dashboard"      onclick="ir('dashboard')">🏠 Inicio</button>
     <button id="n-glucemia"       onclick="ir('glucemia')">📊 Glucemia</button>
@@ -297,7 +297,7 @@ tr:hover td{background:var(--surface2)}
 
   </nav>
   <div class="sfooter">
-    <p>GlucoControl v8.3</p>
+    <p>GlucoControl v9.0</p>
     <button onclick="abrirResumenMedico()" style="background:rgba(46,184,154,0.18);border:1px solid rgba(46,184,154,0.35)">🩺 Informe para el médico</button>
     <button onclick="abrirSyncDrive()" style="background:rgba(66,133,244,0.18);border:1px solid rgba(66,133,244,0.35)">☁️ Sync Google Drive</button>
     <button onclick="doBackupJSON()" style="background:rgba(26,110,142,0.18);border:1px solid rgba(26,110,142,0.35)">💾 Backup datos</button>
@@ -334,6 +334,55 @@ tr:hover td{background:var(--surface2)}
     <!-- DASHBOARD -->
     <div class="sec on" id="sec-dashboard">
       <div id="alert-box"></div>
+
+      <!-- REGISTRO RÁPIDO -->
+      <div class="card" style="margin-bottom:14px;border:2px solid var(--primary-mid);background:linear-gradient(135deg,var(--primary-light) 0%,var(--surface) 100%)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div style="width:36px;height:36px;background:var(--primary-mid);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem">🩸</div>
+          <div>
+            <div style="font-weight:700;font-size:0.95rem;color:var(--primary-mid)">Registro rápido</div>
+            <div style="font-size:0.7rem;color:var(--text3)" id="rq-ultima"></div>
+          </div>
+          <div id="rq-estado" style="margin-left:auto;font-size:1.4rem"></div>
+        </div>
+
+        <!-- Botón de foto -->
+        <div style="margin-bottom:10px">
+          <input type="file" id="rq-foto-input" accept="image/*" capture="environment" style="display:none" onchange="analizarFotoGlucometro(this)">
+          <button onclick="g('rq-foto-input').click()" id="rq-foto-btn" style="width:100%;background:var(--surface2);border:2px dashed var(--primary-mid);color:var(--primary-mid);padding:10px;border-radius:10px;font-weight:700;font-size:0.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s">
+            📷 Fotografiar glucómetro
+          </button>
+          <div id="rq-foto-preview" style="display:none;margin-top:8px;text-align:center">
+            <img id="rq-foto-img" style="max-height:120px;border-radius:8px;border:2px solid var(--border)">
+            <div id="rq-foto-status" style="margin-top:6px;font-size:0.78rem;color:var(--text2)"></div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+          <div style="flex:1;min-width:80px">
+            <label style="font-size:0.7rem;color:var(--text2);font-weight:700;display:block;margin-bottom:4px">Glucosa (mg/dL)</label>
+            <input type="number" id="rq-valor" min="20" max="600" placeholder="120" style="width:100%;font-size:1.3rem;font-weight:700;text-align:center;border-radius:10px;padding:10px 8px;border:2px solid var(--border)" oninput="actualizarRQEstado()">
+          </div>
+          <div style="flex:2;min-width:140px">
+            <label style="font-size:0.7rem;color:var(--text2);font-weight:700;display:block;margin-bottom:4px">Momento</label>
+            <select id="rq-momento" style="width:100%;border-radius:10px;padding:10px 8px;font-size:0.83rem;border:2px solid var(--border)">
+              <option value="ayunas">🌅 Ayunas</option>
+              <option value="antes_desayuno">☕ Antes desayuno</option>
+              <option value="despues_desayuno">🥐 Después desayuno</option>
+              <option value="antes_comida">🍽️ Antes comida</option>
+              <option value="despues_comida" selected>🥘 Después comida</option>
+              <option value="antes_cena">🌆 Antes cena</option>
+              <option value="despues_cena">🌙 Después cena</option>
+              <option value="antes_dormir">🛌 Antes dormir</option>
+            </select>
+          </div>
+          <button onclick="guardarRapidoGlucemia()" style="background:var(--primary-mid);border:none;color:#fff;padding:11px 18px;border-radius:10px;font-weight:700;font-size:0.9rem;cursor:pointer;white-space:nowrap;transition:all 0.2s" id="rq-btn">
+            ✓ Guardar
+          </button>
+        </div>
+        <div id="rq-feedback" style="margin-top:10px;display:none;padding:8px 12px;border-radius:8px;font-size:0.8rem;font-weight:600;text-align:center"></div>
+      </div>
+
       <div class="g4" id="dstats" style="margin-bottom:14px"></div>
       <div class="g2">
         <div class="card">
@@ -619,6 +668,32 @@ tr:hover td{background:var(--surface2)}
         <div><h1 style="font-size:1.15rem;color:#0f4a61">Informes Médicos</h1></div>
         <button class="btn bp" onclick="abrirModal('mi')">+ Añadir</button>
       </div>
+
+      <!-- INFORME PARA EL MÉDICO -->
+      <div class="card" style="margin-bottom:14px;border-left:4px solid var(--primary-mid)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div style="width:38px;height:38px;background:var(--primary-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem">👨‍⚕️</div>
+          <div>
+            <div style="font-weight:700;font-size:0.95rem;color:var(--primary-mid)">Informe para el Médico</div>
+            <div style="font-size:0.72rem;color:var(--text3)">Resumen clínico de los últimos 30 días</div>
+          </div>
+        </div>
+
+        <!-- Resumen clínico -->
+        <div id="informe-medico-resumen" style="margin-bottom:14px"></div>
+
+        <!-- Botones de compartir -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="compartirInformeMedicoWhatsApp()" style="flex:1;min-width:140px;background:#25d366;border:none;color:#fff;padding:11px 14px;border-radius:10px;font-weight:700;font-size:0.83rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px">
+            <span style="font-size:1.1rem">📲</span> WhatsApp
+          </button>
+          <button onclick="generarPDFMedico()" style="flex:1;min-width:140px;background:var(--primary-mid);border:none;color:#fff;padding:11px 14px;border-radius:10px;font-weight:700;font-size:0.83rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px">
+            <span style="font-size:1.1rem">📄</span> Descargar PDF
+          </button>
+        </div>
+        <div style="margin-top:8px;font-size:0.68rem;color:var(--text3);text-align:center">Los datos se comparten directamente desde tu dispositivo · Ningún dato sale a servidores externos</div>
+      </div>
+
       <div class="card">
         <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px">
           <button class="btn bg bs" onclick="filtroInforme('todos')">Todos</button>
@@ -725,6 +800,29 @@ tr:hover td{background:var(--surface2)}
 <!-- MODALES -->
 <div class="ov" id="mg" onclick="cerrarOv(event,this)"><div class="mo">
   <h2 id="mg-titulo">📊 Nueva Medición</h2>
+
+  <!-- BOTÓN OCR -->
+  <div style="margin-bottom:13px">
+    <button onclick="abrirScanGlucometro()" id="btn-scan-gluco" style="width:100%;padding:11px 14px;background:linear-gradient(135deg,#0f4a61,#1a6e8e);border:none;border-radius:var(--radius-sm);color:#fff;font-size:0.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:opacity 0.18s;font-family:var(--font)">
+      <span style="font-size:1.2rem">📷</span> Escanear pantalla del glucómetro
+    </button>
+    <input type="file" id="gluco-cam-input" accept="image/*" style="display:none" onchange="procesarFotoGlucometro(this)">
+    <!-- Preview y estado OCR -->
+    <div id="ocr-preview-wrap" style="display:none;margin-top:9px;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border)">
+      <img id="ocr-preview-img" src="" alt="Foto glucómetro" style="width:100%;max-height:140px;object-fit:contain;background:#000;display:block">
+      <div id="ocr-status" style="padding:8px 12px;font-size:0.78rem;font-weight:600;display:flex;align-items:center;gap:7px;background:var(--surface2)">
+        <div class="spin" id="ocr-spin" style="width:16px;height:16px;border-width:2px;flex-shrink:0"></div>
+        <span id="ocr-status-txt">Analizando imagen con IA…</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:11px">
+    <div style="flex:1;height:1px;background:var(--border)"></div>
+    <span style="font-size:0.68rem;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.05em">o introduce manualmente</span>
+    <div style="flex:1;height:1px;background:var(--border)"></div>
+  </div>
+
   <div class="fr">
     <div class="fg"><label>Fecha <span style="color:#e74c3c">*</span></label><input type="date" id="gf"><span class="err-msg" id="err-gf"></span></div>
     <div class="fg"><label>Hora <span style="color:#e74c3c">*</span></label><input type="time" id="gh"><span class="err-msg" id="err-gh"></span></div>
@@ -959,7 +1057,7 @@ function ir(sec){
   var bt=g('btitle');if(bt)bt.textContent=TITULOS[sec]||sec;
   ['dashboard','glucemia','medicamentos','vitales'].forEach(function(t){var mb=g('mob-'+t);if(mb)mb.style.color=t===sec?'#2eb89a':'rgba(255,255,255,0.6)';});
   actualizarFab(sec);
-  if(sec==='dashboard')pintaDash();
+  if(sec==='dashboard'){pintaDash();pintaRQ();}
   else if(sec==='glucemia')pintaGTable();
   else if(sec==='estadisticas')pintaEstadisticas();
   else if(sec==='hba1c')pintaHba1c();
@@ -969,7 +1067,7 @@ function ir(sec){
   else if(sec==='medicamentos')pintaMeds();
   else if(sec==='recordatorios'){pintaRecs();pintarEstadoNotificaciones();setTimeout(function(){var sel=g('alerta-horas-sel');if(sel)sel.value=String(ldv('alerta_horas',8));},30);}
   else if(sec==='citas')pintaCitas();
-  else if(sec==='informes')pintaInformes();
+  else if(sec==='informes'){pintaInformes();pintaInformeMedico();}
   else if(sec==='asistente'){pintaAiWelcome();}
 }
 
@@ -993,7 +1091,7 @@ function pintaTopbar(){
 }
 
 // ── DASHBOARD ────────────────────────────────────────────────
-function pintaDash(){pintaTopbar();pintaStats();pintaHoy();pintaChart();pintaDSemana();pintaDMeds();pintaDCitas();pintaAlertas();pinta30Dias();pintaRacha();pintaResumenSemanal();}
+function pintaDash(){pintaTopbar();pintaStats();pintaHoy();pintaChart();pintaDSemana();pintaDMeds();pintaDCitas();pintaAlertas();pinta30Dias();pintaRacha();pintaResumenSemanal();pintaRQUltima();}
 
 function pintaStats(){
   var today=hoy(),tg=GL.filter(function(g2){return g2.fecha===today;});
@@ -2279,19 +2377,276 @@ function fmtHora(){
   return d.getHours()+':'+(d.getMinutes()<10?'0':'')+d.getMinutes();
 }
 
+// ── REGISTRO RÁPIDO GLUCEMIA ─────────────────────────────────
+function analizarFotoGlucometro(input){
+  var file=input.files[0];if(!file)return;
+  var preview=g('rq-foto-preview'),img=g('rq-foto-img'),status=g('rq-foto-status'),btn=g('rq-foto-btn');
+
+  // Mostrar preview
+  var reader=new FileReader();
+  reader.onload=function(e){
+    img.src=e.target.result;
+    preview.style.display='block';
+    status.innerHTML='🔍 Analizando imagen con IA...';
+    status.style.color='var(--primary-mid)';
+    btn.textContent='⏳ Analizando...';
+    btn.disabled=true;
+
+    // Convertir a base64 para la API
+    var base64=e.target.result.split(',')[1];
+    var mediaType=file.type||'image/jpeg';
+
+    fetch('https://glucocontrol-proxy.luengoguadiana.workers.dev',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-5',
+        max_tokens:100,
+        messages:[{
+          role:'user',
+          content:[
+            {type:'image',source:{type:'base64',media_type:mediaType,data:base64}},
+            {type:'text',text:'Esta es una foto de un glucómetro o medidor de glucosa en sangre. Extrae ÚNICAMENTE el valor numérico de glucosa que aparece en la pantalla. Responde SOLO con el número en mg/dL, sin texto adicional, sin unidades, solo el número. Si no puedes ver claramente un valor numérico de glucosa, responde exactamente con: ERROR'}
+          ]
+        }]
+      })
+    }).then(function(r){return r.json();}).then(function(data){
+      var resp=(data.content&&data.content[0]&&data.content[0].text)||'ERROR';
+      resp=resp.trim().replace(/[^0-9]/g,'');
+      var valor=parseInt(resp);
+
+      if(!isNaN(valor)&&valor>=20&&valor<=600){
+        g('rq-valor').value=valor;
+        actualizarRQEstado();
+        status.innerHTML='✅ Valor detectado: <strong>'+valor+' mg/dL</strong> · Confirma y guarda';
+        status.style.color='var(--ok)';
+        g('rq-valor').style.borderColor='var(--ok)';
+        g('rq-valor').style.background='#e8f8f0';
+        toast('📷 Glucosa detectada: '+valor+' mg/dL','ok');
+      } else {
+        status.innerHTML='⚠️ No se pudo leer el valor. Introdúcelo manualmente.';
+        status.style.color='var(--hi)';
+      }
+    }).catch(function(e){
+      status.innerHTML='❌ Error al analizar. Introdúcelo manualmente.';
+      status.style.color='var(--hi)';
+    }).finally(function(){
+      btn.innerHTML='📷 Fotografiar glucómetro';
+      btn.disabled=false;
+      input.value='';
+    });
+  };
+  reader.readAsDataURL(file);
+}
+
+function pintaRQUltima(){
+  var el=g('rq-ultima');if(!el)return;
+  if(!GL.length){el.textContent='Sin mediciones aún';return;}
+  var ult=GL[0];
+  el.textContent='Última: '+ult.valor+' mg/dL · '+(MLAB[ult.momento]||ult.momento)+' · '+fmtF(ult.fecha);
+}
+
+function actualizarRQEstado(){
+  var val=parseInt(g('rq-valor').value);
+  var el=g('rq-estado');if(!el)return;
+  if(isNaN(val)||val<20){el.textContent='';return;}
+  if(val<70)el.textContent='⬇️';
+  else if(val<=180)el.textContent='✅';
+  else if(val<=250)el.textContent='⬆️';
+  else el.textContent='🔴';
+}
+
+function guardarRapidoGlucemia(){
+  var valEl=g('rq-valor'),momEl=g('rq-momento');
+  if(!valEl||!momEl)return;
+  var val=parseInt(valEl.value);
+  if(isNaN(val)||val<20||val>600){
+    mostrarRQFeedback('Introduce un valor válido (20-600 mg/dL)','var(--hi)','var(--hi-bg)');
+    return;
+  }
+  var mom=momEl.value;
+  var ahora=new Date();
+  var hora=ahora.getHours()+':'+(ahora.getMinutes()<10?'0':'')+ahora.getMinutes();
+  var registro={id:Date.now(),fecha:hoy(),hora:hora,momento:mom,valor:val,notas:''};
+  GL.unshift(registro);
+  GL.sort(function(a,b){return b.fecha.localeCompare(a.fecha)||b.hora.localeCompare(a.hora);});
+  sv('gl',GL);
+
+  // Feedback visual
+  var estado=val<70?'⬇️ Hipoglucemia — toma acción':val<=180?'✅ En rango':'⬆️ Glucosa elevada';
+  var color=val<70?'var(--hi)':val<=180?'var(--ok)':'#f39c12';
+  var bg=val<70?'var(--hi-bg)':val<=180?'var(--ok-bg, #e8f8f0)':'#fef9e7';
+  mostrarRQFeedback(val+' mg/dL guardado · '+estado,color,bg);
+
+  // Limpiar y actualizar
+  valEl.value='';
+  g('rq-estado').textContent='';
+  pintaRQUltima();
+  pintaDashboard();
+  toast('🩸 Glucemia registrada: '+val+' mg/dL','ok');
+}
+
+function mostrarRQFeedback(msg,color,bg){
+  var el=g('rq-feedback');if(!el)return;
+  el.style.display='block';
+  el.style.color=color;
+  el.style.background=bg||'var(--surface2)';
+  el.style.border='1px solid '+color;
+  el.textContent=msg;
+  setTimeout(function(){el.style.display='none';},4000);
+}
+
+function pintaRQ(){
+  pintaRQUltima();
+  // Preseleccionar momento según la hora actual
+  var h=new Date().getHours();
+  var mom='ayunas';
+  if(h>=6&&h<9)mom='antes_desayuno';
+  else if(h>=9&&h<11)mom='despues_desayuno';
+  else if(h>=11&&h<14)mom='antes_comida';
+  else if(h>=14&&h<16)mom='despues_comida';
+  else if(h>=20&&h<21)mom='antes_cena';
+  else if(h>=21&&h<23)mom='despues_cena';
+  else if(h>=23||h<6)mom='antes_dormir';
+  var sel=g('rq-momento');if(sel)sel.value=mom;
+}
+function detectarAlertas(){
+  var alertas=[];
+  var hace7=new Date();hace7.setDate(hace7.getDate()-7);
+  var hace7s=hace7.toISOString().slice(0,10);
+  var gl7=GL.filter(function(g2){return g2.fecha>=hace7s;});
+
+  if(gl7.length>=5){
+    // Hipoglucemias repetidas
+    var hipog=gl7.filter(function(g2){return g2.valor<70;});
+    if(hipog.length>=2)alertas.push({tipo:'hi',icono:'🔴',msg:'<strong>'+hipog.length+' hipoglucemias</strong> en los últimos 7 días. Consulta con tu médico.'});
+
+    // Hiperglucemias frecuentes
+    var hiperg=gl7.filter(function(g2){return g2.valor>250;});
+    if(hiperg.length>=3)alertas.push({tipo:'hi',icono:'🟠',msg:'<strong>'+hiperg.length+' valores >250 mg/dL</strong> esta semana. Tu control puede mejorar.'});
+
+    // Picos postprandiales altos
+    var post=gl7.filter(function(g2){return (g2.momento==='despues_comida'||g2.momento==='despues_desayuno'||g2.momento==='despues_cena')&&g2.valor>200;});
+    if(post.length>=2)alertas.push({tipo:'warn',icono:'🟡',msg:'<strong>Picos postprandiales altos</strong> detectados ('+post.length+'x >200 mg/dL). Revisa tu alimentación.'});
+
+    // Tiempo en rango bajo
+    var enRango=gl7.filter(function(g2){return g2.valor>=70&&g2.valor<=180;}).length;
+    var pct=Math.round((enRango/gl7.length)*100);
+    if(pct<50)alertas.push({tipo:'warn',icono:'📉',msg:'Tu <strong>tiempo en rango es del '+pct+'%</strong> esta semana. El objetivo es superar el 70%.'});
+  }
+
+  // Stock bajo de medicamentos
+  var bajo=ME.filter(function(m){return m.stock!==undefined&&m.stock<=m.alerta;});
+  if(bajo.length)alertas.push({tipo:'warn',icono:'💊',msg:'Stock bajo: <strong>'+bajo.map(function(m){return m.nombre+' ('+m.stock+'u)';}).join(', ')+'</strong>. Renueva pronto.'});
+
+  // HbA1c tendencia al alza
+  if(HB.length>=2&&HB[0].valor>HB[1].valor&&HB[0].valor>=6.5){
+    var diff=Math.round((HB[0].valor-HB[1].valor)*10)/10;
+    alertas.push({tipo:'warn',icono:'🔬',msg:'Tu HbA1c <strong>subió +'+diff+'%</strong> respecto a la anterior. Habla con tu médico.'});
+  }
+
+  // Próxima cita en menos de 3 días
+  var hoyStr=hoy();
+  var en3=new Date();en3.setDate(en3.getDate()+3);
+  var en3s=en3.toISOString().slice(0,10);
+  var proxCita=CI.filter(function(c){return c.fecha>=hoyStr&&c.fecha<=en3s;});
+  if(proxCita.length)alertas.push({tipo:'ok',icono:'📅',msg:'Tienes una cita el <strong>'+fmtF(proxCita[0].fecha)+' a las '+proxCita[0].hora+'</strong>'+(proxCita[0].especialista?' con '+proxCita[0].especialista:'')+'.'});
+
+  return alertas;
+}
+
+// ── ANÁLISIS SEMANAL ─────────────────────────────────────────
+function debeHacerAnalisisSemanal(){
+  var hoyStr=hoy();
+  var diaSemana=new Date().getDay(); // 1=lunes
+  var ultimoAnalisis=ldv('ai_ultimo_analisis','');
+  if(diaSemana!==1)return false; // solo lunes
+  if(ultimoAnalisis===hoyStr)return false; // ya se hizo hoy
+  if(GL.length<7)return false; // sin datos suficientes
+  return true;
+}
+
+function lanzarAnalisisSemanal(){
+  sv('ai_ultimo_analisis',hoy());
+  var hace7=new Date();hace7.setDate(hace7.getDate()-7);
+  var hace7s=hace7.toISOString().slice(0,10);
+  var gl7=GL.filter(function(g2){return g2.fecha>=hace7s;});
+  if(!gl7.length)return;
+
+  var prom=Math.round(gl7.reduce(function(s,g2){return s+g2.valor;},0)/gl7.length);
+  var enRango=gl7.filter(function(g2){return g2.valor>=70&&g2.valor<=180;}).length;
+  var pct=Math.round((enRango/gl7.length)*100);
+  var hipog=gl7.filter(function(g2){return g2.valor<70;}).length;
+  var hiperg=gl7.filter(function(g2){return g2.valor>180;}).length;
+  var ehba=calcularEHba1c();
+
+  var ctx=construirContextoIA();
+  var prompt=ctx+'\nHaz un análisis semanal breve y motivador del control glucémico de esta semana. '
+    +'Datos clave: '+gl7.length+' mediciones, promedio '+prom+' mg/dL, tiempo en rango '+pct+'%, '
+    +(hipog?hipog+' hipoglucemias, ':'')+(hiperg?hiperg+' hiperglucemias, ':'')
+    +(ehba?'eHbA1c estimada '+ehba+'%. ':'')
+    +'Da 2-3 recomendaciones prácticas y concretas para la semana que empieza. Sé positivo y motivador. Máximo 150 palabras.';
+
+  aiChatHistory.push({role:'user',content:'📊 Análisis automático semanal',hora:fmtHora(),oculto:true});
+  _mostrarTyping(true);
+  _setBtnState(true);
+
+  fetch('https://glucocontrol-proxy.luengoguadiana.workers.dev',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-5',
+      max_tokens:1000,
+      system:'Eres GlucoAssist, asistente de salud en español. Responde siempre en español con **negritas** y listas. Sé empático y motivador.',
+      messages:[{role:'user',content:prompt}]
+    })
+  }).then(function(r){return r.json();}).then(function(data){
+    _mostrarTyping(false);
+    var resp=(data.content&&data.content[0]&&data.content[0].text)||'No se pudo obtener el análisis.';
+    if(data.error)resp='❌ Error: '+(data.error.message||JSON.stringify(data.error));
+    aiChatHistory.push({role:'assistant',content:'📊 **Análisis semanal — semana del '+fmtF(hace7s)+'**\n\n'+resp,hora:fmtHora()});
+    _saveAiChat();
+    renderAiMessages();
+  }).catch(function(e){
+    _mostrarTyping(false);
+    aiChatHistory.push({role:'assistant',content:'No se pudo generar el análisis semanal. Inténtalo más tarde.',hora:fmtHora()});
+    _saveAiChat();
+    renderAiMessages();
+  }).finally(function(){_setBtnState(false);});
+}
+
 function pintaAiWelcome(){
   var box=g('ai-messages');if(!box)return;
-  // Comprobar API key
-  var apiKey=ldv('ai_api_key','');
-  var kCheck=g('ai-key-check');
-  if(kCheck)kCheck.innerHTML=apiKey?'<span style="color:var(--ok)">✓ API Key configurada</span>':'<span style="color:var(--hi)">Sin API Key</span>';
-  var badge=g('ai-model-badge');if(badge)badge.style.display=apiKey?'inline-block':'none';
+  var badge=g('ai-model-badge');if(badge)badge.style.display='inline-block';
+
   if(!aiChatHistory.length){
     var nombre=ldv('user_nombre','')||'';
     var saludo=nombre?'Hola <strong>'+nombre+'</strong>! 👋' :'¡Hola! 👋';
     var resumen=_construirResumenBreve();
-    box.innerHTML='<div class="ai-msg-bot">'+saludo+' Soy <strong>GlucoAssist</strong>, tu asistente de salud personalizado.'+(resumen?'<br><br>'+resumen:'')+'<br><br>Puedo ayudarte a interpretar tus mediciones, explicar tendencias, orientarte sobre medicación o hábitos. ¿En qué te puedo ayudar hoy?</div>';
+
+    // Detectar alertas
+    var alertas=detectarAlertas();
+    var alertasHTML='';
+    if(alertas.length){
+      alertasHTML='<br><br><div style="background:var(--surface2);border-radius:10px;padding:10px 12px;border-left:3px solid var(--hi)">'
+        +'<div style="font-size:0.72rem;font-weight:700;color:var(--hi);margin-bottom:6px;text-transform:uppercase">⚠️ Alertas detectadas</div>';
+      alertas.forEach(function(a){
+        alertasHTML+='<div style="font-size:0.8rem;margin-bottom:5px;color:var(--text)">'+a.icono+' '+a.msg+'</div>';
+      });
+      alertasHTML+='</div>';
+    }
+
+    box.innerHTML='<div class="ai-msg-bot">'+saludo+' Soy <strong>GlucoAssist</strong>, tu asistente de salud personalizado.'
+      +(resumen?'<br><br>'+resumen:'')
+      +alertasHTML
+      +'<br><br>Puedo ayudarte a interpretar tus mediciones, explicar tendencias, orientarte sobre medicación o hábitos. ¿En qué te puedo ayudar hoy?</div>';
+
     pintaAiSugerencias();
+
+    // Lanzar análisis semanal si es lunes y no se ha hecho
+    if(debeHacerAnalisisSemanal()){
+      setTimeout(function(){lanzarAnalisisSemanal();},1500);
+    }
   } else {
     renderAiMessages();
     var sugCont=g('ai-sugerencias');if(sugCont)sugCont.style.display='none';
@@ -2564,6 +2919,220 @@ function construirResumenWhatsApp() {
   return lineas.join('\n');
 }
 
+function pintaInformeMedico(){
+  var el=g('informe-medico-resumen');if(!el)return;
+  var hace30=new Date();hace30.setDate(hace30.getDate()-30);
+  var hace30s=hace30.toISOString().slice(0,10);
+  var gl30=GL.filter(function(g2){return g2.fecha>=hace30s;});
+  var enRango=gl30.filter(function(g2){return g2.valor>=70&&g2.valor<=180;}).length;
+  var altas=gl30.filter(function(g2){return g2.valor>180;}).length;
+  var bajas=gl30.filter(function(g2){return g2.valor<70;}).length;
+  var prom30=gl30.length?Math.round(gl30.reduce(function(s,g2){return s+g2.valor;},0)/gl30.length):null;
+  var pct=gl30.length?Math.round((enRango/gl30.length)*100):null;
+  var ehba=calcularEHba1c();
+  var pred=calcularPrediccionHba1c();
+  var ultHB=HB[0],ultVT=VT[0];
+
+  var html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">';
+
+  // Glucemia
+  if(prom30){
+    var colProm=prom30<=180?'var(--ok)':'var(--hi)';
+    html+='<div style="background:var(--surface2);border-radius:8px;padding:10px;border:1px solid var(--border)">'
+      +'<div style="font-size:0.65rem;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:4px">📊 Promedio 30d</div>'
+      +'<div style="font-size:1.3rem;font-weight:700;color:'+colProm+'">'+prom30+' <span style="font-size:0.7rem">mg/dL</span></div>'
+      +'<div style="font-size:0.68rem;color:var(--text3)">'+gl30.length+' mediciones</div>'
+      +'</div>';
+  }
+
+  // Tiempo en rango
+  if(pct!==null){
+    var colPct=pct>=70?'var(--ok)':pct>=50?'#f39c12':'var(--hi)';
+    html+='<div style="background:var(--surface2);border-radius:8px;padding:10px;border:1px solid var(--border)">'
+      +'<div style="font-size:0.65rem;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:4px">🎯 Tiempo en rango</div>'
+      +'<div style="font-size:1.3rem;font-weight:700;color:'+colPct+'">'+pct+'<span style="font-size:0.7rem">%</span></div>'
+      +'<div style="font-size:0.68rem;color:var(--text3)">Altas: '+altas+' · Bajas: '+bajas+'</div>'
+      +'</div>';
+  }
+
+  // HbA1c
+  if(ultHB||ehba){
+    var hbaVal=ultHB?ultHB.valor:ehba;
+    var hbaLabel=ultHB?'HbA1c real':'eHbA1c estimada';
+    var colHba=hbaVal<5.7?'var(--ok)':hbaVal<6.5?'#f39c12':'var(--hi)';
+    html+='<div style="background:var(--surface2);border-radius:8px;padding:10px;border:1px solid var(--border)">'
+      +'<div style="font-size:0.65rem;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:4px">🔬 '+hbaLabel+'</div>'
+      +'<div style="font-size:1.3rem;font-weight:700;color:'+colHba+'">'+hbaVal+'<span style="font-size:0.7rem">%</span></div>'
+      +'<div style="font-size:0.68rem;color:var(--text3)">'+lblHba(hbaVal)+'</div>'
+      +'</div>';
+  }
+
+  // Predicción
+  if(pred){
+    var flecha=pred.proyectada<pred.actual?'↓ Mejorando':pred.proyectada>pred.actual?'↑ Empeorando':'→ Estable';
+    var colFlecha=pred.proyectada<pred.actual?'var(--ok)':pred.proyectada>pred.actual?'var(--hi)':'var(--text2)';
+    html+='<div style="background:var(--surface2);border-radius:8px;padding:10px;border:1px solid var(--border)">'
+      +'<div style="font-size:0.65rem;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:4px">🔮 Predicción 3m</div>'
+      +'<div style="font-size:1.3rem;font-weight:700;color:'+colFlecha+'">'+pred.proyectada+'<span style="font-size:0.7rem">%</span></div>'
+      +'<div style="font-size:0.68rem;color:'+colFlecha+'">'+flecha+'</div>'
+      +'</div>';
+  }
+
+  html+='</div>';
+
+  // Medicamentos
+  if(ME.length){
+    html+='<div style="background:var(--surface2);border-radius:8px;padding:10px;border:1px solid var(--border);margin-bottom:8px">'
+      +'<div style="font-size:0.68rem;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:6px">💊 Medicación activa</div>';
+    ME.forEach(function(m){
+      html+='<div style="font-size:0.78rem;color:var(--text);margin-bottom:3px">· <strong>'+m.nombre+'</strong> '+m.dosis+(m.horarios&&m.horarios.length?' — '+m.horarios.join(', '):'')+'</div>';
+    });
+    html+='</div>';
+  }
+
+  // Vitales
+  if(ultVT){
+    html+='<div style="background:var(--surface2);border-radius:8px;padding:10px;border:1px solid var(--border)">'
+      +'<div style="font-size:0.68rem;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:6px">⚖️ Vitales ('+fmtF(ultVT.fecha)+')</div>'
+      +'<div style="font-size:0.78rem;color:var(--text);display:flex;gap:12px;flex-wrap:wrap">';
+    if(ultVT.peso)html+='<span>Peso: <strong>'+ultVT.peso+' kg</strong></span>';
+    if(ultVT.imc)html+='<span>IMC: <strong>'+ultVT.imc+'</strong> ('+lblImc(ultVT.imc)+')</span>';
+    if(ultVT.ts&&ultVT.td)html+='<span>Tensión: <strong>'+ultVT.ts+'/'+ultVT.td+' mmHg</strong></span>';
+    if(ultVT.pulso)html+='<span>Pulso: <strong>'+ultVT.pulso+' ppm</strong></span>';
+    html+='</div></div>';
+  }
+
+  if(!gl30.length&&!ultHB&&!ultVT){
+    html='<div style="color:var(--text3);font-size:0.82rem;text-align:center;padding:16px">Sin datos suficientes para generar el informe.<br>Registra glucemias, HbA1c y vitales para verlo aquí.</div>';
+  }
+
+  el.innerHTML=html;
+}
+
+function construirTextoInformeMedico(){
+  var hace30=new Date();hace30.setDate(hace30.getDate()-30);
+  var hace30s=hace30.toISOString().slice(0,10);
+  var gl30=GL.filter(function(g2){return g2.fecha>=hace30s;});
+  var enRango=gl30.filter(function(g2){return g2.valor>=70&&g2.valor<=180;}).length;
+  var altas=gl30.filter(function(g2){return g2.valor>180;}).length;
+  var bajas=gl30.filter(function(g2){return g2.valor<70;}).length;
+  var prom30=gl30.length?Math.round(gl30.reduce(function(s,g2){return s+g2.valor;},0)/gl30.length):null;
+  var pct=gl30.length?Math.round((enRango/gl30.length)*100):null;
+  var ehba=calcularEHba1c();
+  var pred=calcularPrediccionHba1c();
+  var ultHB=HB[0],ultVT=VT[0];
+  var nombre=ldv('user_nombre','')||'Paciente';
+  var fecha=new Date().toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
+
+  var lineas=[];
+  lineas.push('👨‍⚕️ *INFORME GLUCOCONTROL — '+nombre.toUpperCase()+'*');
+  lineas.push('📅 Período: últimos 30 días · '+fecha);
+  lineas.push('');
+  lineas.push('━━━━━━━━━━━━━━━━━━━━━━');
+  lineas.push('📊 *CONTROL GLUCÉMICO*');
+  if(prom30)lineas.push('  · Promedio: *'+prom30+' mg/dL*');
+  if(pct!==null){
+    lineas.push('  · Tiempo en rango (70-180): *'+pct+'%*');
+    lineas.push('  · Mediciones altas (>180): '+altas);
+    lineas.push('  · Mediciones bajas (<70): '+bajas);
+    lineas.push('  · Total mediciones: '+gl30.length);
+  }
+  lineas.push('');
+  lineas.push('━━━━━━━━━━━━━━━━━━━━━━');
+  lineas.push('🔬 *HBA1C*');
+  if(ultHB)lineas.push('  · Último valor real: *'+ultHB.valor+'%* — '+lblHba(ultHB.valor)+' ('+fmtF(ultHB.fecha)+')');
+  if(ehba)lineas.push('  · Estimada (eHbA1c): *'+ehba+'%* — '+lblHba(ehba));
+  if(pred)lineas.push('  · Predicción a 3 meses: *'+pred.proyectada+'%* ('+(pred.proyectada<pred.actual?'↓ mejorando':pred.proyectada>pred.actual?'↑ empeorando':'→ estable')+')');
+  lineas.push('');
+  if(ME.length){
+    lineas.push('━━━━━━━━━━━━━━━━━━━━━━');
+    lineas.push('💊 *MEDICACIÓN ACTIVA*');
+    ME.forEach(function(m){lineas.push('  · '+m.nombre+' '+m.dosis+(m.horarios&&m.horarios.length?' ('+m.horarios.join(', ')+')':''));});
+    lineas.push('');
+  }
+  if(ultVT){
+    lineas.push('━━━━━━━━━━━━━━━━━━━━━━');
+    lineas.push('⚖️ *VITALES* ('+fmtF(ultVT.fecha)+')');
+    if(ultVT.peso)lineas.push('  · Peso: *'+ultVT.peso+' kg*'+(ultVT.imc?' | IMC: '+ultVT.imc+' ('+lblImc(ultVT.imc)+')':''));
+    if(ultVT.ts&&ultVT.td)lineas.push('  · Tensión: *'+ultVT.ts+'/'+ultVT.td+' mmHg*'+(ultVT.pulso?' | Pulso: '+ultVT.pulso+' ppm':''));
+    lineas.push('');
+  }
+  lineas.push('━━━━━━━━━━━━━━━━━━━━━━');
+  lineas.push('_Generado por GlucoControl · '+fecha+'_');
+  return lineas.join('\n');
+}
+
+function compartirInformeMedicoWhatsApp(){
+  var texto=construirTextoInformeMedico();
+  window.open('https://wa.me/?text='+encodeURIComponent(texto),'_blank');
+}
+
+function generarPDFMedico(){
+  var nombre=ldv('user_nombre','')||'Paciente';
+  var fecha=new Date().toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
+  var texto=construirTextoInformeMedico().replace(/\*/g,'').replace(/━/g,'─').replace(/_/g,'');
+  var ventana=window.open('','_blank');
+  ventana.document.write('<html><head><meta charset="UTF-8"><title>Informe Médico GlucoControl</title>'
+    +'<style>body{font-family:Arial,sans-serif;max-width:700px;margin:40px auto;padding:20px;color:#222;font-size:14px;line-height:1.6}'
+    +'h1{color:#0f4a61;border-bottom:3px solid #0f4a61;padding-bottom:8px}'
+    +'h2{color:#1a6e8e;margin-top:20px;font-size:1rem;border-bottom:1px solid #ddd;padding-bottom:4px}'
+    +'.stat{display:inline-block;background:#f0f7fa;border:1px solid #c5dce8;border-radius:8px;padding:10px 16px;margin:6px 4px;text-align:center}'
+    +'.stat-val{font-size:1.6rem;font-weight:bold;color:#0f4a61}'
+    +'.stat-lab{font-size:0.75rem;color:#666}'
+    +'.footer{margin-top:30px;font-size:0.75rem;color:#999;border-top:1px solid #eee;padding-top:10px}'
+    +'@media print{button{display:none}}'
+    +'</style></head><body>');
+
+  var hace30=new Date();hace30.setDate(hace30.getDate()-30);
+  var hace30s=hace30.toISOString().slice(0,10);
+  var gl30=GL.filter(function(g2){return g2.fecha>=hace30s;});
+  var enRango=gl30.filter(function(g2){return g2.valor>=70&&g2.valor<=180;}).length;
+  var altas=gl30.filter(function(g2){return g2.valor>180;}).length;
+  var bajas=gl30.filter(function(g2){return g2.valor<70;}).length;
+  var prom30=gl30.length?Math.round(gl30.reduce(function(s,g2){return s+g2.valor;},0)/gl30.length):null;
+  var pct=gl30.length?Math.round((enRango/gl30.length)*100):null;
+  var ehba=calcularEHba1c();
+  var pred=calcularPrediccionHba1c();
+  var ultHB=HB[0],ultVT=VT[0];
+
+  ventana.document.write('<button onclick="window.print()" style="background:#0f4a61;color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;margin-bottom:20px;font-size:0.9rem">🖨️ Imprimir / Guardar PDF</button>');
+  ventana.document.write('<h1>🩸 Informe Médico GlucoControl</h1>');
+  ventana.document.write('<p><strong>Paciente:</strong> '+nombre+' &nbsp;|&nbsp; <strong>Fecha:</strong> '+fecha+' &nbsp;|&nbsp; <strong>Período:</strong> Últimos 30 días</p>');
+
+  if(prom30||pct!==null){
+    ventana.document.write('<h2>📊 Control Glucémico</h2>');
+    if(prom30)ventana.document.write('<div class="stat"><div class="stat-val">'+prom30+' mg/dL</div><div class="stat-lab">Promedio 30 días</div></div>');
+    if(pct!==null)ventana.document.write('<div class="stat"><div class="stat-val">'+pct+'%</div><div class="stat-lab">Tiempo en rango</div></div>');
+    ventana.document.write('<div class="stat"><div class="stat-val">'+gl30.length+'</div><div class="stat-lab">Mediciones</div></div>');
+    ventana.document.write('<div class="stat"><div class="stat-val">'+altas+'</div><div class="stat-lab">Hiperglucemias</div></div>');
+    ventana.document.write('<div class="stat"><div class="stat-val">'+bajas+'</div><div class="stat-lab">Hipoglucemias</div></div>');
+  }
+
+  if(ultHB||ehba){
+    ventana.document.write('<h2>🔬 HbA1c</h2>');
+    if(ultHB)ventana.document.write('<div class="stat"><div class="stat-val">'+ultHB.valor+'%</div><div class="stat-lab">HbA1c real ('+fmtF(ultHB.fecha)+')</div></div>');
+    if(ehba)ventana.document.write('<div class="stat"><div class="stat-val">'+ehba+'%</div><div class="stat-lab">eHbA1c estimada</div></div>');
+    if(pred)ventana.document.write('<div class="stat"><div class="stat-val">'+pred.proyectada+'%</div><div class="stat-lab">Predicción 3 meses</div></div>');
+  }
+
+  if(ME.length){
+    ventana.document.write('<h2>💊 Medicación Activa</h2><ul>');
+    ME.forEach(function(m){ventana.document.write('<li><strong>'+m.nombre+'</strong> '+m.dosis+(m.horarios&&m.horarios.length?' — '+m.horarios.join(', '):'')+'</li>');});
+    ventana.document.write('</ul>');
+  }
+
+  if(ultVT){
+    ventana.document.write('<h2>⚖️ Vitales ('+fmtF(ultVT.fecha)+')</h2><ul>');
+    if(ultVT.peso)ventana.document.write('<li>Peso: <strong>'+ultVT.peso+' kg</strong>'+(ultVT.imc?' | IMC: '+ultVT.imc+' ('+lblImc(ultVT.imc)+')':'')+'</li>');
+    if(ultVT.ts&&ultVT.td)ventana.document.write('<li>Tensión arterial: <strong>'+ultVT.ts+'/'+ultVT.td+' mmHg</strong>'+(ultVT.pulso?' | Pulso: '+ultVT.pulso+' ppm':'')+'</li>');
+    ventana.document.write('</ul>');
+  }
+
+  ventana.document.write('<div class="footer">Generado por GlucoControl · '+fecha+' · Este informe es orientativo y no sustituye la evaluación clínica del profesional sanitario.</div>');
+  ventana.document.write('</body></html>');
+  ventana.document.close();
+}
+
 function compartirWhatsApp(){
   var texto = construirResumenWhatsApp();
   var encoded = encodeURIComponent(texto);
@@ -2576,8 +3145,37 @@ function pintarEstadoNotificaciones(){
   var el = g('notif-status-body');
   if(!el) return;
 
-  if(!('Notification' in window)){
-    el.innerHTML = '<div class="cj w"><p>Tu navegador no soporta notificaciones push. Prueba con Chrome o Samsung Internet.</p></div>';
+  // Detectar si se abre desde file:// (limitación del navegador, no del navegador en sí)
+  var esFileProtocol = location.protocol === 'file:';
+
+  if(!('Notification' in window) || esFileProtocol){
+    var esIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent);
+    var guia='';
+    if(esFileProtocol){
+      guia='<div style="background:var(--lo-bg);border:1px solid var(--lo-border);border-radius:10px;padding:14px;margin-bottom:10px">'
+        +'<div style="font-weight:700;color:#b7770d;margin-bottom:8px;font-size:0.87rem">⚠️ Archivo abierto localmente</div>'
+        +'<div style="font-size:0.79rem;line-height:1.8;color:var(--text)">Las notificaciones del sistema no están disponibles cuando la app se abre como archivo local (<code>file://</code>). Para activarlas tienes dos opciones:'
+        +'<br><br><b>Opción A — Instalar como PWA (recomendado):</b><br>'
+        +'Abre la app desde un servidor web o súbela a GitHub Pages / Netlify Drop. Luego instálala como app desde el navegador.<br><br>'
+        +'<b>Opción B — Servidor local rápido:</b><br>'
+        +'En la carpeta del archivo ejecuta: <code>npx serve .</code> o <code>python3 -m http.server</code> y abre <code>http://localhost:3000</code>'
+        +'</div>'
+        +'<div style="margin-top:12px;padding:10px;background:var(--accent-light);border-radius:8px;font-size:0.79rem;color:var(--text)">'
+        +'<b>💡 Mientras tanto:</b> los recordatorios funcionan igual con alertas visuales en pantalla mientras la app esté abierta.'
+        +'</div>'
+        +'</div>';
+    } else if(esIOS){
+      guia='<div class="cj w"><p>Safari iOS solo soporta notificaciones desde apps instaladas como PWA. Pulsa el icono compartir (📤) → "Añadir a pantalla de inicio" y ábrela desde ahí.</p></div>';
+    } else {
+      guia='<div class="cj w"><p>Tu navegador no soporta notificaciones. Prueba con Chrome o Samsung Internet.</p></div>';
+    }
+    // Mostrar recordatorios activos aunque no haya notificaciones del sistema
+    var activos2=RE.filter(function(r){return r.activo;}).length;
+    el.innerHTML=guia
+      +'<div style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--surface2);border-radius:8px;font-size:0.8rem">'
+      +'<span style="font-size:1.1rem">🔔</span>'
+      +'<span>Tienes <b>'+activos2+'</b> recordatorio(s) activo(s). Las alertas visuales funcionan mientras la app esté abierta.</span>'
+      +'</div>';
     return;
   }
 
@@ -2613,7 +3211,11 @@ function pintarEstadoNotificaciones(){
       html += '<p style="font-size:0.78rem;color:var(--text3)">Sin recordatorios pendientes para hoy.</p>';
     }
   } else if(perm==='denied'){
-    html += '<div class="cj d"><h4>🚫 Notificaciones bloqueadas</h4><p>Ve a la configuración de tu navegador y permite las notificaciones para este sitio, luego recarga la página.</p></div>';
+    html += '<div style="background:var(--hi-bg);border:1px solid var(--hi-border);border-radius:10px;padding:12px;margin-bottom:8px">';
+    html += '<div style="font-weight:700;color:var(--hi);margin-bottom:6px;font-size:0.85rem">🚫 Notificaciones bloqueadas</div>';
+    html += '<div style="font-size:0.78rem;color:var(--text);margin-bottom:10px">El navegador tiene bloqueadas las notificaciones para esta página. Necesitas desbloquearlas manualmente.</div>';
+    html += '<button onclick="mostrarGuiaDesbloqueo()" style="width:100%;padding:9px;background:var(--hi);border:none;color:#fff;border-radius:8px;font-weight:700;font-size:0.82rem;cursor:pointer">📋 Ver instrucciones para desbloquear</button>';
+    html += '</div>';
   } else {
     html += '<div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--lo-bg);border-radius:8px">';
     html += '<span style="font-size:1.3rem">🔔</span>';
@@ -2625,11 +3227,64 @@ function pintarEstadoNotificaciones(){
 }
 
 function pedirPermisoNotif(){
-  Notification.requestPermission().then(function(perm){
+  if(location.protocol==='file:'){
+    toast('⚠️ Abre la app desde un servidor web para activar notificaciones','warn');
     pintarEstadoNotificaciones();
-    if(perm==='granted'){iniciarRecordatorios();toast('✅ Notificaciones activadas','ok');}
-    else{toast('⚠️ Permiso denegado','warn');}
-  });
+    return;
+  }
+  if(!('Notification' in window)){
+    toast('⚠️ Tu navegador no soporta notificaciones','warn');
+    return;
+  }
+  if(Notification.permission==='denied'){
+    mostrarGuiaDesbloqueo();
+    return;
+  }
+  // Debe llamarse desde un gesto de usuario (este click lo es)
+  var p=Notification.requestPermission();
+  // Algunos navegadores devuelven Promise, otros usan callback legacy
+  if(p && typeof p.then==='function'){
+    p.then(function(perm){
+      pintarEstadoNotificaciones();
+      if(perm==='granted'){iniciarRecordatorios();toast('✅ Notificaciones activadas','ok');}
+      else if(perm==='denied'){mostrarGuiaDesbloqueo();}
+      else{toast('⚠️ No se concedió el permiso','warn');}
+    }).catch(function(){
+      toast('❌ Error al pedir permiso. Prueba desde Chrome','err');
+    });
+  }
+}
+
+function mostrarGuiaDesbloqueo(){
+  var ua=navigator.userAgent;
+  var esIOS=/iPhone|iPad|iPod/i.test(ua);
+  var esAndroid=/Android/i.test(ua);
+  var esFirefox=/Firefox/i.test(ua);
+  var esSamsung=/SamsungBrowser/i.test(ua);
+
+  var pasos='';
+  if(esIOS){
+    pasos='<b>Safari iOS no soporta notificaciones web.</b><br>Instala la app como PWA: pulsa el botón compartir (📤) → "Añadir a pantalla de inicio". Luego ábrela desde el icono del escritorio y activa notificaciones desde allí.';
+  } else if(esSamsung){
+    pasos='1. Toca los <b>tres puntos</b> (⋮) arriba a la derecha<br>2. Ve a <b>Configuración → Sitios web → Notificaciones</b><br>3. Busca este sitio y ponlo en <b>Permitir</b><br>4. Recarga la página';
+  } else if(esFirefox){
+    pasos='1. Pulsa el <b>icono de candado</b> 🔒 en la barra de direcciones<br>2. Toca <b>Más información</b> → <b>Permisos</b><br>3. Cambia "Recibir notificaciones" a <b>Permitir</b><br>4. Recarga la página';
+  } else if(esAndroid){
+    pasos='1. Toca los <b>tres puntos</b> (⋮) en Chrome<br>2. Ve a <b>Configuración → Configuración del sitio → Notificaciones</b><br>3. Busca esta página y toca <b>Permitir</b><br>4. Recarga la página';
+  } else {
+    // Escritorio Chrome/Edge
+    pasos='1. Haz clic en el <b>icono de candado</b> 🔒 a la izquierda de la URL<br>2. Busca <b>Notificaciones</b> y cámbialo a <b>Permitir</b><br>3. Recarga la página (F5)';
+  }
+
+  var el=g('notif-status-body');
+  if(el){
+    el.innerHTML='<div style="background:var(--hi-bg);border:1px solid var(--hi-border);border-radius:10px;padding:14px">'
+      +'<div style="font-weight:700;color:var(--hi);margin-bottom:8px;font-size:0.88rem">🚫 Notificaciones bloqueadas en el navegador</div>'
+      +'<div style="font-size:0.8rem;line-height:1.8;color:var(--text)">'+pasos+'</div>'
+      +'<button onclick="location.reload()" style="margin-top:12px;width:100%;padding:9px;background:var(--primary-mid);border:none;color:#fff;border-radius:8px;font-weight:700;font-size:0.82rem;cursor:pointer">🔄 Recargar página</button>'
+      +'</div>';
+  }
+  toast('🚫 Permiso bloqueado — sigue las instrucciones en pantalla','warn');
 }
 
 function probarNotificacion(){
@@ -3078,6 +3733,138 @@ function gapi_descargarArchivo(fileId,cb){
   });
 }
 
+
+// ── OCR GLUCÓMETRO ────────────────────────────────────────────
+function abrirScanGlucometro(){
+  var inp=g('gluco-cam-input');
+  if(!inp)return;
+  inp.value='';
+  var wrap=g('ocr-preview-wrap');
+  if(wrap)wrap.style.display='none';
+  var statusTxt=g('ocr-status-txt');
+  if(statusTxt)statusTxt.style.color='';
+  // En movil abrimos camara trasera directamente; en escritorio selector de archivos normal
+  var esMobil=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if(esMobil){
+    inp.setAttribute('capture','environment');
+  } else {
+    inp.removeAttribute('capture');
+  }
+  inp.click();
+}
+
+function procesarFotoGlucometro(input){
+  if(!input.files||!input.files[0])return;
+  var file=input.files[0];
+  var wrap=g('ocr-preview-wrap');
+  var previewImg=g('ocr-preview-img');
+  var statusTxt=g('ocr-status-txt');
+  var spin=g('ocr-spin');
+  var gvInput=g('gv');
+
+  // Mostrar preview
+  var reader=new FileReader();
+  reader.onload=function(e){
+    if(previewImg)previewImg.src=e.target.result;
+    if(wrap)wrap.style.display='block';
+    if(spin)spin.style.display='inline-block';
+    if(statusTxt)statusTxt.textContent='Analizando imagen con IA…';
+
+    // Convertir a base64 para la API
+    var base64=e.target.result.split(',')[1];
+    var mediaType=file.type||'image/jpeg';
+    llamarVisionOCR(base64,mediaType,function(resultado){
+      if(spin)spin.style.display='none';
+      if(resultado.ok){
+        var val=resultado.valor;
+        if(gvInput){
+          gvInput.value=val;
+          // Animar el campo para que el usuario lo note
+          gvInput.style.transition='background 0.4s';
+          gvInput.style.background='#eafaf1';
+          gvInput.style.borderColor='var(--ok)';
+          setTimeout(function(){gvInput.style.background='';gvInput.style.borderColor='';},1800);
+        }
+        if(statusTxt){
+          statusTxt.style.color='var(--ok)';
+          statusTxt.textContent='✅ Valor detectado: '+val+' mg/dL — revísalo antes de guardar';
+        }
+        // Si detectó unidades mmol/L, añadir nota
+        if(resultado.mmol){
+          var notas=g('gn');
+          if(notas&&!notas.value)notas.value='Glucómetro mostraba '+resultado.raw+' mmol/L → convertido a mg/dL';
+        }
+        toast('📷 Glucómetro leído: '+val+' mg/dL','ok');
+      } else {
+        if(statusTxt){
+          statusTxt.style.color='var(--hi)';
+          statusTxt.textContent='❌ '+resultado.error+' — introduce el valor manualmente';
+        }
+        toast('⚠️ No se pudo leer el glucómetro','warn');
+      }
+    });
+  };
+  reader.readAsDataURL(file);
+}
+
+function llamarVisionOCR(base64,mediaType,cb){
+  var PROXY='https://glucocontrol-proxy.luengoguadiana.workers.dev';
+  var prompt='Esta imagen muestra la pantalla de un glucómetro (medidor de glucosa en sangre). '
+    +'Extrae ÚNICAMENTE el valor numérico de glucosa que aparece en la pantalla. '
+    +'Responde SOLO con un objeto JSON con este formato exacto, sin texto adicional ni markdown:\n'
+    +'{"valor":120,"unidad":"mg/dL","confianza":"alta"}\n'
+    +'Si la unidad es mmol/L, conviértela a mg/dL multiplicando por 18 y redondea al entero más cercano, e indica el valor original en el campo "original_mmol".\n'
+    +'Si no puedes leer ningún número con certeza, responde: {"error":"No se pudo leer el valor"}\n'
+    +'No incluyas explicaciones, solo el JSON.';
+
+  fetch(PROXY,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-5',
+      max_tokens:120,
+      messages:[{
+        role:'user',
+        content:[
+          {type:'image',source:{type:'base64',media_type:mediaType,data:base64}},
+          {type:'text',text:prompt}
+        ]
+      }]
+    })
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    var txt='';
+    if(data.content&&data.content[0]&&data.content[0].text){
+      txt=data.content[0].text.trim();
+    } else if(data.error){
+      cb({ok:false,error:'Error de API: '+(data.error.message||'desconocido')});return;
+    }
+    // Limpiar posibles bloques markdown por si acaso
+    txt=txt.replace(/```json|```/g,'').trim();
+    try{
+      var json=JSON.parse(txt);
+      if(json.error){cb({ok:false,error:json.error});return;}
+      var val=parseInt(json.valor);
+      if(isNaN(val)||val<20||val>600){
+        cb({ok:false,error:'Valor fuera de rango ('+json.valor+')'});return;
+      }
+      cb({
+        ok:true,
+        valor:val,
+        mmol:!!json.original_mmol,
+        raw:json.original_mmol||null,
+        confianza:json.confianza||'desconocida'
+      });
+    }catch(e){
+      cb({ok:false,error:'Respuesta no interpretable de la IA'});
+    }
+  })
+  .catch(function(e){
+    cb({ok:false,error:'Sin conexión con el servidor IA'});
+  });
+}
+// ── FIN OCR ───────────────────────────────────────────────────
 
 initDark();
 iniciarRecordatorios();
