@@ -2421,7 +2421,7 @@ function enviarChat(){
     renderAiMessages();
   }).catch(function(e){
     _mostrarTyping(false);
-    var errMsg='Error de conexión. Comprueba tu API Key e internet.\n\nDetalle: '+e.message;
+    var errMsg='Error de conexión.\n\nTipo: '+e.name+'\nDetalle: '+e.message+'\nURL: https://glucocontrol-proxy.luengoguadiana.workers.dev\nOrigen: '+window.location.href;
     aiChatHistory.push({role:'assistant',content:errMsg,hora:fmtHora()});
     _saveAiChat();
     renderAiMessages();
