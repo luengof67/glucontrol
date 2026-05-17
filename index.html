@@ -1565,6 +1565,24 @@ function calcularEHba1c(){
   var prom=gl90.reduce(function(s,g2){return s+g2.valor;},0)/gl90.length;
   return Math.round(((prom+46.7)/28.7)*10)/10;
 }
+function calcularPrediccionHba1c(){
+  var hoy2=new Date();
+  var hace28=new Date();hace28.setDate(hoy2.getDate()-28);
+  var hace56=new Date();hace56.setDate(hoy2.getDate()-56);
+  var hace28s=hace28.toISOString().slice(0,10);
+  var hace56s=hace56.toISOString().slice(0,10);
+  var glReciente=GL.filter(function(g2){return g2.fecha>=hace28s;});
+  var glAnterior=GL.filter(function(g2){return g2.fecha>=hace56s&&g2.fecha<hace28s;});
+  if(glReciente.length<7||glAnterior.length<7)return null;
+  var promReciente=glReciente.reduce(function(s,g2){return s+g2.valor;},0)/glReciente.length;
+  var promAnterior=glAnterior.reduce(function(s,g2){return s+g2.valor;},0)/glAnterior.length;
+  var tendencia=promReciente-promAnterior;
+  var promProyectado=promReciente+(tendencia*2);
+  var hbaProyectada=Math.round(((promProyectado+46.7)/28.7)*10)/10;
+  var hbaActual=Math.round(((promReciente+46.7)/28.7)*10)/10;
+  return {actual:hbaActual,proyectada:hbaProyectada,tendencia:tendencia,promReciente:Math.round(promReciente),promProyectado:Math.round(promProyectado)};
+}
+
 function pintaHba1cIndicator(){
   var el=g('hba1c-indicator');if(!el)return;
   // Calcular eHbA1c estimado siempre que haya datos suficientes
@@ -1582,6 +1600,39 @@ function pintaHba1cIndicator(){
       +'</div>'
       +'<div style="font-size:0.68rem;color:var(--text3);margin-top:3px">Basado en '+gl90.length+' mediciones de los últimos 90 días · Fórmula Nathan 2008 (ADA/EASD)</div>'
       +'</div>';
+
+    // Añadir predicción a 3 meses
+    var pred=calcularPrediccionHba1c();
+    if(pred!==null){
+      var mejora=pred.proyectada<pred.actual;
+      var igual=Math.abs(pred.proyectada-pred.actual)<0.1;
+      var flecha=igual?'→':(mejora?'↓':'↑');
+      var colorPred=igual?'var(--text2)':(mejora?'var(--ok)':'var(--hi)');
+      var msgTend=igual?'Tendencia estable':(mejora?'Tendencia a mejorar':'Tendencia a empeorar');
+      var ep=estHba(pred.proyectada);
+      var colPred=ep==='ok'?'#27ae60':ep==='lo'?'#f39c12':'#e74c3c';
+      var diff=Math.round((pred.proyectada-pred.actual)*10)/10;
+      var diffStr=(diff>0?'+':'')+diff;
+      ehbaHTML+='<div style="margin-top:10px;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)">'
+        +'<div style="font-size:0.68rem;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px">🔮 Predicción a 3 meses</div>'
+        +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'
+        +'<div style="text-align:center">'
+        +'<div style="font-size:0.65rem;color:var(--text3);margin-bottom:2px">Ahora</div>'
+        +'<div style="font-size:1.2rem;font-weight:700;color:'+ecol+'">'+pred.actual+'%</div>'
+        +'</div>'
+        +'<div style="font-size:1.5rem;font-weight:700;color:'+colorPred+';flex:1;text-align:center">'+flecha+'</div>'
+        +'<div style="text-align:center">'
+        +'<div style="font-size:0.65rem;color:var(--text3);margin-bottom:2px">En 3 meses</div>'
+        +'<div style="font-size:1.2rem;font-weight:700;color:'+colPred+'">'+pred.proyectada+'%</div>'
+        +'</div>'
+        +'<div style="background:'+colorPred+';color:#fff;border-radius:20px;padding:3px 9px;font-size:0.7rem;font-weight:700">'+diffStr+'%</div>'
+        +'</div>'
+        +'<div style="display:flex;align-items:center;gap:5px">'
+        +'<span style="font-size:0.75rem;font-weight:600;color:'+colorPred+'">'+flecha+' '+msgTend+'</span>'
+        +'</div>'
+        +'<div style="font-size:0.65rem;color:var(--text3);margin-top:4px">Basado en la tendencia de tus últimas 8 semanas · Estimación orientativa</div>'
+        +'</div>';
+    }
   }
   if(!HB.length){
     el.innerHTML='<p style="color:#999;font-size:0.8rem;margin-bottom:8px">Sin analítica registrada.</p>'+ehbaHTML;
