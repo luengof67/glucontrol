@@ -686,8 +686,7 @@ tr:hover td{background:var(--surface2)}
           </div>
           <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px">
             <div style="font-size:0.67rem;color:var(--text3);display:flex;align-items:center;gap:4px">
-              ⚙️ <button onclick="abrirConfig()" style="background:none;border:none;color:var(--primary-mid);font-size:0.67rem;cursor:pointer;text-decoration:underline;padding:0">Configurar API Key</button>
-              <span id="ai-key-check" style="font-size:0.67rem"></span>
+              🤖 Asistente conectado via proxy seguro
             </div>
             <div style="font-size:0.67rem;color:var(--text3)">Enter para enviar · Shift+Enter nueva línea</div>
           </div>
@@ -2374,8 +2373,7 @@ function construirContextoIA(){
 function enviarChat(){
   var input=g('ai-input');if(!input)return;
   var texto=input.value.trim();if(!texto)return;
-  var apiKey=ldv('ai_api_key','');
-  if(!apiKey){toast('⚠️ Configura tu API Key primero (⚙️)','warn');abrirConfig();return;}
+  var apiKey='via-worker';
 
   var hora=fmtHora();
   aiChatHistory.push({role:'user',content:texto,hora:hora});
@@ -2401,10 +2399,7 @@ function enviarChat(){
   fetch('https://glucocontrol-proxy.luengoguadiana.workers.dev',{
     method:'POST',
     headers:{
-      'Content-Type':'application/json',
-      'x-api-key':apiKey,
-      'anthropic-version':'2023-06-01',
-      'anthropic-dangerous-direct-browser-access':'true'
+      'Content-Type':'application/json'
     },
     body:JSON.stringify({
       model:'claude-sonnet-4-5',
