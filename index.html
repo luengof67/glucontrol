@@ -2407,7 +2407,7 @@ function enviarChat(){
       'anthropic-dangerous-direct-browser-access':'true'
     },
     body:JSON.stringify({
-      model:'claude-sonnet-4-20250514',
+      model:'claude-sonnet-4-5',
       max_tokens:1000,
       system:'Eres GlucoAssist, un asistente de salud especializado en diabetes integrado en GlucoControl. Responde siempre en español. Usa **negritas** y listas con - para organizar la información. Sé empático, claro y práctico. No eres médico; siempre recomienda consultar al profesional sanitario para decisiones clínicas.',
       messages:messages.map(function(m){return{role:m.role,content:m.content};})
@@ -2811,7 +2811,7 @@ function generarResumenMedico(){
   fetch('https://glucocontrol-proxy.luengoguadiana.workers.dev',{
     method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,messages:[{role:'user',content:prompt}]})
+    body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1500,messages:[{role:'user',content:prompt}]})
   }).then(function(r){return r.json();}).then(function(data){
     var texto=(data.content&&data.content[0]&&data.content[0].text)||'Error al generar el informe.';
     if(data.error)texto='Error: '+(data.error.message||'API Error');
