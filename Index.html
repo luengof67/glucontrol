@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f4a61"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="GlucoControl">
+<link rel="manifest" id="manifest-link"><title>GlucoControl v4</title>
+<style>:root{--bg:#eef2f5;--card:#fff;--border:#dde4ec;--text:#2c3e50;--text2:#6c7a89;--pri:#0f4a61;--pri2:#1a6e8e;--acc:#2eb89a;--dan:#e74c3c;--war:#f39c12;--suc:#27ae60;--side:linear-gradient(180deg,#0d3d52,#0f4a61 60%,#0d5247);--inp:#fff;--sh:0 2px 12px rgba(0,0,0,.08)}[data-theme=dark]{--bg:#111827;--card:#1f2937;--border:#374151;--text:#f1f5f9;--text2:#9ca3af;--side:linear-gradient(180deg,#0a1929,#0f2537);--inp:#374151}*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text)}button{cursor:pointer;font-family:inherit}
+#splash{position:fixed;inset:0;background:var(--side);display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:9999;transition:opacity .5s}#splash.hide{opacity:0;pointer-events:none}#splash .ico{font-size:4rem;animation:pulse 1s ease infinite}@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}#splash h1{color:#fff;font-size:2rem;font-weight:800;margin-top:12px}#splash p{color:rgba(255,255,255,.7);font-size:.9rem;margin-top:6px}
+#wrap{display:flex;min-height:100vh}#side{width:230px;background:var(--side);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100;box-shadow:4px 0 20px rgba(0,0,0,.15)}#side .logo{padding:16px;border-bottom:1px solid rgba(255,255,255,.12)}#side .logo h1{color:#fff;font-size:1rem;font-weight:800}#side .logo .un{color:rgba(255,255,255,.85);font-size:.77rem;font-weight:600;margin-top:3px}#side .logo .ud{color:rgba(255,255,255,.5);font-size:.67rem}#side nav button{display:flex;align-items:center;gap:8px;padding:10px 16px;color:rgba(255,255,255,.68);font-size:.81rem;border:none;border-left:3px solid transparent;cursor:pointer;background:none;width:100%;text-align:left;transition:all .15s}#side nav button:hover{background:rgba(255,255,255,.09);color:#fff}#side nav button.on{background:rgba(255,255,255,.14);color:#fff;border-left-color:var(--acc)}#side nav .sep{padding:6px 16px 2px;color:rgba(255,255,255,.35);font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:1px}#side .sf{padding:10px 14px;border-top:1px solid rgba(255,255,255,.1);margin-top:auto}#side .sf p{color:rgba(255,255,255,.35);font-size:.66rem}#side .sf button{display:block;width:100%;margin-top:5px;padding:7px 10px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.85);border-radius:7px;font-size:.73rem;font-weight:600;text-align:left}#side .sf button:hover{background:rgba(255,255,255,.18)}#side .sf .bpdf{background:rgba(46,184,154,.18);border-color:rgba(46,184,154,.4)}#side .sf .bxls{background:rgba(39,174,96,.18);border-color:rgba(39,174,96,.4)}#side .sf .bpwa{background:rgba(255,193,7,.18);border-color:rgba(255,193,7,.35)}
+#main{margin-left:230px;flex:1}#bar{position:sticky;top:0;height:54px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 22px;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,.08)}#bar .bt{font-size:.94rem;font-weight:700;color:var(--pri2)}#bar .br{display:flex;align-items:center;gap:10px}#bar .bl{font-size:.78rem;color:var(--text2)}#bar .bl span{font-weight:700;margin-left:5px;padding:2px 9px;border-radius:12px;font-size:.73rem}#bar .bl span.ok{background:#d1fae5;color:#065f46}#bar .bl span.hi{background:#fee2e2;color:#991b1b}#bar .bl span.lo{background:#fef3c7;color:#92400e}#bar .bl span.nd{background:var(--bg);color:var(--text2)}.tbtn{width:30px;height:30px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1rem;background:var(--card)}
+#content{padding:18px 22px}.sec{display:none;animation:fi .22s ease}.sec.on{display:block}@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}.card{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:16px 18px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,.08)}.card h2{font-size:.89rem;font-weight:700;color:var(--pri2);margin-bottom:12px}.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px}.sc .sl{font-size:.66rem;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}.sc .sv{font-size:1.35rem;font-weight:800}.sc.ok .sv{color:var(--suc)}.sc.hi .sv{color:var(--dan)}.sc.lo .sv{color:var(--war)}.sc .su{font-size:.67rem;color:var(--text2);margin-top:2px}
+.fr{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:10px}.fg{display:flex;flex-direction:column;gap:4px;flex:1;min-width:100px}.fg label{font-size:.73rem;font-weight:700;color:var(--text2)}input,select,textarea{border:1px solid var(--border);border-radius:8px;padding:8px 11px;font-family:inherit;font-size:.82rem;color:var(--text);background:var(--inp);outline:none;width:100%;transition:border .15s}input:focus,select:focus,textarea:focus{border-color:var(--pri2)}textarea{resize:vertical;min-height:60px}
+.btn{padding:7px 15px;border-radius:8px;font-size:.8rem;font-weight:700;border:none;transition:filter .15s}.bp{background:var(--pri2);color:#fff}.bp:hover{filter:brightness(1.1)}.ba{background:var(--acc);color:#fff}.bd{background:var(--dan);color:#fff}.bg{background:var(--card);color:var(--pri2);border:1px solid var(--border)}.bg:hover{background:var(--bg)}.bx{background:var(--suc);color:#fff}.bs{padding:4px 10px;font-size:.73rem}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:.78rem}th{background:var(--bg);font-weight:700;color:var(--text2);font-size:.67rem;text-transform:uppercase;padding:7px 9px;border-bottom:2px solid var(--border);text-align:left}td{padding:7px 9px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text)}tr:last-child td{border-bottom:none}tr:hover td{background:var(--bg)}.pill{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.69rem;font-weight:700}.pok{background:#d1fae5;color:#065f46}.phi{background:#fee2e2;color:#991b1b}.plo{background:#fef3c7;color:#92400e}
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:14px}.mc{border:1px solid var(--border);border-radius:9px;padding:9px 7px;text-align:center;cursor:pointer;background:var(--card);transition:all .15s}.mc:hover,.mc.on{border-color:var(--pri2);background:var(--bg)}.mc .mi{font-size:1.1rem;margin-bottom:2px}.mc .mn{font-size:.66rem;font-weight:700;color:var(--text)}
+.ab{border-radius:9px;padding:10px 14px;margin-bottom:12px;font-size:.81rem;font-weight:600;display:flex;align-items:center;gap:8px}.ab.hi{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}.ab.lo{background:#fef3c7;color:#92400e;border:1px solid #fcd34d}.ab.ok{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7}.ab.info{background:#dbeafe;color:#1e40af;border:1px solid #93c5fd}
+.cj{border-radius:9px;padding:12px 14px;margin-bottom:9px;border-left:4px solid}.cj.w{background:#fef3c7;border-color:var(--war)}.cj.d{background:#fee2e2;border-color:var(--dan)}.cj.i{background:#dbeafe;border-color:var(--pri2)}.cj.s{background:#d1fae5;border-color:var(--suc)}.cj h4{font-size:.82rem;font-weight:700;margin-bottom:3px;color:var(--text)}.cj p{font-size:.77rem;line-height:1.55;color:var(--text)}
+.mcard{border:1px solid var(--border);border-radius:10px;padding:11px 13px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;background:var(--card)}.mico{width:35px;height:35px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.95rem;background:var(--bg);flex-shrink:0}.mname{font-weight:700;font-size:.84rem;color:var(--text)}.mdose{font-size:.72rem;color:var(--text2)}.mstock{font-size:.72rem}.mstock.ok{color:var(--suc)}.mstock.lo{color:var(--war)}.mstock.no{color:var(--dan)}.mact{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.citarow{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--border)}.citarow:last-child{border-bottom:none}.cfecha{width:46px;text-align:center;background:var(--bg);border-radius:8px;padding:5px;flex-shrink:0}.cfecha .cd{font-size:1.15rem;font-weight:800;color:var(--pri2);line-height:1}.cfecha .cm{font-size:.59rem;font-weight:700;color:var(--text2);text-transform:uppercase}.cinfo{flex:1}.ctbadge{display:inline-block;padding:2px 7px;border-radius:10px;font-size:.65rem;font-weight:700;margin-bottom:2px}.ctbadge.med{background:#dbeafe;color:#1e40af}.ctbadge.enf{background:#d1fae5;color:#065f46}.ctbadge.ana{background:#ede9fe;color:#5b21b6}.cinfo h4{font-size:.82rem;font-weight:700;color:var(--text)}.cinfo p{font-size:.71rem;color:var(--text2)}
+.irow{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid var(--border)}.irow:last-child{border-bottom:none}.iico{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.9rem;background:var(--bg);flex-shrink:0}.iinfo{flex:1}.iinfo h4{font-size:.81rem;font-weight:700;color:var(--text)}.iinfo p{font-size:.7rem;color:var(--text2)}.iimg{width:56px;height:56px;object-fit:cover;border-radius:7px;border:1px solid var(--border);cursor:pointer;flex-shrink:0}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.76rem}.bar-bg{flex:1;height:7px;background:var(--bg);border-radius:4px;overflow:hidden}.bar-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.hba1c-bar{height:10px;border-radius:5px;background:linear-gradient(to right,#22c55e 0%,#22c55e 53%,#f59e0b 53%,#f59e0b 64%,#ef4444 64%,#ef4444 100%);position:relative;margin:8px 0}.hba1c-ind{position:absolute;top:-4px;width:16px;height:16px;border-radius:50%;background:var(--card);border:3px solid var(--pri2);transform:translateX(-50%)}.hba1c-labels{display:flex;justify-content:space-between;font-size:.59rem;color:var(--text2)}
+.rtoggle{width:40px;height:22px;border-radius:11px;border:none;position:relative;cursor:pointer;transition:background .25s;flex-shrink:0}.rtoggle.on{background:var(--acc)}.rtoggle.off{background:var(--border)}.rtoggle::after{content:'';position:absolute;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .25s}.rtoggle.on::after{left:21px}.rtoggle.off::after{left:3px}.rec-card{border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;background:var(--card)}
+.cont-card{border:1px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:8px;background:var(--card);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(2px)}.ov.on{display:flex}.mo{background:var(--card);border-radius:14px;padding:20px 22px;width:92%;max-width:500px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);animation:mi .2s ease}@keyframes mi{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}.mo h2{font-size:.98rem;font-weight:800;color:var(--pri2);margin-bottom:14px}.mfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+#imgv{display:none;position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:500;align-items:center;justify-content:center;flex-direction:column}#imgv.on{display:flex}#imgv img{max-width:92vw;max-height:84vh;object-fit:contain;border-radius:10px}#imgv button{margin-top:14px;padding:9px 22px;background:#fff;border:none;border-radius:9px;font-weight:700}
+#pdfov{display:none;position:fixed;inset:0;background:rgba(10,25,47,.92);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:14px}#pdfov.on{display:flex}#pdfov p{color:#fff;font-size:.9rem;font-weight:600}.spin{width:38px;height:38px;border:4px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.hoy{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px}.hslot{border:1px solid var(--border);border-radius:8px;padding:7px;text-align:center;background:var(--card)}.hslot .hl{font-size:.59rem;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:2px}.hslot .hv{font-size:.93rem;font-weight:800}.hv.ok{color:var(--suc)}.hv.hi{color:var(--dan)}.hv.lo{color:var(--war)}.hv.nd{color:var(--border);font-size:.75rem}
+.rbar{height:8px;border-radius:4px;background:linear-gradient(to right,var(--war) 0%,var(--suc) 35%,var(--suc) 65%,var(--dan) 100%);position:relative;margin:5px 0}.rind{position:absolute;top:-4px;width:13px;height:13px;border-radius:50%;background:var(--card);border:3px solid var(--pri2);transform:translateX(-50%)}.rlabels{display:flex;justify-content:space-between;font-size:.59rem;color:var(--text2)}
+.fprev{width:100%;max-height:160px;object-fit:contain;border-radius:9px;border:1px solid var(--border);margin-top:6px;display:none}
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--pri2);color:#fff;padding:9px 20px;border-radius:25px;font-size:.82rem;font-weight:700;z-index:9000;opacity:0;transition:all .3s;pointer-events:none}#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#pwa-banner{display:none;position:fixed;bottom:68px;left:10px;right:10px;background:var(--pri2);color:#fff;border-radius:13px;padding:14px 16px;z-index:300;box-shadow:0 6px 24px rgba(0,0,0,.3)}#pwa-banner p{font-size:.83rem;margin-bottom:10px}.pbtn{display:flex;gap:8px}.pbtn button{flex:1;padding:9px;border-radius:8px;font-weight:700;font-size:.79rem;border:none;cursor:pointer}.pi{background:var(--acc);color:#fff}.pc{background:rgba(255,255,255,.15);color:#fff}
+.ph{display:none;padding-bottom:10px;border-bottom:2px solid var(--pri2);margin-bottom:12px}.ph h1{font-size:1.1rem;font-weight:800;color:var(--pri2)}.ph p{font-size:.71rem;color:var(--text2)}.empty{text-align:center;color:var(--text2);font-size:.81rem;padding:18px 0}.shdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.shdr h1{font-size:1.12rem;font-weight:800;color:var(--pri2)}
+@media print{#side,#bar,.btn,.ov,#pdfov,#alert-box,#mobnav,#mas-panel,#mas-ov,#imgv,#pwa-banner,#splash,#toast{display:none!important}#main{margin-left:0!important}#content{padding:0!important}.sec{display:none!important}.sec.printing{display:block!important}.card{break-inside:avoid}body{background:#fff!important}.ph{display:block!important}}
+@media(max-width:900px){.g3,.g4{grid-template-columns:1fr 1fr}}@media(max-width:800px){.g2{grid-template-columns:1fr}.mgrid,.hoy{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){#side{display:none}#main{margin-left:0!important}#bar{padding:0 10px}#content{padding:10px 8px;padding-bottom:70px}.g2,.g3,.g4{grid-template-columns:1fr}.hoy,.mgrid{grid-template-columns:1fr 1fr}.card{padding:11px}#mobnav{display:flex!important}}</style>
+</head>
+<body>
+<div id="toast"></div>
+<div id="splash"><div class="ico">🩸</div><h1>GlucoControl</h1><p id="splash-sub">Tu salud, bajo control</p></div>
+<div id="wrap">
+<aside id="side">
+  <div class="logo"><h1>🩸 GlucoControl</h1><div class="un" id="side-name">Mi perfil</div><div class="ud" id="side-diag">Diabetes</div></div>
+  <nav>
+    <div class="sep">Principal</div>
+    <button id="n-dashboard" onclick="ir('dashboard')">🏠 Inicio</button>
+    <button id="n-glucemia" onclick="ir('glucemia')">📊 Glucemia</button>
+    <button id="n-estadisticas" onclick="ir('estadisticas')">📈 Estadísticas</button>
+    <button id="n-hba1c" onclick="ir('hba1c')">🔬 HbA1c</button>
+    <div class="sep">Salud</div>
+    <button id="n-consejos" onclick="ir('consejos')">💡 Consejos</button>
+    <button id="n-vitales" onclick="ir('vitales')">⚖️ Peso y Tensión</button>
+    <div class="sep">Control</div>
+    <button id="n-medicamentos" onclick="ir('medicamentos')">💊 Medicamentos</button>
+    <button id="n-recordatorios" onclick="ir('recordatorios')">🔔 Recordatorios</button>
+    <button id="n-citas" onclick="ir('citas')">📅 Citas</button>
+    <button id="n-informes" onclick="ir('informes')">📋 Informes</button>
+    <button id="n-contactos" onclick="ir('contactos')">🆘 Emergencias</button>
+    <div class="sep">Opciones</div>
+    <button id="n-ajustes" onclick="ir('ajustes')">⚙️ Ajustes</button>
+  </nav>
+  <div class="sf">
+    <p>GlucoControl v4.0 Final</p>
+    <button onclick="doImprimir()">🖨️ Imprimir</button>
+    <button class="bpdf" onclick="doExportPDF()">📄 Exportar PDF</button>
+    <button class="bxls" onclick="doExportExcel()">📊 Exportar Excel</button>
+    <button class="bpwa" onclick="instalarPWA()">📱 Instalar app</button>
+  </div>
+</aside>
+<main id="main">
+  <div id="bar">
+    <span class="bt" id="btitle">Inicio</span>
+    <div class="br">
+      <span class="bl">Última: <span id="lastbadge" class="nd">Sin datos</span></span>
+      <button class="tbtn" onclick="toggleTheme()" title="Modo oscuro/claro">🌙</button>
+    </div>
+  </div>
+  <div id="content">
+    <div class="sec on" id="sec-dashboard">
+      <div id="alert-box"></div>
+      <div class="g4" id="dstats" style="margin-bottom:14px"></div>
+      <div class="g2">
+        <div class="card"><h2>📊 Glucemia de hoy</h2><div class="hoy" id="hoy"></div><div id="chartBox"></div></div>
+        <div>
+          <div class="card" style="margin-bottom:14px"><h2>📈 Esta semana</h2><div id="d-semana"></div></div>
+          <div class="card" style="margin-bottom:14px"><h2>💊 Medicamentos</h2><div id="d-meds"></div></div>
+          <div class="card"><h2>📅 Próximas citas</h2><div id="d-citas"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec" id="sec-glucemia">
+      <div class="shdr"><div><h1>Glucemia</h1></div><button class="btn bp" onclick="am('mg')">+ Nueva</button></div>
+      <div class="card"><h2>Filtrar</h2><div class="mgrid">
+        <div class="mc on" onclick="fm('todos',this)"><div class="mi">📋</div><div class="mn">Todos</div></div>
+        <div class="mc" onclick="fm('ayunas',this)"><div class="mi">🌅</div><div class="mn">Ayunas</div></div>
+        <div class="mc" onclick="fm('antes_desayuno',this)"><div class="mi">☕</div><div class="mn">A.Desayuno</div></div>
+        <div class="mc" onclick="fm('despues_desayuno',this)"><div class="mi">🥐</div><div class="mn">D.Desayuno</div></div>
+        <div class="mc" onclick="fm('antes_comida',this)"><div class="mi">🍽️</div><div class="mn">A.Comida</div></div>
+        <div class="mc" onclick="fm('despues_comida',this)"><div class="mi">🥘</div><div class="mn">D.Comida</div></div>
+        <div class="mc" onclick="fm('antes_cena',this)"><div class="mi">🌆</div><div class="mn">A.Cena</div></div>
+        <div class="mc" onclick="fm('despues_cena',this)"><div class="mi">🌙</div><div class="mn">D.Cena</div></div>
+        <div class="mc" onclick="fm('antes_dormir',this)"><div class="mi">🛌</div><div class="mn">A.Dormir</div></div>
+      </div></div>
+      <div class="card"><h2>Historial</h2><div class="tw"><table><thead><tr><th>Fecha</th><th>Hora</th><th>Momento</th><th>mg/dL</th><th>Estado</th><th>Notas</th><th></th></tr></thead><tbody id="gtbody"></tbody></table></div></div>
+    </div>
+    <div class="sec" id="sec-estadisticas">
+      <div class="shdr"><div><h1>Estadísticas</h1><p style="font-size:.77rem;color:var(--text2)">Últimos 28 días</p></div></div>
+      <div class="g4" id="est-cards" style="margin-bottom:14px"></div>
+      <div class="g2">
+        <div class="card"><h2>🎯 Tiempo en rango</h2><div id="tir-chart"></div></div>
+        <div class="card"><h2>📊 Por momento</h2><div id="momento-stats"></div></div>
+      </div>
+      <div class="card"><h2>📈 Tendencia 4 semanas</h2><div id="tendencia-chart"></div></div>
+    </div>
+    <div class="sec" id="sec-hba1c">
+      <div class="shdr"><div><h1>HbA1c</h1></div><button class="btn bp" onclick="am('mhba')">+ Añadir</button></div>
+      <div class="g2">
+        <div class="card"><h2>📈 Evolución</h2><div id="hba1cChart"></div></div>
+        <div class="card"><h2>🎯 Indicador</h2><div id="hba1c-indicator"></div>
+          <div style="margin-top:10px;padding:9px;background:var(--bg);border-radius:8px;font-size:.74rem;color:var(--text)">🟢 &lt;5.7% Normal · 🟡 5.7–6.4% Prediabetes · 🔴 ≥6.5% Diabetes<br><span style="color:var(--pri2)">🎯 Objetivo: &lt;7%</span></div>
+        </div>
+      </div>
+      <div class="card"><h2>Historial</h2><div class="tw"><table><thead><tr><th>Fecha</th><th>HbA1c%</th><th>Estado</th><th>Centro</th><th>Notas</th><th></th></tr></thead><tbody id="hba1c-tbody"></tbody></table></div></div>
+    </div>
+    <div class="sec" id="sec-consejos">
+      <div class="shdr"><div><h1>Consejos de Salud</h1></div></div>
+      <div class="card"><h2>📊 Nivel actual</h2>
+        <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+          <div><div style="font-size:.72rem;color:var(--text2);margin-bottom:2px">Última glucosa</div><div id="cnivel" style="font-size:1.9rem;font-weight:800">—</div><div style="font-size:.71rem;color:var(--text2)">mg/dL</div></div>
+          <div style="flex:1;min-width:160px"><div class="rbar"><div class="rind" id="rind" style="left:50%"></div></div><div class="rlabels"><span>Baja</span><span>Normal</span><span>Alta</span></div></div>
+        </div>
+      </div>
+      <div id="cons-din"></div>
+      <div class="card"><h2>💡 Consejos generales</h2>
+        <div class="cj i"><h4>🥗 Alimentación</h4><p>Bajo índice glucémico, evita azúcares refinados, horarios regulares.</p></div>
+        <div class="cj i"><h4>🚶 Ejercicio</h4><p>30 min diarios. Caminar post-comida reduce picos hasta 40 mg/dL.</p></div>
+        <div class="cj s"><h4>💧 Hidratación</h4><p>1,5–2 litros de agua. Sin zumos ni bebidas azucaradas.</p></div>
+        <div class="cj w"><h4>😴 Descanso</h4><p>7–8h de sueño. El estrés eleva la glucemia significativamente.</p></div>
+        <div class="cj d"><h4>🩺 Revisiones</h4><p>Control periódico, revisar pies a diario. Urgencias si &gt;300 mg/dL.</p></div>
+      </div>
+    </div>
+    <div class="sec" id="sec-vitales">
+      <div class="shdr"><div><h1>Peso y Tensión</h1></div><button class="btn bp" onclick="am('mvit')">+ Registrar</button></div>
+      <div class="g3" id="vital-stats" style="margin-bottom:14px"></div>
+      <div class="g2">
+        <div class="card"><h2>⚖️ Evolución peso</h2><div id="pesoChart"></div></div>
+        <div class="card"><h2>🩺 Evolución tensión</h2><div id="tensionChart"></div></div>
+      </div>
+      <div class="card"><h2>Historial</h2><div class="tw"><table><thead><tr><th>Fecha</th><th>Hora</th><th>Peso</th><th>Tensión</th><th>Pulso</th><th>IMC</th><th></th></tr></thead><tbody id="vit-tbody"></tbody></table></div></div>
+    </div>
+    <div class="sec" id="sec-medicamentos">
+      <div class="shdr"><div><h1>Medicamentos</h1></div><button class="btn bp" onclick="am('mm')">+ Añadir</button></div>
+      <div class="g2">
+        <div class="card"><h2>💊 Mis medicamentos</h2><div id="listamed"></div></div>
+        <div>
+          <div class="card" style="margin-bottom:14px"><h2>✅ Tomas hoy</h2><div id="tomashot"></div></div>
+          <div class="card"><h2>⚠️ Stock bajo</h2><div id="stockbajo"></div></div>
+        </div>
+      </div>
+      <div class="card"><h2>Historial tomas</h2><div class="tw"><table><thead><tr><th>Fecha</th><th>Hora</th><th>Medicamento</th><th>Dosis</th></tr></thead><tbody id="tombody"></tbody></table></div></div>
+    </div>
+    <div class="sec" id="sec-recordatorios">
+      <div class="shdr"><div><h1>Recordatorios</h1></div><button class="btn bp" onclick="am('mr')">+ Añadir</button></div>
+      <div class="card"><h2>🔔 Activos</h2><div id="lista-rec"></div></div>
+      <div class="card"><h2>ℹ️ Info</h2><div class="cj i"><h4>Notificaciones</h4><p>Acepta el permiso cuando se solicite. Funciona mejor con el archivo abierto en el navegador.</p></div></div>
+    </div>
+    <div class="sec" id="sec-citas">
+      <div class="shdr"><div><h1>Citas Médicas</h1></div><button class="btn bp" onclick="am('mc')">+ Nueva</button></div>
+      <div class="g2">
+        <div class="card"><h2>📅 Próximas</h2><div id="proxcitas"></div></div>
+        <div class="card"><h2>🗂️ Historial</h2><div id="histcitas"></div></div>
+      </div>
+    </div>
+    <div class="sec" id="sec-informes">
+      <div class="shdr"><div><h1>Informes Médicos</h1></div><button class="btn bp" onclick="am('mi')">+ Añadir</button></div>
+      <div class="card">
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px">
+          <button class="btn bg bs" onclick="fi2('todos')">Todos</button>
+          <button class="btn bg bs" onclick="fi2('analisis')">Análisis</button>
+          <button class="btn bg bs" onclick="fi2('prueba')">Pruebas</button>
+          <button class="btn bg bs" onclick="fi2('cita')">Resumen</button>
+        </div>
+        <div id="listainf"></div>
+      </div>
+    </div>
+    <div class="sec" id="sec-contactos">
+      <div class="shdr"><div><h1>Contactos Emergencia</h1><p style="font-size:.77rem;color:var(--text2)">Acceso rápido en situaciones críticas</p></div><button class="btn bp" onclick="am('mcon')">+ Añadir</button></div>
+      <div class="card"><div class="ab info">📞 Emergencias: <strong>112</strong></div><div id="lista-cont"></div></div>
+    </div>
+    <div class="sec" id="sec-ajustes">
+      <div class="shdr"><div><h1>Ajustes</h1></div></div>
+      <div class="g2">
+        <div class="card"><h2>👤 Perfil del paciente</h2>
+          <div class="fg" style="margin-bottom:10px"><label>Nombre completo</label><input type="text" id="aj-nombre" placeholder="Tu nombre"></div>
+          <div class="fr"><div class="fg"><label>Fecha nacimiento</label><input type="date" id="aj-fecha"></div><div class="fg"><label>Tipo diabetes</label><select id="aj-tipo"><option>Tipo 1</option><option>Tipo 2</option><option>Gestacional</option><option>MODY</option><option>Otro</option></select></div></div>
+          <div class="fr"><div class="fg"><label>Altura (cm)</label><input type="number" id="aj-altura" placeholder="170"></div><div class="fg"><label>Médico de referencia</label><input type="text" id="aj-medico" placeholder="Dr. García"></div></div>
+          <button class="btn bp" style="margin-top:6px" onclick="guardarPerfil()">💾 Guardar perfil</button>
+        </div>
+        <div class="card"><h2>🎯 Rangos personalizados</h2>
+          <div class="fr"><div class="fg"><label>Mínimo (baja) mg/dL</label><input type="number" id="aj-min" placeholder="70"></div><div class="fg"><label>Máximo (alta) mg/dL</label><input type="number" id="aj-max" placeholder="180"></div></div>
+          <div class="fg" style="margin-bottom:10px"><label>Meta HbA1c (%)</label><input type="number" id="aj-hba" step="0.1" placeholder="7.0"></div>
+          <button class="btn bp" onclick="guardarRangos()">💾 Guardar rangos</button>
+          <div class="cj i" style="margin-top:10px"><h4>💡 Consejo</h4><p>Tu médico puede recomendarte rangos personalizados según tu tratamiento.</p></div>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="card"><h2>🌙 Apariencia</h2>
+          <div style="display:flex;gap:8px;margin-bottom:10px">
+            <button class="btn bg bs" onclick="setModo('light')">☀️ Claro</button>
+            <button class="btn bg bs" onclick="setModo('dark')">🌙 Oscuro</button>
+          </div>
+          <div class="cj i"><h4>Atajo rápido</h4><p>Pulsa el botón 🌙 en la barra superior para cambiar el tema en cualquier momento.</p></div>
+        </div>
+        <div class="card"><h2>💾 Copia de seguridad</h2>
+          <div class="cj s" style="margin-bottom:10px"><h4>✅ Datos locales</h4><p>Todo se guarda en tu dispositivo. Exporta copias periódicamente.</p></div>
+          <button class="btn bx" style="margin-bottom:8px;width:100%" onclick="exportarBackup()">📤 Exportar copia de seguridad</button>
+          <div class="fg"><label>📥 Restaurar desde copia</label><input type="file" id="backup-file" accept=".json" onchange="importarBackup(this)" style="padding:3px"></div>
+        </div>
+      </div>
+      <div class="card"><h2>📄 Informe médico completo</h2>
+        <div class="cj i" style="margin-bottom:10px"><h4>Informe para llevar a consulta</h4><p>Genera un documento con glucemia, HbA1c, medicamentos, peso y tensión de los últimos 30 días.</p></div>
+        <button class="btn bp" onclick="generarInformeMedico()">📄 Generar informe médico</button>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+<div class="ov" id="mg" onclick="cov(event,this)"><div class="mo"><h2>📊 Nueva Medición</h2>
+  <div class="fr"><div class="fg"><label>Fecha</label><input type="date" id="gf"></div><div class="fg"><label>Hora</label><input type="time" id="gh"></div></div>
+  <div class="fg" style="margin-bottom:9px"><label>Momento</label><select id="gm"><option value="ayunas">En ayunas</option><option value="antes_desayuno">Antes desayuno</option><option value="despues_desayuno">Después desayuno</option><option value="antes_comida">Antes comida</option><option value="despues_comida">Después comida</option><option value="antes_cena">Antes cena</option><option value="despues_cena">Después cena</option><option value="antes_dormir">Antes de dormir</option></select></div>
+  <div class="fg" style="margin-bottom:9px"><label>Glucosa (mg/dL)</label><input type="number" id="gv" min="20" max="600" placeholder="120"></div>
+  <div class="fg" style="margin-bottom:9px"><label>Notas</label><textarea id="gn" placeholder="Opcional..."></textarea></div>
+  <div class="mfoot"><button class="btn bg" onclick="c('mg')">Cancelar</button><button class="btn bp" onclick="guardarG()">Guardar</button></div>
+</div></div>
+<div class="ov" id="mhba" onclick="cov(event,this)"><div class="mo"><h2>🔬 Nueva HbA1c</h2>
+  <div class="fr"><div class="fg"><label>Fecha</label><input type="date" id="hf"></div><div class="fg"><label>HbA1c (%)</label><input type="number" id="hv" step="0.1" min="3" max="20" placeholder="6.8"></div></div>
+  <div class="fg" style="margin-bottom:9px"><label>Centro</label><input type="text" id="hc" placeholder="Hospital..."></div>
+  <div class="fg" style="margin-bottom:9px"><label>Notas</label><textarea id="hn"></textarea></div>
+  <div class="mfoot"><button class="btn bg" onclick="c('mhba')">Cancelar</button><button class="btn bp" onclick="guardarHba()">Guardar</button></div>
+</div></div>
+<div class="ov" id="mvit" onclick="cov(event,this)"><div class="mo"><h2>⚖️ Peso y Tensión</h2>
+  <div class="fr"><div class="fg"><label>Fecha</label><input type="date" id="vf"></div><div class="fg"><label>Hora</label><input type="time" id="vh"></div></div>
+  <div class="fr"><div class="fg"><label>Peso (kg)</label><input type="number" id="vp" step="0.1" placeholder="75.5"></div><div class="fg"><label>Altura (cm)</label><input type="number" id="valt" placeholder="170"></div></div>
+  <div class="fr"><div class="fg"><label>Tensión sistólica</label><input type="number" id="vts" placeholder="120"></div><div class="fg"><label>Tensión diastólica</label><input type="number" id="vtd" placeholder="80"></div></div>
+  <div class="fg" style="margin-bottom:9px"><label>Pulso (ppm)</label><input type="number" id="vpu" placeholder="70"></div>
+  <div class="mfoot"><button class="btn bg" onclick="c('mvit')">Cancelar</button><button class="btn bp" onclick="guardarVit()">Guardar</button></div>
+</div></div>
+<div class="ov" id="mm" onclick="cov(event,this)"><div class="mo"><h2>💊 Medicamento</h2>
+  <div class="fg" style="margin-bottom:9px"><label>Nombre</label><input type="text" id="mn" placeholder="Metformina 850mg"></div>
+  <div class="fr"><div class="fg"><label>Dosis</label><input type="text" id="md" placeholder="1 comprimido"></div><div class="fg"><label>Tipo</label><select id="mtp"><option>Comprimido</option><option>Cápsula</option><option>Insulina</option><option>Líquido</option><option>Otro</option></select></div></div>
+  <div class="fg" style="margin-bottom:9px"><label>Horarios (separados por coma)</label><input type="text" id="mh" placeholder="08:00, 14:00, 22:00"></div>
+  <div class="fr"><div class="fg"><label>Stock actual</label><input type="number" id="ms" placeholder="30"></div><div class="fg"><label>Alerta cuando queden</label><input type="number" id="ma" placeholder="10"></div></div>
+  <div class="fg" style="margin-bottom:9px"><label>Instrucciones</label><textarea id="minstr" placeholder="Tomar con comida..."></textarea></div>
+  <div class="mfoot"><button class="btn bg" onclick="c('mm')">Cancelar</button><button class="btn bp" onclick="guardarM()">Guardar</button></div>
+</div></div>
+<div class="ov" id="mr" onclick="cov(event,this)"><div class="mo"><h2>🔔 Recordatorio</h2>
+  <div class="fg" style="margin-bottom:9px"><label>Nombre</label><input type="text" id="rn" placeholder="Tomar Metformina..."></div>
+  <div class="fr"><div class="fg"><label>Hora</label><input type="time" id="rh"></div><div class="fg"><label>Tipo</label><select id="rt"><option value="medicacion">Medicación</option><option value="glucemia">Medir glucemia</option><option value="cita">Cita médica</option><option value="otro">Otro</option></select></div></div>
+  <div class="fg" style="margin-bottom:9px"><label>Días de la semana</label>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px" id="dias-selector">
+      <label style="display:flex;align-items:center;gap:3px;font-size:.77rem;color:var(--text)"><input type="checkbox" value="1" style="width:auto"> Lu</label>
+      <label style="display:flex;align-items:center;gap:3px;font-size:.77rem;color:var(--text)"><input type="checkbox" value="2" style="width:auto"> Ma</label>
+      <label style="display:flex;align-items:center;gap:3px;font-size:.77rem;color:var(--text)"><input type="checkbox" value="3" style="width:auto"> Mi</label>
+      <label style="display:flex;align-items:center;gap:3px;font-size:.77rem;color:var(--text)"><input type="checkbox" value="4" style="width:auto"> Ju</label>
+      <label style="display:flex;align-items:center;gap:3px;font-size:.77rem;color:var(--text)"><input type="checkbox" value="5" style="width:auto"> Vi</label>
+      <label style="display:flex;align-items:center;gap:3px;font-size:.77rem;color:var(--text)"><input type="checkbox" value="6" style="width:auto"> Sa</label>
+      <label style="display:flex;align-items:center;gap:3px;font-size:.77rem;color:var(--text)"><input type="checkbox" value="0" style="width:auto"> Do</label>
+      <button type="button" class="btn bg bs" onclick="selTD()">Todos</button>
+    </div>
+  </div>
+  <div class="mfoot"><button class="btn bg" onclick="c('mr')">Cancelar</button><button class="btn bp" onclick="guardarRec()">Guardar</button></div>
+</div></div>
+<div class="ov" id="mc" onclick="cov(event,this)"><div class="mo"><h2>📅 Nueva Cita</h2>
+  <div class="fr"><div class="fg"><label>Fecha</label><input type="date" id="cf"></div><div class="fg"><label>Hora</label><input type="time" id="ch"></div></div>
+  <div class="fg" style="margin-bottom:9px"><label>Tipo</label><select id="ctp"><option value="med">Médico/a</option><option value="enf">Enfermería</option><option value="ana">Análisis</option></select></div>
+  <div class="fg" style="margin-bottom:9px"><label>Especialista / Centro</label><input type="text" id="ce"></div>
+  <div class="fg" style="margin-bottom:9px"><label>Motivo</label><textarea id="cn"></textarea></div>
+  <div class="mfoot"><button class="btn bg" onclick="c('mc')">Cancelar</button><button class="btn bp" onclick="guardarC()">Guardar</button></div>
+</div></div>
+<div class="ov" id="mi" onclick="cov(event,this)"><div class="mo"><h2>📋 Informe Médico</h2>
+  <div class="fg" style="margin-bottom:9px"><label>Título</label><input type="text" id="it" placeholder="Analítica trimestral"></div>
+  <div class="fr"><div class="fg"><label>Fecha</label><input type="date" id="ife"></div><div class="fg"><label>Tipo</label><select id="ity"><option value="analisis">Análisis</option><option value="prueba">Prueba diagnóstica</option><option value="cita">Resumen cita</option></select></div></div>
+  <div class="fg" style="margin-bottom:9px"><label>Médico / Centro</label><input type="text" id="imd"></div>
+  <div class="fg" style="margin-bottom:9px"><label>Resultados</label><textarea id="ic" placeholder="HbA1c: 6.8%" style="min-height:80px"></textarea></div>
+  <div class="fg" style="margin-bottom:9px"><label>📷 Foto (opcional)</label><input type="file" id="ifoto" accept="image/*" onchange="prevFoto(this)" style="padding:3px"><img id="fprev" class="fprev" alt="preview"></div>
+  <div class="mfoot"><button class="btn bg" onclick="c('mi')">Cancelar</button><button class="btn bp" onclick="guardarI()">Guardar</button></div>
+</div></div>
+<div class="ov" id="mcon" onclick="cov(event,this)"><div class="mo"><h2>🆘 Contacto Emergencia</h2>
+  <div class="fg" style="margin-bottom:9px"><label>Nombre</label><input type="text" id="con-n" placeholder="Dr. García / María"></div>
+  <div class="fr"><div class="fg"><label>Teléfono</label><input type="tel" id="con-t" placeholder="600 123 456"></div><div class="fg"><label>Tipo</label><select id="con-tp"><option value="med">Médico/a</option><option value="fam">Familiar</option><option value="urg">Urgencias</option></select></div></div>
+  <div class="fg" style="margin-bottom:9px"><label>Relación / Especialidad</label><input type="text" id="con-r" placeholder="Endocrinólogo / Cónyuge"></div>
+  <div class="mfoot"><button class="btn bg" onclick="c('mcon')">Cancelar</button><button class="btn bp" onclick="guardarCont()">Guardar</button></div>
+</div></div>
+<div id="imgv"><img id="imgv-img" src="" alt="Informe"><button onclick="g('imgv').classList.remove('on')">✕ Cerrar</button></div>
+<div id="pdfov"><div class="spin"></div><p id="pdfmsg">Generando...</p></div>
+<div id="pwa-banner"><p>📱 <strong>Instala GlucoControl</strong> en tu pantalla de inicio</p><div class="pbtn"><button class="pi" onclick="confirmarInstalar()">Instalar</button><button class="pc" onclick="g('pwa-banner').style.display='none'">Ahora no</button></div></div>
+<nav id="mobnav" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--side);z-index:200;border-top:2px solid rgba(255,255,255,.12);height:60px;align-items:stretch">
+  <button onclick="ir('dashboard')" id="mob-dashboard" style="flex:1;background:none;border:none;color:rgba(255,255,255,.6);font-size:.54rem;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer"><span style="font-size:1.15rem">🏠</span>Inicio</button>
+  <button onclick="ir('glucemia')" id="mob-glucemia" style="flex:1;background:none;border:none;color:rgba(255,255,255,.6);font-size:.54rem;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer"><span style="font-size:1.15rem">📊</span>Glucemia</button>
+  <button onclick="ir('medicamentos')" id="mob-medicamentos" style="flex:1;background:none;border:none;color:rgba(255,255,255,.6);font-size:.54rem;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer"><span style="font-size:1.15rem">💊</span>Meds</button>
+  <button onclick="ir('vitales')" id="mob-vitales" style="flex:1;background:none;border:none;color:rgba(255,255,255,.6);font-size:.54rem;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer"><span style="font-size:1.15rem">⚖️</span>Vitales</button>
+  <button onclick="amas()" style="flex:1;background:none;border:none;color:rgba(255,255,255,.6);font-size:.54rem;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer"><span style="font-size:1.15rem">⋯</span>Más</button>
+</nav>
+<div id="mas-panel" style="display:none;position:fixed;bottom:60px;left:0;right:0;background:var(--side);z-index:199;border-top:1px solid rgba(255,255,255,.12);padding:8px;max-height:70vh;overflow-y:auto">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:6px">
+    <button onclick="ir('estadisticas')" style="background:rgba(255,255,255,.09);border:none;color:#fff;padding:10px;border-radius:8px;font-size:.79rem;cursor:pointer;text-align:left">📈 Estadísticas</button>
+    <button onclick="ir('hba1c')" style="background:rgba(255,255,255,.09);border:none;color:#fff;padding:10px;border-radius:8px;font-size:.79rem;cursor:pointer;text-align:left">🔬 HbA1c</button>
+    <button onclick="ir('consejos')" style="background:rgba(255,255,255,.09);border:none;color:#fff;padding:10px;border-radius:8px;font-size:.79rem;cursor:pointer;text-align:left">💡 Consejos</button>
+    <button onclick="ir('recordatorios')" style="background:rgba(255,255,255,.09);border:none;color:#fff;padding:10px;border-radius:8px;font-size:.79rem;cursor:pointer;text-align:left">🔔 Recordatorios</button>
+    <button onclick="ir('citas')" style="background:rgba(255,255,255,.09);border:none;color:#fff;padding:10px;border-radius:8px;font-size:.79rem;cursor:pointer;text-align:left">📅 Citas</button>
+    <button onclick="ir('informes')" style="background:rgba(255,255,255,.09);border:none;color:#fff;padding:10px;border-radius:8px;font-size:.79rem;cursor:pointer;text-align:left">📋 Informes</button>
+    <button onclick="ir('contactos')" style="background:rgba(255,255,255,.09);border:none;color:#fff;padding:10px;border-radius:8px;font-size:.79rem;cursor:pointer;text-align:left">🆘 Emergencias</button>
+    <button onclick="ir('ajustes')" style="background:rgba(255,255,255,.09);border:none;color:#fff;padding:10px;border-radius:8px;font-size:.79rem;cursor:pointer;text-align:left">⚙️ Ajustes</button>
+    <button onclick="instalarPWA()" style="background:rgba(255,193,7,.2);border:1px solid rgba(255,193,7,.4);color:#fff;padding:10px;border-radius:8px;font-size:.79rem;cursor:pointer;text-align:left">📱 Instalar app</button>
+    <button onclick="generarInformeMedico()" style="background:rgba(46,184,154,.2);border:1px solid rgba(46,184,154,.4);color:#fff;padding:10px;border-radius:8px;font-size:.79rem;cursor:pointer;text-align:left">📄 Informe médico</button>
+  </div>
+  <div style="display:flex;gap:5px">
+    <button onclick="doImprimir()" style="flex:1;background:rgba(255,255,255,.1);border:none;color:#fff;padding:8px;border-radius:7px;font-size:.75rem;font-weight:700;cursor:pointer">🖨️ Imprimir</button>
+    <button onclick="doExportPDF()" style="flex:1;background:rgba(46,184,154,.25);border:none;color:#fff;padding:8px;border-radius:7px;font-size:.75rem;font-weight:700;cursor:pointer">📄 PDF</button>
+    <button onclick="doExportExcel()" style="flex:1;background:rgba(39,174,96,.25);border:none;color:#fff;padding:8px;border-radius:7px;font-size:.75rem;font-weight:700;cursor:pointer">📊 Excel</button>
+  </div>
+</div>
+<div id="mas-ov" onclick="cmas()" style="display:none;position:fixed;inset:0;bottom:60px;z-index:198;background:rgba(0,0,0,.35)"></div>
+<script>var ML={ayunas:'Ayunas',antes_desayuno:'Antes desayuno',despues_desayuno:'Despues desayuno',antes_comida:'Antes comida',despues_comida:'Despues comida',antes_cena:'Antes cena',despues_cena:'Despues cena',antes_dormir:'Antes dormir'};
+var MI={ayunas:'🌅',antes_desayuno:'☕',despues_desayuno:'🥐',antes_comida:'🍽️',despues_comida:'🥘',antes_cena:'🌆',despues_cena:'🌙',antes_dormir:'🛌'};
+var MO=['ayunas','antes_desayuno','despues_desayuno','antes_comida','despues_comida','antes_cena','despues_cena','antes_dormir'];
+var MES=['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+var TIT={dashboard:'Inicio',glucemia:'Glucemia',estadisticas:'Estadísticas',hba1c:'HbA1c',consejos:'Consejos',vitales:'Peso y Tensión',medicamentos:'Medicamentos',recordatorios:'Recordatorios',citas:'Citas',informes:'Informes',contactos:'Emergencias',ajustes:'Ajustes'};
+var DL=['Do','Lu','Ma','Mi','Ju','Vi','Sa'];
+function ld(k){try{var v=localStorage.getItem('gc_'+k);return v?JSON.parse(v):[];}catch(e){return[];}}
+function sv(k,v){try{localStorage.setItem('gc_'+k,JSON.stringify(v));}catch(e){}}
+function ldv(k,d){try{var v=localStorage.getItem('gc_'+k);return v!==null?JSON.parse(v):d;}catch(e){return d;}}
+var GL=ld('gl'),ME=ld('me'),TM=ld('tm'),CI=ld('ci'),IN=ld('in'),HB=ld('hb'),RE=ld('re'),VT=ld('vt'),CONT=ld('cont');
+var PR=ldv('perfil',{nombre:'',tipo:'Tipo 2',altura:null,medico:'',fechaNac:'',metaMin:70,metaMax:180,metaHba:7});
+var altH=PR.altura,eMId=null,fG='todos',fInf='todos',SA='dashboard',rT=[],dP=null,DM=ldv('dm',false);
+function hoy(){return new Date().toISOString().slice(0,10);}
+function ahora(){return new Date().toTimeString().slice(0,5);}
+function ff(d){if(!d)return'—';var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
+function est(v){return v<PR.metaMin?'lo':v<=PR.metaMax?'ok':'hi';}
+function lbl(v){return v<PR.metaMin?'⚠️ Baja':v<=PR.metaMax?'✅ Normal':'🔴 Alta';}
+function pcl(v){return v<PR.metaMin?'plo':v<=PR.metaMax?'pok':'phi';}
+function g(id){return document.getElementById(id);}
+function eH(v){return v<5.7?'ok':v<6.5?'lo':'hi';}
+function lH(v){return v<5.7?'✅ Normal':v<6.5?'⚠️ Prediabetes':'🔴 Diabetes';}
+function cimc(p,a){return a?Math.round((p/((a/100)*(a/100)))*10)/10:null;}
+function limc(v){return v<18.5?'Bajo peso':v<25?'Normal':v<30?'Sobrepeso':'Obesidad';}
+function tema(){document.documentElement.setAttribute('data-theme',DM?'dark':'light');}
+function toggleTheme(){DM=!DM;sv('dm',DM);tema();}
+function setModo(m){DM=(m==='dark');sv('dm',DM);tema();}
+function toast(msg){var t=g('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2200);}
+function cmas(){var p=g('mas-panel'),o=g('mas-ov');if(p)p.style.display='none';if(o)o.style.display='none';}
+function amas(){var p=g('mas-panel'),o=g('mas-ov');if(!p)return;var op=p.style.display==='block';p.style.display=op?'none':'block';if(o)o.style.display=op?'none':'block';}
+function ir(sec){
+  cmas();SA=sec;
+  document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('on');});
+  document.querySelectorAll('#side nav button').forEach(function(a){a.classList.remove('on');});
+  var el=g('sec-'+sec),nl=g('n-'+sec);
+  if(el)el.classList.add('on');if(nl)nl.classList.add('on');
+  var bt=g('btitle');if(bt)bt.textContent=TIT[sec]||sec;
+  ['dashboard','glucemia','medicamentos','vitales'].forEach(function(t){var mb=g('mob-'+t);if(mb)mb.style.color=t===sec?'var(--acc)':'rgba(255,255,255,.6)';});
+  if(sec==='dashboard')pintaDash();
+  else if(sec==='glucemia')pintaG();
+  else if(sec==='estadisticas')pintaEst();
+  else if(sec==='hba1c')pintaHba();
+  else if(sec==='consejos')pintaCons();
+  else if(sec==='vitales')pintaVit();
+  else if(sec==='medicamentos')pintaMeds();
+  else if(sec==='recordatorios')pintaRec();
+  else if(sec==='citas')pintaCitas();
+  else if(sec==='informes')pintaInf();
+  else if(sec==='contactos')pintaCont();
+  else if(sec==='ajustes')loadAj();
+}
+function pintaTopbar(){var b=g('lastbadge');if(!b)return;if(!GL.length){b.className='nd';b.textContent='Sin datos';return;}var last=GL[0],e=est(last.valor);b.className=e;b.textContent=last.valor+' mg/dL · '+(e==='ok'?'Normal':e==='hi'?'Alta':'Baja');}
+function pintaDash(){pintaTopbar();pintaStats();pintaHoy();pintaChart();pintaDSem();pintaDMeds();pintaDCitas();pintaAlerts();}
+function pintaStats(){
+  var t=hoy(),tg=GL.filter(function(x){return x.fecha===t;});
+  var avg=tg.length?Math.round(tg.reduce(function(s,x){return s+x.valor;},0)/tg.length):null;
+  var uh=HB.length?HB[0].valor:null,uv=VT.length?VT[0]:null;
+  var el=g('dstats');if(!el)return;
+  function sc(lb,val,u,cls,sub){return '<div class="sc '+cls+'"><div class="sl">'+lb+'</div><div class="sv">'+val+(val!='—'?'<span style="font-size:.67rem;color:var(--text2)"> '+u+'</span>':'')+'</div>'+(sub?'<div class="su">'+sub+'</div>':'')+'</div>';}
+  el.innerHTML=sc('Glucosa hoy',avg||'—',avg?'mg/dL':'',avg?(avg<=PR.metaMax?'ok':avg<=250?'lo':'hi'):'',avg?tg.length+' mediciones':'')+sc('HbA1c',uh?uh+'%':'—','',uh?eH(uh):'',uh?ff(HB[0].fecha):'')+sc('Peso',uv&&uv.peso?uv.peso+' kg':'—','','',uv&&uv.imc?'IMC: '+uv.imc:'')+sc('Tensión',uv&&uv.ts?uv.ts+'/'+uv.td:'—','mmHg',uv&&uv.ts>140?'hi':'','');
+}
+function pintaDSem(){
+  var el=g('d-semana');if(!el)return;
+  var days=[],i;for(i=6;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);days.push(d.toISOString().slice(0,10));}
+  var tot=0,er=0,al=0,ba=0;
+  days.forEach(function(d){GL.filter(function(x){return x.fecha===d;}).forEach(function(x){tot++;if(x.valor>=PR.metaMin&&x.valor<=PR.metaMax)er++;else if(x.valor>PR.metaMax)al++;else ba++;});});
+  if(!tot){el.innerHTML='<p class="empty">Sin datos esta semana</p>';return;}
+  var pct=Math.round((er/tot)*100);
+  el.innerHTML='<div style="font-size:.77rem;margin-bottom:6px;color:var(--text)"><strong>'+tot+'</strong> mediciones · <strong style="color:var(--suc)">'+pct+'%</strong> en rango</div>'+bRow('En rango',er,tot,'var(--suc)')+bRow('Altas',al,tot,'var(--dan)')+bRow('Bajas',ba,tot,'var(--war)');
+}
+function bRow(lb,n,tot,col){var pct=tot?Math.round((n/tot)*100):0;return '<div class="bar-row"><span style="width:60px;color:var(--text2)">'+lb+'</span><div class="bar-bg"><div class="bar-fill" style="width:'+pct+'%;background:'+col+'"></div></div><span style="width:28px;text-align:right;font-size:.73rem;color:var(--text2)">'+n+'</span></div>';}
+function pintaHoy(){
+  var t=hoy(),tg=GL.filter(function(x){return x.fecha===t;});
+  var el=g('hoy');if(!el)return;
+  el.innerHTML=MO.map(function(m){var gl=tg.find(function(x){return x.momento===m;});var cls=gl?est(gl.valor):'nd';return '<div class="hslot"><div class="hl">'+(ML[m]||m).slice(0,10)+'</div><div class="hv '+cls+'">'+(gl?gl.valor:'—')+'</div></div>';}).join('');
+}
+function pintaChart(){
+  var el=g('chartBox');if(!el)return;
+  var days=[],i;for(i=6;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);days.push(d.toISOString().slice(0,10));}
+  var data=days.map(function(d){var gs=GL.filter(function(x){return x.fecha===d;});return gs.length?Math.round(gs.reduce(function(s,x){return s+x.valor;},0)/gs.length):null;});
+  var labels=days.map(function(d){return d.slice(8)+'/'+d.slice(5,7);});
+  svgLine(el,data,labels,PR.metaMin,PR.metaMax,'#1a6e8e');
+}
+function svgLine(el,data,labels,r1,r2,color){
+  if(!data.some(function(v){return v!==null;})){el.innerHTML='<p class="empty">Sin datos</p>';return;}
+  var W=480,H=140,PL=34,PR2=8,PT=10,PB=24,cW=W-PL-PR2,cH=H-PT-PB;
+  var vals=data.filter(function(v){return v!==null;});
+  var minV=Math.min.apply(null,vals.concat([r1]))-15,maxV=Math.max.apply(null,vals.concat([r2]))+15;
+  function fy(v){return PT+cH-((v-minV)/(maxV-minV))*cH;}
+  function fx(i){return PL+i*(cW/Math.max(data.length-1,1));}
+  var refs='';[[r1,'#f59e0b'],[r2,'#22c55e']].forEach(function(r){if(r[0]>=minV&&r[0]<=maxV){var y=fy(r[0]);refs+='<line x1="'+PL+'" y1="'+y+'" x2="'+(W-PR2)+'" y2="'+y+'" stroke="'+r[1]+'" stroke-width="1" stroke-dasharray="4,3" opacity=".6"/><text x="'+(PL-2)+'" y="'+(y+3)+'" text-anchor="end" font-size="8" fill="'+r[1]+'">'+r[0]+'</text>';}});
+  var pts=data.map(function(v,i){return v!==null?[fx(i),fy(v)]:null;});
+  var path='',first=true;
+  pts.forEach(function(p,i){if(p){if(first){path+='M '+p[0]+','+p[1];first=false;}else{var prev=null;for(var j=i-1;j>=0;j--){if(pts[j]){prev=pts[j];break;}}if(prev){var cx1=prev[0]+(p[0]-prev[0])*.4,cx2=p[0]-(p[0]-prev[0])*.4;path+=' C '+cx1+','+prev[1]+' '+cx2+','+p[1]+' '+p[0]+','+p[1];}}}else{first=true;}});
+  var area=path+' L '+fx(data.length-1)+','+(H-PB)+' L '+PL+','+(H-PB)+' Z';
+  var dots='';pts.forEach(function(p,i){if(!p)return;var v=data[i],col=v<r1?'#f59e0b':v<=r2?'#22c55e':'#ef4444';dots+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="'+col+'" stroke="white" stroke-width="1.5"/><text x="'+p[0]+'" y="'+(p[1]-8)+'" text-anchor="middle" font-size="8" fill="'+col+'" font-weight="bold">'+v+'</text>';});
+  var xl=labels.map(function(l,i){return '<text x="'+fx(i)+'" y="'+(H-4)+'" text-anchor="middle" font-size="8" fill="#999">'+l+'</text>';}).join('');
+  var uid='u'+Math.random().toString(36).slice(2,6);
+  el.innerHTML='<svg width="100%" viewBox="0 0 '+W+' '+H+'" style="overflow:visible"><defs><linearGradient id="'+uid+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+color+'" stop-opacity=".15"/><stop offset="100%" stop-color="'+color+'" stop-opacity=".02"/></linearGradient></defs>'+refs+'<path d="'+area+'" fill="url(#'+uid+')"/><path d="'+path+'" fill="none" stroke="'+color+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>'+dots+xl+'</svg>';
+}
+function pintaDMeds(){var el=g('d-meds');if(!el)return;if(!ME.length){el.innerHTML='<p class="empty">Sin medicamentos</p>';return;}el.innerHTML=ME.slice(0,3).map(function(m){var cls=m.stock===0?'no':m.stock<=m.alerta?'lo':'ok';return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:.79rem"><span>💊 '+m.nombre+'</span><span class="mstock '+cls+'">'+m.stock+' uds</span></div>';}).join('');}
+function pintaDCitas(){var t=hoy(),prox=CI.filter(function(c){return c.fecha>=t;}).slice(0,3);var el=g('d-citas');if(!el)return;if(!prox.length){el.innerHTML='<p class="empty">Sin citas próximas</p>';return;}el.innerHTML=prox.map(function(c){return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:.79rem"><span>📅 '+ff(c.fecha)+'</span><span style="color:var(--text2)">'+(c.especialista||'').slice(0,20)+'</span></div>';}).join('');}
+function pintaAlerts(){var el=g('alert-box');if(!el)return;var html='',last=GL[0];if(last){var e=est(last.valor);if(e==='hi'&&last.valor>250)html+='<div class="ab hi">🔴 Glucosa muy alta: '+last.valor+' mg/dL</div>';else if(e==='lo')html+='<div class="ab lo">⚠️ Glucosa baja: '+last.valor+' mg/dL — toma azúcar rápido</div>';}var agot=ME.filter(function(m){return m.stock===0;}),bajo=ME.filter(function(m){return m.stock>0&&m.stock<=m.alerta;});if(agot.length)html+='<div class="ab hi">❌ Agotado: '+agot.map(function(m){return m.nombre;}).join(', ')+'</div>';else if(bajo.length)html+='<div class="ab lo">⚠️ Stock bajo: '+bajo.map(function(m){return m.nombre;}).join(', ')+'</div>';el.innerHTML=html;}
+function fm(m,el2){fG=m;document.querySelectorAll('.mc').forEach(function(c){c.classList.remove('on');});if(el2)el2.classList.add('on');pintaG();}
+function pintaG(){var lista=fG==='todos'?GL:GL.filter(function(x){return x.momento===fG;});var tb=g('gtbody');if(!tb)return;if(!lista.length){tb.innerHTML='<tr><td colspan="7" class="empty">Sin mediciones</td></tr>';return;}tb.innerHTML=lista.map(function(x){return '<tr><td>'+ff(x.fecha)+'</td><td>'+x.hora+'</td><td>'+(MI[x.momento]||'📊')+' '+(ML[x.momento]||x.momento)+'</td><td><strong>'+x.valor+'</strong></td><td><span class="pill '+pcl(x.valor)+'">'+lbl(x.valor)+'</span></td><td style="font-size:.75rem;color:var(--text2)">'+(x.notas||'—')+'</td><td><button class="btn bd bs" onclick="bG('+x.id+')">🗑️</button></td></tr>';}).join('');}
+function guardarG(){var f=g('gf').value,h=g('gh').value,m=g('gm').value,v=parseInt(g('gv').value),n=g('gn').value;if(!f||!h||isNaN(v)){alert('Completa fecha, hora y glucosa.');return;}GL.unshift({id:Date.now(),fecha:f,hora:h,momento:m,valor:v,notas:n});sv('gl',GL);c('mg');pintaTopbar();pintaG();if(SA==='dashboard')pintaDash();toast('✅ Medición guardada');}
+function bG(id){if(!confirm('¿Eliminar?'))return;GL=GL.filter(function(x){return x.id!==id;});sv('gl',GL);pintaG();pintaTopbar();if(SA==='dashboard')pintaDash();}
+function pintaEst(){
+  var days=[],desde=new Date();desde.setDate(desde.getDate()-27);
+  for(var i=0;i<28;i++){var d=new Date(desde);d.setDate(desde.getDate()+i);days.push(d.toISOString().slice(0,10));}
+  var todas=GL.filter(function(x){return x.fecha>=days[0];});
+  var tot=todas.length,er=0,al=0,ba=0;
+  todas.forEach(function(x){if(x.valor>=PR.metaMin&&x.valor<=PR.metaMax)er++;else if(x.valor>PR.metaMax)al++;else ba++;});
+  var avg=tot?Math.round(todas.reduce(function(s,x){return s+x.valor;},0)/tot):null;
+  var pct=tot?Math.round((er/tot)*100):0;
+  var sd=0;if(avg&&tot>1){var s2=todas.reduce(function(s,x){return s+Math.pow(x.valor-avg,2);},0);sd=Math.round(Math.sqrt(s2/tot));}
+  var ec=g('est-cards');if(ec){function sc(lb,v,u,cls,sub){return '<div class="sc '+cls+'"><div class="sl">'+lb+'</div><div class="sv">'+v+(v!='—'?'<span style="font-size:.67rem;color:var(--text2)"> '+u+'</span>':'')+'</div>'+(sub?'<div class="su">'+sub+'</div>':'')+'</div>';}ec.innerHTML=sc('Promedio',avg||'—','mg/dL',avg?(avg<=PR.metaMax?'ok':avg<=250?'lo':'hi'):'',' ')+sc('Tiempo en rango',pct,'%',pct>=70?'ok':pct>=50?'lo':'hi','Obj ≥70%')+sc('Desv. estándar',sd||'—','mg/dL','',sd&&sd<50?'✅ Estable':'⚠️ Variable')+sc('Total mediciones',tot,'','','28 días');}
+  var tir=g('tir-chart');if(tir&&tot){var R=40,C=2*Math.PI*R,pA=Math.round((al/tot)*100),pB=Math.round((ba/tot)*100),pR=100-pA-pB;function arc(pct,off,col){var len=C*(pct/100);return '<circle cx="50" cy="50" r="'+R+'" fill="none" stroke="'+col+'" stroke-width="14" stroke-dasharray="'+len+' '+(C-len)+'" stroke-dashoffset="'+(-off*C/100)+'" transform="rotate(-90 50 50)"/>';}tir.innerHTML='<div style="display:flex;align-items:center;gap:14px"><svg width="90" height="90" viewBox="0 0 100 100" style="flex-shrink:0"><circle cx="50" cy="50" r="40" fill="none" stroke="var(--border)" stroke-width="14"/>'+arc(pR,0,'#22c55e')+arc(pA,pR,'#ef4444')+arc(pB,pR+pA,'#f59e0b')+'<text x="50" y="46" text-anchor="middle" font-size="14" font-weight="bold" fill="var(--pri2)">'+pR+'%</text><text x="50" y="58" text-anchor="middle" font-size="8" fill="#999">en rango</text></svg><div style="flex:1">'+bRow('En rango',er,tot,'#22c55e')+bRow('Altas',al,tot,'#ef4444')+bRow('Bajas',ba,tot,'#f59e0b')+'</div></div>';}else if(tir)tir.innerHTML='<p class="empty">Sin datos</p>';
+  var ms=g('momento-stats');if(ms){var html='';MO.forEach(function(m){var gs=GL.filter(function(x){return x.momento===m;});if(!gs.length)return;var a=Math.round(gs.reduce(function(s,x){return s+x.valor;},0)/gs.length);var col=a<PR.metaMin?'#f59e0b':a<=PR.metaMax?'#22c55e':'#ef4444';html+='<div class="bar-row" style="margin-bottom:8px"><span style="width:100px;font-size:.75rem;color:var(--text)">'+(MI[m]||'')+' '+(ML[m]||m).slice(0,12)+'</span><div class="bar-bg" style="height:6px"><div class="bar-fill" style="width:'+Math.min(100,Math.round((a/400)*100))+'%;background:'+col+'"></div></div><span style="width:50px;text-align:right;font-size:.75rem;font-weight:700;color:'+col+'">'+a+'</span></div>';});ms.innerHTML=html||'<p class="empty">Sin datos</p>';}
+  var tc=g('tendencia-chart');if(tc){var sw=[],sl=[];for(var w=3;w>=0;w--){var ini=new Date(),fin=new Date();ini.setDate(ini.getDate()-w*7-6);fin.setDate(fin.getDate()-w*7);var iniS=ini.toISOString().slice(0,10),finS=fin.toISOString().slice(0,10);var gs2=GL.filter(function(x){return x.fecha>=iniS&&x.fecha<=finS;});sw.push(gs2.length?Math.round(gs2.reduce(function(s,x){return s+x.valor;},0)/gs2.length):null);sl.push(w===0?'Esta':'Hace '+w+'s');}svgLine(tc,sw,sl,PR.metaMin,PR.metaMax,'#7c3aed');}
+}
+function guardarHba(){var f=g('hf').value,v=parseFloat(g('hv').value),cc=g('hc').value,n=g('hn').value;if(!f||isNaN(v)){alert('Fecha y valor obligatorios.');return;}HB.unshift({id:Date.now(),fecha:f,valor:v,centro:cc,notas:n});HB.sort(function(a,b){return b.fecha.localeCompare(a.fecha);});sv('hb',HB);c('mhba');pintaHba();toast('✅ HbA1c guardada');}
+function bHba(id){if(!confirm('¿Eliminar?'))return;HB=HB.filter(function(x){return x.id!==id;});sv('hb',HB);pintaHba();}
+function pintaHba(){
+  var ec=g('hba1cChart');if(ec){if(!HB.length)ec.innerHTML='<p class="empty">Sin datos</p>';else{var d=HB.slice(0,10).reverse();svgLine(ec,d.map(function(x){return x.valor;}),d.map(function(x){var p=x.fecha.split('-');return p[2]+'/'+p[1];}),5.7,PR.metaHba,'#7c3aed');}}
+  var ei=g('hba1c-indicator');if(ei){if(!HB.length)ei.innerHTML='<p class="empty">Sin datos</p>';else{var last=HB[0],e=eH(last.valor),pct=Math.min(100,Math.max(0,((last.valor-4)/(12-4))*100)),col=e==='ok'?'#22c55e':e==='lo'?'#f59e0b':'#ef4444';ei.innerHTML='<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><div style="font-size:1.7rem;font-weight:800;color:'+col+'">'+last.valor+'%</div><div><div style="font-weight:700;font-size:.88rem;color:var(--text)">'+lH(last.valor)+'</div><div style="font-size:.73rem;color:var(--text2)">'+ff(last.fecha)+(last.centro?' · '+last.centro:'')+'</div></div></div><div class="hba1c-bar"><div class="hba1c-ind" style="left:'+pct+'%"></div></div><div class="hba1c-labels"><span>4%</span><span>5.7</span><span>6.5</span><span>'+PR.metaHba+'</span><span>12%</span></div>';}}
+  var tb=g('hba1c-tbody');if(tb){if(!HB.length)tb.innerHTML='<tr><td colspan="6" class="empty">Sin registros</td></tr>';else tb.innerHTML=HB.map(function(h){var e=eH(h.valor);return '<tr><td>'+ff(h.fecha)+'</td><td><strong>'+h.valor+'%</strong></td><td><span class="pill '+(e==='ok'?'pok':e==='lo'?'plo':'phi')+'">'+lH(h.valor)+'</span></td><td style="font-size:.75rem;color:var(--text2)">'+(h.centro||'—')+'</td><td style="font-size:.75rem;color:var(--text2)">'+(h.notas||'—')+'</td><td><button class="btn bd bs" onclick="bHba('+h.id+')">🗑️</button></td></tr>';}).join('');}
+}
+function pintaCons(){
+  var last=GL[0],v=last?last.valor:null;
+  var el=g('cnivel');if(el){el.textContent=v?v+' mg/dL':'—';el.style.color=v?(v<PR.metaMin?'#f59e0b':v<=PR.metaMax?'#22c55e':'#ef4444'):'var(--text2)';}
+  var ri=g('rind');if(ri&&v)ri.style.left=Math.min(100,Math.max(0,((v-40)/360)*100))+'%';
+  var cd=g('cons-din');if(!cd)return;
+  if(!v){cd.innerHTML='<div class="cj i"><h4>Sin datos</h4><p>Registra una medición para recibir consejos personalizados.</p></div>';return;}
+  var html='';
+  if(v<PR.metaMin)html+='<div class="ab lo">⚠️ Glucosa baja ('+v+' mg/dL)</div><div class="cj d"><h4>🍬 Actúa ahora</h4><p>15g de hidratos rápidos: azúcar, zumo, caramelos. Espera 15 min y vuelve a medir.</p></div>';
+  else if(v<=PR.metaMax)html+='<div class="cj s"><h4>✅ En rango ('+v+' mg/dL)</h4><p>Buen control. Mantén tus hábitos actuales de alimentación y ejercicio.</p></div>';
+  else if(v<=250)html+='<div class="cj w"><h4>⚠️ Glucosa elevada ('+v+' mg/dL)</h4><p>Revisa tu medicación. Bebe agua y evita carbohidratos simples en la próxima comida.</p></div>';
+  else html+='<div class="ab hi">🚨 Glucosa muy alta ('+v+' mg/dL)</div><div class="cj d"><h4>🚨 Busca atención médica</h4><p>Riesgo de cetoacidosis. Llama al médico o ve a urgencias inmediatamente.</p></div>';
+  cd.innerHTML=html;
+}
+function guardarVit(){var f=g('vf').value,h=g('vh').value,p=parseFloat(g('vp').value),alt=parseFloat(g('valt').value),ts=parseInt(g('vts').value),td=parseInt(g('vtd').value),pu=parseInt(g('vpu').value);if(!f){alert('Fecha obligatoria.');return;}if(alt&&!isNaN(alt)){altH=alt;PR.altura=alt;sv('perfil',PR);}var obj={id:Date.now(),fecha:f,hora:h};if(!isNaN(p))obj.peso=p;if(!isNaN(ts))obj.ts=ts;if(!isNaN(td))obj.td=td;if(!isNaN(pu))obj.pulso=pu;if(altH&&obj.peso)obj.imc=cimc(obj.peso,altH);VT.unshift(obj);sv('vt',VT);c('mvit');pintaVit();toast('✅ Datos guardados');}
+function bVit(id){if(!confirm('¿Eliminar?'))return;VT=VT.filter(function(x){return x.id!==id;});sv('vt',VT);pintaVit();}
+function pintaVit(){
+  var uP=VT.find(function(x){return x.peso;}),uT=VT.find(function(x){return x.ts;});
+  var vs=g('vital-stats');if(vs){function sc2(lb,val,u,cls,sub){return '<div class="sc '+cls+'"><div class="sl">'+lb+'</div><div class="sv">'+val+'<span style="font-size:.67rem;color:var(--text2)"> '+u+'</span></div>'+(sub?'<div class="su">'+sub+'</div>':'')+'</div>';}vs.innerHTML=sc2('Peso',uP?uP.peso:'—','kg','',uP&&uP.imc?'IMC: '+uP.imc+' · '+limc(uP.imc):'')+sc2('Tensión',uT?uT.ts+'/'+uT.td:'—','mmHg',uT&&uT.ts>140?'hi':'',uT&&uT.pulso?uT.pulso+' ppm':'')+sc2('IMC',uP&&uP.imc?uP.imc:'—','',uP&&uP.imc?(uP.imc<18.5?'lo':uP.imc<25?'ok':uP.imc<30?'lo':'hi'):'',uP&&uP.imc?limc(uP.imc):'');}
+  var pe=g('pesoChart');if(pe){var ps=VT.filter(function(x){return x.peso;}).slice(0,14).reverse();if(ps.length<2)pe.innerHTML='<p class="empty">Añade al menos 2 registros</p>';else svgLine(pe,ps.map(function(x){return x.peso;}),ps.map(function(x){var p=x.fecha.split('-');return p[2]+'/'+p[1];}),50,120,'#f59e0b');}
+  var te=g('tensionChart');if(te){var ts2=VT.filter(function(x){return x.ts;}).slice(0,14).reverse();if(ts2.length<2)te.innerHTML='<p class="empty">Añade al menos 2 registros</p>';else svgLine(te,ts2.map(function(x){return x.ts;}),ts2.map(function(x){var p=x.fecha.split('-');return p[2]+'/'+p[1];}),90,140,'#ef4444');}
+  var tb=g('vit-tbody');if(tb){if(!VT.length)tb.innerHTML='<tr><td colspan="7" class="empty">Sin registros</td></tr>';else tb.innerHTML=VT.slice(0,30).map(function(x){return '<tr><td>'+ff(x.fecha)+'</td><td>'+x.hora+'</td><td>'+(x.peso?x.peso+' kg':'—')+'</td><td>'+(x.ts&&x.td?x.ts+'/'+x.td+' mmHg':'—')+'</td><td>'+(x.pulso?x.pulso+' ppm':'—')+'</td><td style="font-size:.75rem">'+(x.imc?x.imc+' ('+limc(x.imc)+')':'—')+'</td><td><button class="btn bd bs" onclick="bVit('+x.id+')">🗑️</button></td></tr>';}).join('');}
+}
+function guardarM(){var n=g('mn').value.trim(),d=g('md').value.trim(),tp=g('mtp').value,h=g('mh').value.split(',').map(function(x){return x.trim();}).filter(Boolean),s=parseInt(g('ms').value)||0,a=parseInt(g('ma').value)||10,nt=g('minstr').value;if(!n){alert('Nombre obligatorio.');return;}if(eMId){var idx=ME.findIndex(function(m){return m.id===eMId;});if(idx!==-1)ME[idx]={id:eMId,nombre:n,dosis:d,tipo:tp,horarios:h,stock:s,alerta:a,notas:nt};eMId=null;}else ME.push({id:Date.now(),nombre:n,dosis:d,tipo:tp,horarios:h,stock:s,alerta:a,notas:nt});sv('me',ME);c('mm');pintaMeds();toast('✅ Guardado');}
+function tomarM(id){var m=ME.find(function(x){return x.id===id;});if(!m)return;TM.unshift({id:Date.now(),medId:id,nombre:m.nombre,dosis:m.dosis,fecha:hoy(),hora:ahora()});if(m.stock>0){m.stock--;sv('me',ME);}sv('tm',TM);pintaMeds();toast('✅ Toma registrada');}
+function editM(id){var m=ME.find(function(x){return x.id===id;});if(!m)return;eMId=id;g('mn').value=m.nombre;g('md').value=m.dosis;g('mtp').value=m.tipo;g('mh').value=m.horarios.join(', ');g('ms').value=m.stock;g('ma').value=m.alerta;g('minstr').value=m.notas||'';am('mm');}
+function bM(id){if(!confirm('¿Eliminar?'))return;ME=ME.filter(function(x){return x.id!==id;});sv('me',ME);pintaMeds();}
+function pintaMeds(){
+  var t=hoy(),th=TM.filter(function(x){return x.fecha===t;});
+  var le=g('listamed');if(le){if(!ME.length)le.innerHTML='<p class="empty">Sin medicamentos</p>';else le.innerHTML=ME.map(function(m){var cls=m.stock===0?'no':m.stock<=m.alerta?'lo':'ok';var sl=m.stock===0?'❌ Agotado':m.stock<=m.alerta?'⚠️ Quedan '+m.stock:'✅ Stock: '+m.stock;return '<div class="mcard"><div style="display:flex;align-items:center;gap:10px"><div class="mico">💊</div><div><div class="mname">'+m.nombre+'</div><div class="mdose">'+m.dosis+' · '+(m.horarios.join(', ')||'—')+'</div><div class="mstock '+cls+'">'+sl+'</div></div></div><div class="mact"><button class="btn ba bs" onclick="tomarM('+m.id+')">✅ Tomar</button><button class="btn bg bs" onclick="editM('+m.id+')">✏️</button><button class="btn bd bs" onclick="bM('+m.id+')">🗑️</button></div></div>';}).join('');}
+  var te=g('tomashot');if(te){if(!th.length)te.innerHTML='<p class="empty">Sin tomas hoy</p>';else te.innerHTML=th.slice(0,6).map(function(t2){return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:.79rem"><span>💊 '+t2.nombre+'</span><span style="color:var(--text2)">'+t2.hora+'</span></div>';}).join('');}
+  var be=g('stockbajo');if(be){var bajo=ME.filter(function(m){return m.stock<=m.alerta;});if(!bajo.length)be.innerHTML='<p style="color:var(--suc);font-size:.8rem">✅ Todo el stock correcto</p>';else be.innerHTML=bajo.map(function(m){return '<div class="cj w" style="margin-bottom:6px"><h4>⚠️ '+m.nombre+'</h4><p>Quedan '+m.stock+' unidades.</p></div>';}).join('');}
+  var tb=g('tombody');if(tb){if(!TM.length)tb.innerHTML='<tr><td colspan="4" class="empty">Sin registros</td></tr>';else tb.innerHTML=TM.slice(0,30).map(function(t2){return '<tr><td>'+ff(t2.fecha)+'</td><td>'+t2.hora+'</td><td>'+t2.nombre+'</td><td>'+t2.dosis+'</td></tr>';}).join('');}
+}
+function selTD(){document.querySelectorAll('#dias-selector input[type=checkbox]').forEach(function(cb){cb.checked=true;});}
+function guardarRec(){var n=g('rn').value.trim(),h=g('rh').value,tp=g('rt').value;var dias=[];document.querySelectorAll('#dias-selector input[type=checkbox]:checked').forEach(function(cb){dias.push(parseInt(cb.value));});if(!n||!h||!dias.length){alert('Nombre, hora y días obligatorios.');return;}RE.push({id:Date.now(),nombre:n,hora:h,tipo:tp,dias:dias,activo:true});sv('re',RE);c('mr');pintaRec();inicRec();toast('✅ Recordatorio guardado');}
+function togRec(id){var r=RE.find(function(x){return x.id===id;});if(!r)return;r.activo=!r.activo;sv('re',RE);pintaRec();inicRec();}
+function bRec(id){if(!confirm('¿Eliminar?'))return;RE=RE.filter(function(x){return x.id!==id;});sv('re',RE);pintaRec();inicRec();}
+function pintaRec(){var el=g('lista-rec');if(!el)return;if(!RE.length){el.innerHTML='<p class="empty">Sin recordatorios</p>';return;}var tI={medicacion:'💊',glucemia:'📊',cita:'📅',otro:'🔔'};el.innerHTML=RE.map(function(r){var ds=r.dias.length===7?'Todos los días':r.dias.map(function(d){return DL[d];}).join(', ');return '<div class="rec-card"><div style="display:flex;align-items:center;gap:9px;flex:1"><div style="font-size:1.2rem">'+(tI[r.tipo]||'🔔')+'</div><div><div style="font-weight:700;font-size:.84rem;color:var(--text)">'+r.nombre+'</div><div style="font-size:.73rem;color:var(--pri2);font-weight:700">'+r.hora+'</div><div style="font-size:.7rem;color:var(--text2)">'+ds+'</div></div></div><div style="display:flex;gap:6px;align-items:center"><button class="rtoggle '+(r.activo?'on':'off')+'" onclick="togRec('+r.id+')"></button><button class="btn bd bs" onclick="bRec('+r.id+')">🗑️</button></div></div>';}).join('');}
+function inicRec(){rT.forEach(function(t){clearTimeout(t);});rT=[];if(!('Notification' in window))return;if(Notification.permission==='default')Notification.requestPermission();if(Notification.permission!=='granted')return;var now=new Date(),hd=now.getDay();RE.forEach(function(r){if(!r.activo||r.dias.indexOf(hd)===-1)return;var p=r.hora.split(':'),target=new Date();target.setHours(parseInt(p[0]),parseInt(p[1]),0,0);var diff=target-now;if(diff>0&&diff<86400000){var t=setTimeout(function(){try{new Notification('🩸 GlucoControl',{body:r.nombre+' — '+r.hora});}catch(e){}},diff);rT.push(t);}});}
+function guardarC(){var f=g('cf').value,h=g('ch').value,tp=g('ctp').value,e=g('ce').value,n=g('cn').value;if(!f||!h){alert('Fecha y hora obligatorias.');return;}CI.push({id:Date.now(),fecha:f,hora:h,tipo:tp,especialista:e,notas:n});CI.sort(function(a,b){return(a.fecha+a.hora).localeCompare(b.fecha+b.hora);});sv('ci',CI);c('mc');pintaCitas();toast('✅ Cita guardada');}
+function bCita(id){if(!confirm('¿Eliminar?'))return;CI=CI.filter(function(x){return x.id!==id;});sv('ci',CI);pintaCitas();}
+function pintaCitas(){var t=hoy(),prox=CI.filter(function(x){return x.fecha>=t;}),hist=CI.filter(function(x){return x.fecha<t;}).reverse();function cH(c){var p=c.fecha.split('-'),tl={med:'Medico',enf:'Enfermeria',ana:'Analisis'};return '<div class="citarow"><div class="cfecha"><div class="cd">'+p[2]+'</div><div class="cm">'+MES[parseInt(p[1])-1]+'</div></div><div class="cinfo"><span class="ctbadge '+(c.tipo||'med')+'">'+(tl[c.tipo]||c.tipo)+'</span><h4>'+(c.especialista||'—')+'</h4><p>'+(c.notas||'')+'</p></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px"><span style="font-weight:700;color:var(--pri2);font-size:.82rem">'+c.hora+'</span><button class="btn bd bs" onclick="bCita('+c.id+')">🗑️</button></div></div>';}var pe=g('proxcitas');if(pe)pe.innerHTML=prox.length?prox.map(cH).join(''):'<p class="empty">Sin citas próximas</p>';var he=g('histcitas');if(he)he.innerHTML=hist.length?hist.map(cH).join(''):'<p class="empty">Sin historial</p>';}
+function prevFoto(input){var prev=g('fprev');if(input.files&&input.files[0]){var r=new FileReader();r.onload=function(e){prev.src=e.target.result;prev.style.display='block';};r.readAsDataURL(input.files[0]);}}
+function fi2(tp){fInf=tp;pintaInf();}
+function guardarI(){var t=g('it').value.trim(),f=g('ife').value,tp=g('ity').value,m=g('imd').value,cc=g('ic').value;if(!t||!f){alert('Título y fecha obligatorios.');return;}var foto=null,prev=g('fprev');if(prev&&prev.src&&prev.style.display!=='none')foto=prev.src;IN.unshift({id:Date.now(),titulo:t,fecha:f,tipo:tp,medico:m,contenido:cc,foto:foto});sv('in',IN);c('mi');pintaInf();toast('✅ Informe guardado');}
+function verFoto(src){var v=g('imgv'),i=g('imgv-img');if(v&&i){i.src=src;v.classList.add('on');}}
+function bInf(id){if(!confirm('¿Eliminar?'))return;IN=IN.filter(function(x){return x.id!==id;});sv('in',IN);pintaInf();}
+function verFoto(src){var v=g('imgv'),i=g('imgv-img');if(v&&i){i.src=src;v.classList.add('on');}}
+function pintaInf(){
+  var lista=fInf==='todos'?IN:IN.filter(function(x){return x.tipo===fInf;});
+  var im={analisis:'\u{1F9EA}',prueba:'\u{1F52C}',cita:'\u{1F4CB}'},il={analisis:'Analisis',prueba:'Prueba',cita:'Resumen'};
+  var el=g('listainf');if(!el)return;
+  if(!lista.length){el.innerHTML='<p class="empty">Sin informes</p>';return;}
+  el.innerHTML=lista.map(function(i){
+    var fh='';
+    if(i.foto){fh='<img src="'+i.foto+'" class="iimg" onclick="verFoto(this.src)" alt="foto">';}
+    var cont='';
+    if(i.contenido){cont='<p style="margin-top:3px;font-size:.72rem;color:var(--text2);white-space:pre-line">'+i.contenido.slice(0,120)+(i.contenido.length>120?'...':'')+'</p>';}
+    return '<div class="irow"><div class="iico">'+(im[i.tipo]||'\u{1F4CB}')+'</div><div class="iinfo"><h4>'+i.titulo+'</h4><p>'+(i.medico||'')+' \u00B7 '+(il[i.tipo]||i.tipo)+'</p>'+cont+'</div>'+fh+'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0"><span style="font-size:.75rem;color:var(--text2)">'+ff(i.fecha)+'</span><button class="btn bd bs" onclick="bInf('+i.id+')">X</button></div></div>';
+  }).join('');
+}
+function guardarCont(){var n=g('con-n').value.trim(),t=g('con-t').value.trim(),tp=g('con-tp').value,r=g('con-r').value;if(!n||!t){alert('Nombre y teléfono obligatorios.');return;}CONT.push({id:Date.now(),nombre:n,tel:t,tipo:tp,rel:r});sv('cont',CONT);c('mcon');pintaCont();toast('✅ Contacto guardado');}
+function bCont(id){if(!confirm('¿Eliminar?'))return;CONT=CONT.filter(function(x){return x.id!==id;});sv('cont',CONT);pintaCont();}
+function pintaCont(){var el=g('lista-cont');if(!el)return;if(!CONT.length){el.innerHTML='<p class="empty">Sin contactos. Añade tu médico y familiares de emergencia.</p>';return;}var tI={med:'👨‍⚕️',fam:'👨‍👩‍👧',urg:'🚑'},bg={med:'#dbeafe',fam:'#d1fae5',urg:'#fee2e2'};el.innerHTML=CONT.map(function(cc){return '<div class="cont-card"><div style="display:flex;align-items:center;gap:10px"><div style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;background:'+bg[cc.tipo]+';flex-shrink:0">'+(tI[cc.tipo]||'👤')+'</div><div><div style="font-weight:700;font-size:.85rem;color:var(--text)">'+cc.nombre+'</div><div style="font-size:.73rem;color:var(--text2)">'+cc.rel+'</div><div style="font-size:.75rem;color:var(--pri2);font-weight:700">📞 '+cc.tel+'</div></div></div><div style="display:flex;gap:6px;flex-wrap:wrap"><a href="tel:'+cc.tel+'" style="padding:7px 12px;background:var(--suc);color:#fff;border-radius:8px;text-decoration:none;font-size:.78rem;font-weight:700;display:inline-block">📞 Llamar</a><a href="https://wa.me/'+cc.tel.replace(/\D/g,'')+'" target="_blank" style="padding:7px 12px;background:#25d366;color:#fff;border-radius:8px;text-decoration:none;font-size:.78rem;font-weight:700;display:inline-block">WhatsApp</a><button class="btn bd bs" onclick="bCont('+cc.id+')">🗑️</button></div></div>';}).join('');}
+function loadAj(){if(g('aj-nombre'))g('aj-nombre').value=PR.nombre||'';if(g('aj-tipo'))g('aj-tipo').value=PR.tipo||'Tipo 2';if(g('aj-fecha'))g('aj-fecha').value=PR.fechaNac||'';if(g('aj-altura'))g('aj-altura').value=PR.altura||'';if(g('aj-medico'))g('aj-medico').value=PR.medico||'';if(g('aj-min'))g('aj-min').value=PR.metaMin||70;if(g('aj-max'))g('aj-max').value=PR.metaMax||180;if(g('aj-hba'))g('aj-hba').value=PR.metaHba||7;}
+function guardarPerfil(){PR.nombre=g('aj-nombre').value;PR.tipo=g('aj-tipo').value;PR.fechaNac=g('aj-fecha').value;PR.altura=parseFloat(g('aj-altura').value)||null;PR.medico=g('aj-medico').value;altH=PR.altura;sv('perfil',PR);actSide();toast('✅ Perfil guardado');}
+function guardarRangos(){PR.metaMin=parseInt(g('aj-min').value)||70;PR.metaMax=parseInt(g('aj-max').value)||180;PR.metaHba=parseFloat(g('aj-hba').value)||7;sv('perfil',PR);toast('✅ Rangos guardados');}
+function actSide(){var sn=g('side-name'),sd=g('side-diag');if(sn)sn.textContent=PR.nombre||'Mi perfil';if(sd)sd.textContent='Diabetes '+PR.tipo;}
+function am(id){var f=hoy(),h=ahora();if(id==='mg'){g('gf').value=f;g('gh').value=h;g('gv').value='';g('gn').value='';}if(id==='mhba'){g('hf').value=f;g('hv').value='';g('hc').value='';g('hn').value='';}if(id==='mvit'){g('vf').value=f;g('vh').value=h;g('vp').value='';g('valt').value=altH||'';g('vts').value='';g('vtd').value='';g('vpu').value='';}if(id==='mc'){g('cf').value=f;g('ch').value=h;g('ce').value='';g('cn').value='';}if(id==='mi'){g('ife').value=f;g('it').value='';g('imd').value='';g('ic').value='';var fp=g('fprev');if(fp){fp.src='';fp.style.display='none';}var fi=g('ifoto');if(fi)fi.value='';}if(id==='mr'&&!eMId){g('rn').value='';g('rh').value=h;document.querySelectorAll('#dias-selector input[type=checkbox]').forEach(function(cb){cb.checked=false;});}if(id==='mm'&&!eMId){g('mn').value='';g('md').value='';g('mh').value='';g('ms').value='';g('ma').value='10';g('minstr').value='';}if(id==='mcon'){g('con-n').value='';g('con-t').value='';g('con-r').value='';}g(id).classList.add('on');}
+function c(id){var el=g(id);if(el)el.classList.remove('on');eMId=null;}
+function cov(e,el2){if(e.target===el2)el2.classList.remove('on');}
+function exportarBackup(){var data={GL:GL,ME:ME,TM:TM,CI:CI,IN:IN,HB:HB,RE:RE,VT:VT,CONT:CONT,perfil:PR,version:4,fecha:hoy()};var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='GlucoControl_backup_'+hoy()+'.json';a.click();toast('✅ Copia exportada');}
+function importarBackup(input){if(!input.files||!input.files[0])return;var r=new FileReader();r.onload=function(e){try{var d=JSON.parse(e.target.result);if(d.GL)GL=d.GL,sv('gl',GL);if(d.ME)ME=d.ME,sv('me',ME);if(d.TM)TM=d.TM,sv('tm',TM);if(d.CI)CI=d.CI,sv('ci',CI);if(d.IN)IN=d.IN,sv('in',IN);if(d.HB)HB=d.HB,sv('hb',HB);if(d.RE)RE=d.RE,sv('re',RE);if(d.VT)VT=d.VT,sv('vt',VT);if(d.CONT)CONT=d.CONT,sv('cont',CONT);if(d.perfil){PR=d.perfil;sv('perfil',PR);altH=PR.altura;actSide();}toast('✅ Backup restaurado. Recargando...');setTimeout(function(){ir(SA);},800);}catch(ex){alert('Error al leer el archivo de backup.');}};r.readAsText(input.files[0]);}
+function generarInformeMedico(){var ov=g('pdfov'),msg=g('pdfmsg');ov.classList.add('on');msg.textContent='Preparando informe...';function loadSc(src,cb){if(document.querySelector('script[src="'+src+'"]')){cb(null);return;}var s=document.createElement('script');s.src=src;s.onload=function(){cb(null);};s.onerror=function(){cb(new Error());};document.head.appendChild(s);}var desde=new Date();desde.setDate(desde.getDate()-30);var desdeS=desde.toISOString().slice(0,10);var gl30=GL.filter(function(x){return x.fecha>=desdeS;});var avg30=gl30.length?Math.round(gl30.reduce(function(s,x){return s+x.valor;},0)/gl30.length):null;var er30=gl30.filter(function(x){return x.valor>=PR.metaMin&&x.valor<=PR.metaMax;}).length;var pct30=gl30.length?Math.round((er30/gl30.length)*100):0;
+var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;margin:30px;color:#333}h1{color:#0f4a61;border-bottom:2px solid #0f4a61;padding-bottom:8px}h2{color:#1a6e8e;margin-top:20px;font-size:1.1rem}table{width:100%;border-collapse:collapse;margin:8px 0;font-size:.85rem}th{background:#e8f4f8;padding:6px 8px;text-align:left}td{padding:6px 8px;border-bottom:1px solid #ddd}.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.75rem;font-weight:700}.ok{background:#d1fae5;color:#065f46}.hi{background:#fee2e2;color:#991b1b}.lo{background:#fef3c7;color:#92400e}</style></head><body>';
+html+='<h1>🩸 Informe Médico — GlucoControl</h1>';html+='<p><strong>Paciente:</strong> '+(PR.nombre||'—')+'</p>';html+='<p><strong>Tipo diabetes:</strong> '+(PR.tipo||'—')+'</p>';if(PR.medico)html+='<p><strong>Médico de referencia:</strong> '+PR.medico+'</p>';html+='<p><strong>Fecha del informe:</strong> '+ff(hoy())+'</p><p><strong>Período:</strong> Últimos 30 días</p>';
+html+='<h2>📊 Resumen de Glucemia (últimos 30 días)</h2>';html+='<table><tr><th>Total mediciones</th><th>Promedio</th><th>Tiempo en rango</th><th>Rango objetivo</th></tr><tr><td>'+gl30.length+'</td><td>'+(avg30?avg30+' mg/dL':'—')+'</td><td>'+pct30+'%</td><td>'+PR.metaMin+'–'+PR.metaMax+' mg/dL</td></tr></table>';
+if(gl30.length){html+='<table><tr><th>Fecha</th><th>Hora</th><th>Momento</th><th>mg/dL</th><th>Estado</th></tr>';gl30.slice(0,30).forEach(function(x){html+='<tr><td>'+ff(x.fecha)+'</td><td>'+x.hora+'</td><td>'+(ML[x.momento]||x.momento)+'</td><td><strong>'+x.valor+'</strong></td><td><span class="badge '+(x.valor<PR.metaMin?'lo':x.valor<=PR.metaMax?'ok':'hi')+'">'+lbl(x.valor)+'</span></td></tr>';});html+='</table>';}
+if(HB.length){html+='<h2>🔬 HbA1c</h2><table><tr><th>Fecha</th><th>HbA1c%</th><th>Estado</th><th>Centro</th></tr>';HB.slice(0,6).forEach(function(h2){html+='<tr><td>'+ff(h2.fecha)+'</td><td><strong>'+h2.valor+'%</strong></td><td><span class="badge '+(h2.valor<5.7?'ok':h2.valor<6.5?'lo':'hi')+'">'+lH(h2.valor)+'</span></td><td>'+(h2.centro||'—')+'</td></tr>';});html+='</table>';}
+if(ME.length){html+='<h2>💊 Medicamentos activos</h2><table><tr><th>Medicamento</th><th>Dosis</th><th>Horarios</th><th>Stock</th></tr>';ME.forEach(function(m){html+='<tr><td>'+m.nombre+'</td><td>'+m.dosis+'</td><td>'+m.horarios.join(', ')+'</td><td>'+m.stock+' uds</td></tr>';});html+='</table>';}
+var vt30=VT.filter(function(x){return x.fecha>=desdeS;});if(vt30.length){html+='<h2>⚖️ Peso y Tensión</h2><table><tr><th>Fecha</th><th>Peso</th><th>Tensión</th><th>Pulso</th><th>IMC</th></tr>';vt30.slice(0,10).forEach(function(x){html+='<tr><td>'+ff(x.fecha)+'</td><td>'+(x.peso?x.peso+' kg':'—')+'</td><td>'+(x.ts&&x.td?x.ts+'/'+x.td+' mmHg':'—')+'</td><td>'+(x.pulso?x.pulso+' ppm':'—')+'</td><td>'+(x.imc||'—')+'</td></tr>';});html+='</table>';}
+html+='<br><hr><p style="font-size:.75rem;color:#999">Generado por GlucoControl v4.0 el '+new Date().toLocaleString('es-ES')+'</p></body></html>';
+loadSc('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',function(err){if(err){ov.classList.remove('on');alert('Sin conexión para generar el PDF.');return;}loadSc('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',function(err2){if(err2){ov.classList.remove('on');alert('Sin conexión.');return;}msg.textContent='Generando PDF...';var w2=window.open('','_blank');if(!w2){ov.classList.remove('on');alert('Activa las ventanas emergentes.');return;}w2.document.write(html);w2.document.close();setTimeout(function(){w2.print();ov.classList.remove('on');},800);});});} 
+function doExportExcel(){var ov=g('pdfov'),msg=g('pdfmsg');ov.classList.add('on');msg.textContent='Generando Excel...';function loadSc(src,cb){if(document.querySelector('script[src="'+src+'"]')){cb(null);return;}var s=document.createElement('script');s.src=src;s.onload=function(){cb(null);};s.onerror=function(){cb(new Error());};document.head.appendChild(s);}loadSc('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',function(err){if(err){ov.classList.remove('on');alert('Sin conexión.');return;}var XL=window.XLSX,wb=XL.utils.book_new();var gd=[['Fecha','Hora','Momento','mg/dL','Estado','Notas']];GL.forEach(function(x){gd.push([ff(x.fecha),x.hora,ML[x.momento]||x.momento,x.valor,lbl(x.valor),x.notas||'']);});XL.utils.book_append_sheet(wb,XL.utils.aoa_to_sheet(gd),'Glucemia');var hd=[['Fecha','HbA1c%','Estado','Centro','Notas']];HB.forEach(function(h2){hd.push([ff(h2.fecha),h2.valor,lH(h2.valor),h2.centro||'',h2.notas||'']);});XL.utils.book_append_sheet(wb,XL.utils.aoa_to_sheet(hd),'HbA1c');var md=[['Nombre','Dosis','Tipo','Horarios','Stock','Alerta']];ME.forEach(function(m){md.push([m.nombre,m.dosis,m.tipo,m.horarios.join(', '),m.stock,m.alerta]);});XL.utils.book_append_sheet(wb,XL.utils.aoa_to_sheet(md),'Medicamentos');var vd=[['Fecha','Hora','Peso kg','Tension','Pulso','IMC']];VT.forEach(function(x){vd.push([ff(x.fecha),x.hora,x.peso||'',x.ts&&x.td?x.ts+'/'+x.td:'',x.pulso||'',x.imc||'']);});XL.utils.book_append_sheet(wb,XL.utils.aoa_to_sheet(vd),'Peso_Tension');var cd=[['Fecha','Hora','Tipo','Especialista','Motivo']];CI.forEach(function(x){cd.push([ff(x.fecha),x.hora,x.tipo,x.especialista||'',x.notas||'']);});XL.utils.book_append_sheet(wb,XL.utils.aoa_to_sheet(cd),'Citas');var id=[['Fecha','Titulo','Tipo','Medico','Contenido']];IN.forEach(function(x){id.push([ff(x.fecha),x.titulo,x.tipo,x.medico||'',x.contenido||'']);});XL.utils.book_append_sheet(wb,XL.utils.aoa_to_sheet(id),'Informes');XL.writeFile(wb,'GlucoControl_'+hoy()+'.xlsx');ov.classList.remove('on');toast('✅ Excel exportado');});}
+function doImprimir(){document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('printing');});var el=g('sec-'+SA);if(el)el.classList.add('printing');window.print();setTimeout(function(){var e=g('sec-'+SA);if(e)e.classList.remove('printing');},2000);}
+function doExportPDF(){var ov=g('pdfov'),msg=g('pdfmsg');ov.classList.add('on');msg.textContent='Cargando...';function loadSc(src,cb){if(document.querySelector('script[src="'+src+'"]')){cb(null);return;}var s=document.createElement('script');s.src=src;s.onload=function(){cb(null);};s.onerror=function(){cb(new Error());};document.head.appendChild(s);}function gen(){msg.textContent='Capturando...';var el=g('sec-'+SA);if(!el){ov.classList.remove('on');return;}var ph=document.createElement('div');ph.className='ph';ph.style.display='block';ph.innerHTML='<h1>🩸 GlucoControl – '+TIT[SA]+'</h1><p>'+new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'})+(PR.nombre?' · '+PR.nombre:'')+'</p>';el.insertBefore(ph,el.firstChild);window.html2canvas(el,{scale:1.5,useCORS:true,backgroundColor:'#eef2f5',logging:false,windowWidth:1100}).then(function(canvas){try{el.removeChild(ph);}catch(e){}msg.textContent='Creando PDF...';var jsPDF=window.jspdf.jsPDF,pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'}),pW=pdf.internal.pageSize.getWidth(),pH2=pdf.internal.pageSize.getHeight(),mg=10,iW=pW-mg*2,sH=pH2-mg*2,src=(sH/iW)*canvas.width,pages=Math.ceil(canvas.height/src);for(var p=0;p<pages;p++){if(p>0)pdf.addPage();var sc2=document.createElement('canvas');sc2.width=canvas.width;sc2.height=Math.min(src,canvas.height-p*src);var ctx=sc2.getContext('2d');ctx.drawImage(canvas,0,p*src,sc2.width,sc2.height,0,0,sc2.width,sc2.height);pdf.addImage(sc2.toDataURL('image/jpeg',.88),'JPEG',mg,mg,iW,(sc2.height*iW)/canvas.width);}pdf.save('GlucoControl_'+SA+'_'+hoy()+'.pdf');ov.classList.remove('on');toast('✅ PDF guardado');}).catch(function(err){try{el.removeChild(ph);}catch(e){}ov.classList.remove('on');alert('Error: '+err.message);});}if(!window.jspdf)loadSc('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',function(e){if(e){ov.classList.remove('on');return;}if(!window.html2canvas)loadSc('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',function(e2){if(e2){ov.classList.remove('on');return;}gen();});else gen();});else if(!window.html2canvas)loadSc('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',function(e){if(e){ov.classList.remove('on');return;}gen();});else gen();}
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();dP=e;setTimeout(function(){var b=g('pwa-banner');if(b)b.style.display='block';},3000);});
+function instalarPWA(){var b=g('pwa-banner');if(b)b.style.display='block';if(!dP){alert('Para instalar:\nChrome: menú ⋮ → Añadir a pantalla de inicio\nSamsung Internet: menú → Añadir página a → Pantalla de inicio');return;}}
+function confirmarInstalar(){if(dP){dP.prompt();dP.userChoice.then(function(r){dP=null;var b=g('pwa-banner');if(b)b.style.display='none';if(r.outcome==='accepted')toast('✅ GlucoControl instalado');});}else{var b=g('pwa-banner');if(b)b.style.display='none';}}
+(function(){try{var mf={name:'GlucoControl',short_name:'GlucoControl',description:'Control de diabetes',start_url:'.',display:'standalone',background_color:'#0f4a61',theme_color:'#0f4a61',orientation:'portrait',icons:[{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%230f4a61"/><text y=".9em" font-size="80" x="10">\U0001F9B8</text></svg>',sizes:'512x512',type:'image/svg+xml'}]};var bl=new Blob([JSON.stringify(mf)],{type:'application/json'});var link=g('manifest-link');if(link)link.href=URL.createObjectURL(bl);}catch(e){}})();
+tema();actSide();
+setTimeout(function(){var s=g('splash');if(s)s.classList.add('hide');setTimeout(function(){if(s)s.style.display='none';},600);},2200);
+var sn=g('splash-sub');if(sn&&PR.nombre)sn.textContent='Hola, '+PR.nombre+' 👋';
+inicRec();
+ir('dashboard');</script>
+</body>
+</html>
