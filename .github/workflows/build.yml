@@ -6,6 +6,9 @@ on:
     tags:
       - 'v*'                   # también al crear un tag tipo v1.0.0
 
+permissions:
+  contents: write   # para publicar en Releases
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -66,3 +69,15 @@ jobs:
           name: glucontrol-apk
           path: GluControl.apk
           if-no-files-found: error
+
+      # Enlace fijo de descarga (sin zip ni sesión de GitHub):
+      # https://github.com/luengof67/glucontrol/releases/download/descargas/GluControl.apk
+      - name: Publicar en Releases
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view descargas >/dev/null 2>&1 || \
+            gh release create descargas --target "$GITHUB_SHA" --title "GluControl: descargas" \
+              --notes "Última versión compilada. Android: GluControl.apk · Windows: GluControl-windows.zip (descomprimir y abrir glucontrol.exe)." || true
+          gh release upload descargas GluControl.apk --clobber

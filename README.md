@@ -55,6 +55,13 @@ En el navegador donde usabas GluControl: *Ajustes / Copia de seguridad →
 Exportar* (v4) o *Backup* (v9). Luego en la app nueva: *Ajustes → Importar
 copia*. Se puede importar más de una vez sin duplicar.
 
+## Descargar
+
+Cada compilación deja la última versión en Releases, con enlace fijo:
+
+- Android: https://github.com/luengof67/glucontrol/releases/download/descargas/GluControl.apk
+- Windows: https://github.com/luengof67/glucontrol/releases/download/descargas/GluControl-windows.zip
+
 ## Compilar
 
 Pestaña **Actions** de GitHub:
