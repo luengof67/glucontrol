@@ -334,8 +334,9 @@ class Datos extends ChangeNotifier {
     if (cfg['altura'] != null) p['altura'] = cfg['altura'];
     if (cfg['alerta_horas'] != null) p['horasAviso'] = cfg['alerta_horas'];
     if (cfg['peso_objetivo'] != null) p['pesoObjetivo'] = cfg['peso_objetivo'];
+    p.removeWhere((k, v) => v == null || v == '');
     if (p.isNotEmpty) {
-      final nuevo = Perfil.deMapa({...perfil.aMapa(), ...p..removeWhere((k, v) => v == null || v == '')});
+      final nuevo = Perfil.deMapa({...perfil.aMapa(), ...p});
       perfil = nuevo;
       guardarPerfil();
       resumen.add('perfil');
