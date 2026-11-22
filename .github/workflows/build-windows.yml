@@ -1,0 +1,67 @@
+name: Build (Windows escritorio)
+
+on:
+  workflow_dispatch: {}        # botón manual en la pestaña Actions
+  push:
+    tags:
+      - 'win-v*'               # también al crear un tag tipo win-v1.0.0
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.2'
+          channel: stable
+          cache: true
+
+      - name: Dependencias
+        run: flutter pub get
+
+      # Arreglo del plugin cloud_firestore 5.6.12 para Windows: lee mal el
+      # ajuste persistenceEnabled (lo toma siempre como "sí") y nunca lo pasa
+      # al SDK, así que la app guarda una copia local de Firestore en
+      # %LOCALAPPDATA%\firestore aunque se le diga que no. Esa copia es la
+      # que cerraba la app (APPCRASH c000001d). Es el mismo cambio que ya
+      # tiene la versión en desarrollo de FlutterFire.
+      - name: Parche cloud_firestore (persistencia en Windows)
+        shell: pwsh
+        run: |
+          $raices = @($env:PUB_CACHE, "$env:LOCALAPPDATA\Pub\Cache", "$env:APPDATA\Pub\Cache") |
+            Where-Object { $_ -and (Test-Path $_) }
+          $archivos = Get-ChildItem -Path $raices -Recurse -Filter cloud_firestore_plugin.cpp -ErrorAction SilentlyContinue |
+            Where-Object { $_.FullName -match '\\cloud_firestore-[^\\]+\\windows\\' }
+          if (-not $archivos) { throw "No se encuentra cloud_firestore_plugin.cpp en la cache de pub" }
+          $viejo = 'bool persistEnabled = pigeonApp.settings().persistence_enabled();'
+          $nuevo = 'bool persistEnabled = *pigeonApp.settings().persistence_enabled(); settings.set_persistence_enabled(persistEnabled);'
+          foreach ($f in $archivos) {
+            $t = Get-Content -Raw $f.FullName
+            if ($t.Contains($nuevo)) { Write-Host "Ya parcheado: $($f.FullName)"; continue }
+            if (-not $t.Contains($viejo)) { throw "Patron no encontrado en $($f.FullName): revisar el parche" }
+            Set-Content -NoNewline -Path $f.FullName -Value $t.Replace($viejo, $nuevo)
+            Write-Host "Parcheado: $($f.FullName)"
+          }
+
+      - name: Build Windows (release)
+        run: flutter build windows --release
+        env:
+          CMAKE_POLICY_VERSION_MINIMUM: '3.5'
+
+      # La app son varios archivos (exe + dlls + data): se empaqueta en zip.
+      - name: Empaquetar
+        shell: pwsh
+        run: |
+          Compress-Archive -Path build/windows/x64/runner/Release/* `
+            -DestinationPath GluControl-windows.zip
+
+      - name: Subir artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: glucontrol-windows
+          path: GluControl-windows.zip
+          if-no-files-found: error
