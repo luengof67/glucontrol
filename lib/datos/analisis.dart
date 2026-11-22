@@ -51,7 +51,7 @@ class Resumen {
     final bandas = {for (final n in Nivel.values) n: 0};
     if (l.isEmpty) return Resumen._(0, null, null, 0, 0, bandas);
     final v = l.map((x) => x.valor).toList();
-    final m = media(v)!;
+    final m = v.fold<double>(0, (s, x) => s + x) / v.length;
     final sd = v.length > 1
         ? math.sqrt(v.fold<double>(0, (s, x) => s + (x - m) * (x - m)) / v.length)
         : 0.0;
@@ -204,7 +204,7 @@ class ParComida {
   final Lectura? antes;
   final Lectura despues;
   ParComida(this.comida, this.antes, this.despues);
-  int? get delta => antes == null ? null : despues.valor - antes.valor;
+  int? get delta => antes == null ? null : despues.valor - antes!.valor;
   int get minutosDespues => despues.cuando.difference(comida.cuando).inMinutes;
 }
 
