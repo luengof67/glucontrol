@@ -185,7 +185,7 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
                     (v) => setState(() => tipo = v)),
               ),
               const SizedBox(width: 10),
-              Expanded(child: CampoFecha('Fecha de nacimiento', fechaNac, (v) => setState(() => fechaNac = v))),
+              Expanded(child: CampoFecha('Fecha de nacimiento', fechaNac, (v) => setState(() => fechaNac = v), nacimiento: true)),
             ]),
             const SizedBox(height: 10),
             Row(children: [

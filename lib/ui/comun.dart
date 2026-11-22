@@ -299,16 +299,23 @@ class CampoFecha extends StatelessWidget {
   final String etiqueta, valor;
   final ValueChanged<String> onChanged;
   final bool futuro;
-  const CampoFecha(this.etiqueta, this.valor, this.onChanged, {super.key, this.futuro = false});
+
+  /// Fecha de nacimiento: abre eligiendo el año y empieza en 1970 si está vacía.
+  final bool nacimiento;
+  const CampoFecha(this.etiqueta, this.valor, this.onChanged,
+      {super.key, this.futuro = false, this.nacimiento = false});
 
   @override
   Widget build(BuildContext context) => InkWell(
         onTap: () async {
-          final ini = DateTime.tryParse(valor) ?? DateTime.now();
+          var ini = DateTime.tryParse(valor) ?? (nacimiento ? DateTime(1970) : DateTime.now());
+          // Una fecha de nacimiento de este año es un valor puesto por error.
+          if (nacimiento && ini.year >= DateTime.now().year) ini = DateTime(1970);
           final d = await showDatePicker(
             context: context,
             initialDate: ini,
-            firstDate: DateTime(2000),
+            firstDate: DateTime(1900),
+            initialDatePickerMode: nacimiento ? DatePickerMode.year : DatePickerMode.day,
             lastDate: futuro ? DateTime(2100) : DateTime.now().add(const Duration(days: 1)),
             locale: const Locale('es', 'ES'),
           );
